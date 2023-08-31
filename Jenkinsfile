@@ -20,7 +20,7 @@ pipeline {
             }
             steps {
                 echo 'Deploying...'
-                echo 'Yeahhhh., current build value ${currentBuild.completeBuild}'
+                sh 'echo Yeahhhh., current build value ${currentBuild.completeBuild}'
             }
         }
     }
