@@ -20,6 +20,7 @@ pipeline {
             }
             steps {
                 echo 'Deploying...'
+                echo 'current build value ${currentBuild.completeBuild}'
             }
         }
     }
