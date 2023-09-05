@@ -74,15 +74,17 @@
     -   SCM: Git
     -   Repositories / Repository URL: paste your **SSH** repo url that contains Jenkinsfile and webhook here. e.g: git@github.com:xmars4/odoo-cicd-jenkins.git
     -   Credentials: select the credential you created at step **2.4**
-    -   Branches to build / Branch Specifier: select a propriate branch
+    -   Branches to build / Branch Specifier: select apropriate branch
 
     4.2. **You have to run build first time manually before Github webhook can trigger build automatically**
 
     -   Path: Dashboard / Your pipeline / Build Now
 
+--> **Congrats** : now your pipeline will automatic start building when the repo received a push event
+
 # Reference
 
--   Run Jenkins from [docker-compose.yml](docker-compose/docker-compose.yml) file and got error
+-   Run Jenkins from [docker-compose.yml](docker-compose/docker-compose.yml) file using a **[bind mount](https://github.com/jenkinsci/docker/blob/master/README.md#usage)** volume:
 
     ```bash
     touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied
