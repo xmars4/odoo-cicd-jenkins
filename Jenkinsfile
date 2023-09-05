@@ -24,7 +24,8 @@ pipeline {
             }
             steps {
                 echo 'Deploying...'
-                sh 'echo Yeahhhh.aa, current build value \${currentBuild.completeBuild} ..'
+                def build_status = currentBuild.completeBuild
+                sh 'echo Yeahhhh.aa, current build value \$build_status -- \$currentBuild ...'
                 sh 'echo show bash variable value \$MY_VARIABLE'
             }
         }
