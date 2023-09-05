@@ -16,7 +16,7 @@
 
     2.3. [Add SSH public key (.pub) to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
 
-    2.4. Create a **SSH Username with private key** credential
+    2.4. Create a **SSH Username with private key** credential in Jenkins
 
     -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
     -   Kind: SSH Username with private key
