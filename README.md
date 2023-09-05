@@ -23,6 +23,12 @@
     -   Username: your github username
     -   Private key / Enter directly: paste your private SSH key at step **2.1** here
 
+    2.5. Add github.com to known_hosts file (if you used the Jenkins's Dockerfile in this repo, ignore this step)
+
+    ```bash
+    ssh-keyscan github.com >> /var/jenkins_home.ssh/known_hosts
+    ```
+
 3.  Config Github plugin - allow trigger job in Jenkins by Github webhook
 
     3.1. [Generate Github fine-grained personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with following scopes:
@@ -54,8 +60,8 @@
     -   Pipeline / Definition, select **Pipeline script from SCM**
     -   SCM: Git
     -   Repositories / Repository URL: paste your **SSH** repo url that contains Jenkinsfile and webhook here. e.g: git@github.com:xmars4/odoo-cicd-jenkins.git
-    -   # TODO HERE: can't not validate ssh credential -> solution?
-    -
+    -   Credentials: select the credential you created at step **2.4**
+    -   Branches to build / Branch Specifier: select a propriate branch
 
 # Reference
 
