@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        MY_VARIABLE = 'Hello, World!'
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -20,7 +24,8 @@ pipeline {
             }
             steps {
                 echo 'Deploying...'
-                sh 'echo Yeahhhh.aa, current build value $currentBuild.completeBuild ..'
+                sh 'echo Yeahhhh.aa, current build value \$currentBuild.completeBuild ..'
+                sh 'another variable \$MY_VARIABLE'
             }
         }
     }

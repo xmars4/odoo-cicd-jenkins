@@ -23,7 +23,7 @@
     -   Username: your github username
     -   Private key / Enter directly: paste your private SSH key at step **2.1** here
 
-    2.5. Add github.com to known_hosts file (if you used the Jenkins's Dockerfile in this repo, ignore this step)
+    2.5. Add github.com to known_hosts file (if you use a Jenkins image built from [docker-compose/Dockerfile], ignore this step)
 
     ```bash
     ssh-keyscan github.com >> /var/jenkins_home.ssh/known_hosts
