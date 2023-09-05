@@ -25,7 +25,7 @@ pipeline {
             steps {
                 echo 'Deploying...'
                 sh 'echo Yeahhhh.aa, current build value \$currentBuild.completeBuild ..'
-                sh 'another variable \$MY_VARIABLE'
+                sh 'echo show bash variable value \$MY_VARIABLE'
             }
         }
     }
