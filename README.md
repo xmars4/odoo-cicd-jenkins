@@ -49,9 +49,22 @@
     -   Path: Dashboard > Manage Jenkins > System : Github / Github Servers
     -   Add new Github server with following information:
         -   API URL: https://api.github.com
-        -   Credentials: select credential created at step **3.2**
+        -   Credentials: select the credential created at step **3.2**
+        -   Click _Test connection_ to check your configuration
+    -   Click Save
 
-4.  Create and config Github pipeline
+4.  [Create Github webhook](https://docs.github.com/en/webhooks/using-webhooks)
+
+    4.1. If you use a local server to receive webhook, [reference this guide](https://docs.github.com/en/webhooks/using-webhooks/creating-webhooks#exposing-localhost-to-the-internet) to expose localhost to internet
+
+    4.2. Add Jenkins's hook url to repo's webhook
+
+    -   Open Github repo page
+    -   Path: Settings / Webhooks / Add webhook
+    -   Payload URL (the ending forward slash **/** is important): <public_jenkins_url>/github-webhook/
+    -   Content type: application/json
+
+5.  Create and config Github pipeline
 
     4.1. Create new pipeline
 
