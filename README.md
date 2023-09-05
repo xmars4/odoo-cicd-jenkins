@@ -76,6 +76,10 @@
     -   Credentials: select the credential you created at step **2.4**
     -   Branches to build / Branch Specifier: select a propriate branch
 
+    4.2. **You have to run build first time manually before Github webhook can trigger build automatically**
+
+    -   Path: Dashboard / Your pipeline / Build Now
+
 # Reference
 
 -   Run Jenkins from [docker-compose.yml](docker-compose/docker-compose.yml) file and got error
