@@ -1,7 +1,7 @@
 version: "3"
 services:
     jenkins:
-        image: jenkins-custom
+        image: jenkins
         build:
             dockerfile: Dockerfile
         container_name: jenkins
@@ -12,6 +12,11 @@ services:
             - jenkins
         volumes:
             - jenkins_home:/var/jenkins_home
+            # allow jenkin instance running inside a container can execute docker command
+            # two methods: dind and dood -> in this case, we used dood
+            # + mount docker socket from host machine to container
+            # + add docker cli (already define in Dockerfile)
+            - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
     jenkins:

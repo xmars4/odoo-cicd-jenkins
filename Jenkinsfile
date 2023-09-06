@@ -1,18 +1,36 @@
 pipeline {
     agent any
+
+    environment {
+        MY_VARIABLE = 'Hello, World!'
+    }
+
     stages {
         stage('Build') {
-            agent {
-                docker {
-                    image 'gradle:8.2.0-jdk17-alpine'
-                    // Run the container on the node specified at the
-                    // top-level of the Pipeline, in the same workspace,
-                    // rather than on a new node entirely:
-                    reuseNode true
+            steps {
+                echo 'Building...'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+            }
+        }
+        stage('Deploy'){
+            when {
+                expression {
+                    currentBuild.result == null || currentBuild.result == 'SUCCESS'
                 }
             }
             steps {
-                sh 'gradle --version'
+                script {
+                    echo 'Deploying...'
+                    echo "current build value-- ${env.JOB_NAME}"
+                    // sh 'echo $'
+                    sh 'echo show bash variable value \$MY_VARIABLE'
+                    sh 'docker ps'
+                }
+                
             }
         }
     }
