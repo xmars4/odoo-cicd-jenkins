@@ -30,7 +30,6 @@ pipeline {
                     sh 'echo show bash variable value \$MY_VARIABLE'
                     sh 'docker ps'
                 }
-                
             }
         }
     }
