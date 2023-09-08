@@ -1,6 +1,4 @@
 #!/bin/bash
 
-docker compose help
-cd ./odoo-docker/
-
-docker compose -f ./odoo-docker/docker-compose.yml up -d
+cd ./odoo-docker
+docker compose up -d
