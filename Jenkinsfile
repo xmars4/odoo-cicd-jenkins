@@ -9,10 +9,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh "cd odoo-docker"
-                    sh "ls -lah"
-                    sh 'cat etc/os-release && docker ps'
-                    sh 'docker compose help'
+                    sh "./odoo-docker/scripts/build.sh"
                 }
             }
         }
