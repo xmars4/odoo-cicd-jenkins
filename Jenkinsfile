@@ -1,11 +1,38 @@
-node {
-    stage('Build') {
-        step([$class: 'DockerComposeBuilder', dockerComposeFile: 'odoo-docker/docker-compose.yml', option: [$class: 'StartAllServices'], useCustomDockerComposeFile: true])
+pipeline {
+    agent any
+
+    environment {
+        MY_VARIABLE = 'Hello, World!'
     }
-    stage('Test') {
-        echo 'Testing....'
-    }
-    stage('Deploy') {
-        echo 'Deploying....'
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    sh "ls odoo-docker"
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+            }
+        }
+        stage('Deploy'){
+            when {
+                expression {
+                    currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
+            }
+            steps {
+                script {
+                    echo 'Deploying...'
+                    echo "current build value-- ${env.JOB_NAME}"
+                    // sh 'echo $'
+                    sh 'echo show bash variable value \$MY_VARIABLE'
+                    sh 'docker ps'
+                }
+            }
+        }
     }
 }
