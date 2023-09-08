@@ -1,3 +1,4 @@
 #!/bin/bash
 
-docker compose -f ./odoo-docker/docker-compose.yml up -d
+docker ps -a
+# docker compose -f ./odoo-docker/docker-compose.yml up -d
