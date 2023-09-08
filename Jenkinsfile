@@ -9,7 +9,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh ./odoo-docker/scripts/build.sh
+                    sh './odoo-docker/scripts/build.sh'
                 }
             }
         }
