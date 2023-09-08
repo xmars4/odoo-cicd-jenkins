@@ -9,7 +9,9 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'cd odoo-docker && docker compose up -d'
+                    sh "cd odoo-docker"
+                    sh "ls -lah"
+                    sh "docker compose up -d"
                 }
             }
         }
