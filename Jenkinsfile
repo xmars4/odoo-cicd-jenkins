@@ -11,7 +11,8 @@ pipeline {
                 script {
                     sh "cd odoo-docker"
                     sh "ls -lah"
-                    sh "docker compose up -d"
+                    sh "cat etc/os-release && docker ps"
+                    sh "docker compose help"
                 }
             }
         }
