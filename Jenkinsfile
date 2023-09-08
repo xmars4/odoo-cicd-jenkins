@@ -16,6 +16,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
+                    sh 'ls -lah .'
                     sh 'cat ./odoo-docker/logs/odoo.log|grep INFO'
                 }
             }
