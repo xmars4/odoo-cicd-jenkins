@@ -15,7 +15,9 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'Testing...'
+                script {
+                    sh 'cat ./odoo-docker/logs/odoo.log|grep INFO'
+                }
             }
         }
         stage('Deploy'){
