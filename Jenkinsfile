@@ -34,5 +34,12 @@ pipeline {
                 }
             }
         }
+        stage('Cleaning'){
+            steps {
+                script {
+                    sh './odoo-docker/scripts/cleaning.sh'
+                }
+            }
+        }
     }
 }
