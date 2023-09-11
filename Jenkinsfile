@@ -16,7 +16,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    echo '#TODO: wait for some minute to odoo up and running'
+                    echo '#TODO: wait for some minute to odoo up and running..'
                     sh 'ls -lah ./odoo-docker'
                     sh './odoo-docker/scripts/test.sh'
                 }
