@@ -41,7 +41,7 @@ pipeline {
         stage('Cleaning'){
             steps {
                 script {
-                    sh './odoo-docker/scripts/cleaning.sh'
+                    sh './odoo-docker/scripts/clean.sh'
                 }
             }
         }
