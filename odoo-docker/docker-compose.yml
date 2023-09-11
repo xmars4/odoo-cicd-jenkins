@@ -8,9 +8,9 @@ services:
             - POSTGRES_DB=postgres
         ports:
             - "15432:5432"
-        volumes:
-            - ./etc/postgresql.conf:/etc/postgresql/postgresql.conf
-        command: -c 'config_file=/etc/postgresql/postgresql.conf'
+        # volumes:
+        #     - ./etc/postgresql.conf:/etc/postgresql/postgresql.conf
+        # command: -c 'config_file=/etc/postgresql/postgresql.conf'
         networks:
             - backend
         restart: always
@@ -38,7 +38,6 @@ services:
 
 volumes:
     odoo-data:
-    postgresql-data:
 
 networks:
     backend:
