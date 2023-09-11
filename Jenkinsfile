@@ -11,7 +11,7 @@ node {
             docker.image('postgres:15').inside{
                 sh 'ls -lah /'
                 sh 'echo $POSTGRES_DB $POSTGRES_PASSWORD'
-                sh 'psql'
+                sh 'psql -U odoo'
             }
                         // sh 'cat /etc/postgresql/postgresql.conf '
             
