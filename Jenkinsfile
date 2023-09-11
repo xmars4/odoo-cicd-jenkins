@@ -7,8 +7,8 @@ node {
     }
 
     stage ('Build') {
-        docker.image('postgres:15').withRun('-e "POSTGRES_PASSWORD=odoo" -e "POSTGRES_USER=odoo" -e "POSTGRES_DB=postgres"') {
-            // sh 'cat /etc/postgresql/postgresql.conf '
+        docker.image('postgres:15').withRun('-e "POSTGRES_PASSWORD=odoo" -e "POSTGRES_USER=odoo" -e "POSTGRES_DB=postgres"').inside(){
+                        // sh 'cat /etc/postgresql/postgresql.conf '
             sh 'ls -lah /'
             sh 'echo $POSTGRES_DB $POSTGRES_PASSWORD'
             sh 'psql'
