@@ -30,7 +30,7 @@ services:
         volumes:
             - ./extra-addons:/mnt/extra-addons # customize addons
             - ./et-addons:/mnt/et-addons # odoo enterprise addons
-            - ./etc:/etc/odoo
+            - ./etc/odoo.conf:/etc/odoo/odoo.conf
             - ./logs:/var/log/odoo
         networks:
             - backend
