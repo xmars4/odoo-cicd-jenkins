@@ -8,6 +8,8 @@
 
     1.3. [Install ssh-agent](https://plugins.jenkins.io/ssh-agent/)
 
+    1.4. [Install Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)
+
 2.  Allow Jenkins connect to Github - with SSH key
 
     2.1. [Generate SSH key or find an existing on Jenkins's host](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)

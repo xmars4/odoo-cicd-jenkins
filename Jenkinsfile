@@ -1,50 +1,12 @@
-pipeline {
-    agent any
-
-    environment {
-        MY_VARIABLE = 'Hello, World!'
+node {
+    stage ('Prepare'){
+        sh './odoo-docker/scripts/prepare.sh'
     }
 
-    stages {
-        stage('Build') {
-            steps {
-                script {
-                    sh './odoo-docker/scripts/build.sh'
-                    sh 'echo just build step'
-                }
-            }
+    stage ('Build') {
+        docker.image('postgres:15').withRun('-e "POSTGRES_PASSWORD=odoo" -e "POSTGRES_USER=odoo" -e "POSTGRES_DB=postgres" --network odoo-cicd-net') {
+            sh 'cat /etc/postgresql/postgresql.conf '
+            sh 'ls -lah /'
         }
-        // stage('Test') {
-        //     steps {
-        //         script {
-        //             echo '#TODO: wait for some minute to odoo up and running..'
-        //             sh 'ls -lah ./odoo-docker'
-        //             sh './odoo-docker/scripts/test.sh'
-        //         }
-        //     }
-        // }
-        // stage('Deploy'){
-        //     when {
-        //         expression {
-        //             currentBuild.result == null || currentBuild.result == 'SUCCESS'
-        //         }
-        //     }
-        //     steps {
-        //         script {
-        //             echo 'Deploying...'
-        //             echo "current build value-- ${env.JOB_NAME}"
-        //             // sh 'echo $'
-        //             sh 'echo show bash variable value \$MY_VARIABLE'
-        //             sh 'docker ps'
-        //         }
-        //     }
-        // }
-        // stage('Cleaning'){
-        //     steps {
-        //         script {
-        //             sh './odoo-docker/scripts/clean.sh'
-        //         }
-        //     }
-        // }
     }
 }
