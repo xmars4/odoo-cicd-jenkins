@@ -1,4 +1,7 @@
 node {
+
+    checkout scm
+    
     stage ('Prepare'){
         sh './odoo-docker/scripts/prepare.sh'
     }
