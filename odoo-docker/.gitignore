@@ -51,5 +51,4 @@ package.json
 # ide and editor
 .idea
 .vscode
-logs/
-odoo.log
+*.log
