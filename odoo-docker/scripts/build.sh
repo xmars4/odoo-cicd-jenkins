@@ -1,8 +1,6 @@
 #!/bin/bash
 
-cd ./odoo-docker
-pwd
-ls -lah
+docker network create odoo-cicd-test
 
 docker compose up -f odoo-docker/docker-compose.yml -d
 docker compose ps -a

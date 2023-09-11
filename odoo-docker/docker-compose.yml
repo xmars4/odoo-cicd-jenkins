@@ -9,7 +9,7 @@ services:
         ports:
             - "15432:5432"
         volumes:
-            - ./postgresql/postgresql.conf:/etc/postgresql/postgresql.conf
+            - ./postgresql:/etc/postgresql
         command: -c 'config_file=/etc/postgresql/postgresql.conf'
         networks:
             - backend
