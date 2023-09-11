@@ -3,8 +3,8 @@
 cd ./odoo-docker
 pwd
 ls -lah
-echo "wtf happen"
-docker compose up -d
+
+docker compose up -f odoo-docker/docker-compose.yml -d
 docker compose ps -a
 ls -lah logs
 ls -lah .
