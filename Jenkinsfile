@@ -12,14 +12,7 @@ node {
         + ' -e "POSTGRES_DB=postgres"'
         + ' --network odoo-cicd-net' 
         + ' -p 15430:5432'){c ->
-        sh 'docker ps -a'
-                sh './odoo-docker/scripts/wait-for-it.sh localhost:15430 -t 20'
-                sh 'which psql'
-                sh 'psql -h localhost:15430 -U odoo'
-                // sh 'while !</dev/tcp/db/5432; do sleep 1; done;'
-                sh 'ls -lah /'
-                sh 'echo $POSTGRES_DB $POSTGRES_PASSWORD'
-                sh 'psql -U odoo'
+
             
         }
     }

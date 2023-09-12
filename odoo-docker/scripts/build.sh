@@ -1,8 +1,10 @@
 #!/bin/bash
-
-docker network create odoo-cicd-test
-
-docker compose up -f odoo-docker/docker-compose.yml -d
-docker compose ps -a
-ls -lah logs
-ls -lah .
+docker ps -a
+docker logs ${c.id}
+./odoo-docker/scripts/wait-for-it.sh localhost:15430 -t 30
+which psql
+psql -h localhost:15430 -U odoo
+// while !</dev/tcp/db/5432; do sleep 1; done;
+ls -lah /
+echo $POSTGRES_DB $POSTGRES_PASSWORD
+psql -U odoo
