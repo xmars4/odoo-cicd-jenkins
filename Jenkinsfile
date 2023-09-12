@@ -14,14 +14,14 @@ node {
         + ' -p 15430:5432'
         + ' --name postgres-db'){c ->
             sh './odoo-docker/scripts/build.sh'
-            sh "docker logs ${c.id}"
+            sh "docker logs -f ${c.id}"
             
             docker.image('odoo:16').withRun('-e "HOST=postgres-db"'
             + ' -e "PORT=5432"' 
             + ' -e "USER=odoo"'
             + ' -e "PASSWORD=odoo"'
             + ' --network odoo-cicd-net'){z ->
-                sh "docker logs ${z.id}"
+                sh "docker logs -f ${z.id}"
             }
 
         }
