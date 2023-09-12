@@ -21,7 +21,7 @@ node {
             + ' -e "USER=odoo"'
             + ' -e "PASSWORD=odoo"'
             + ' --network odoo-cicd-net'
-            + ' -u root' + ' -v ./odoo-docker/etc/:/etc/odoo'
+            + ' -u root' + ' -v ${WORKSPACE}/odoo-docker/etc:/etc/odoo'
             ){z ->
                 sh "echo ${WORKSPACE}"
                 sh "docker ps "
