@@ -16,12 +16,13 @@ node {
             sh './odoo-docker/scripts/build.sh'
             sh "docker logs  ${c.id}"
             
-            docker.image('odoo:16').withRun('-e "HOST=postgres-db"'
+            docker.image('odoo:16').inside('-e "HOST=postgres-db"'
             + ' -e "PORT=5432"' 
             + ' -e "USER=odoo"'
             + ' -e "PASSWORD=odoo"'
             + ' --network odoo-cicd-net'){z ->
-                sh "docker logs ${z.id}"
+                // sh "docker logs ${z.id}"
+                sh 'tail /var/log/odoo/odoo.log'
             }
 
         }
