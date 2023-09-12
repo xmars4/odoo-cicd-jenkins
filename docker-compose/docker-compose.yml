@@ -11,7 +11,7 @@ services:
         networks:
             - jenkins
         volumes:
-            - jenkins_home:/var/jenkins_home
+            - /var/jenkins_home:/var/jenkins_home
             # allow jenkin instance running inside a container can execute docker command
             # two methods: dind and dood -> in this case, we used dood
             # + mount docker socket from host machine to container
@@ -20,5 +20,3 @@ services:
 
 networks:
     jenkins:
-volumes:
-    jenkins_home:
