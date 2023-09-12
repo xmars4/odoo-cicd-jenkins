@@ -21,6 +21,7 @@ node {
             + ' -e "USER=odoo"'
             + ' -e "PASSWORD=odoo"'
             + ' --network odoo-cicd-net'
+            + ' -u root:root'
             + ' -v ./odoo-docker/etc/:/etc/odoo'){z ->
                 // sh "docker logs ${z.id}"
                 // sh 'tail /var/log/odoo/odoo.log'
