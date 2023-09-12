@@ -11,15 +11,19 @@ node {
         + ' -e "POSTGRES_USER=odoo"' 
         + ' -e "POSTGRES_DB=postgres"'
         + ' --network odoo-cicd-net' 
-        + ' -p 15430:5432'){c ->
+        + ' -p 15430:5432'
+        + ' --name postgres-db'){c ->
             sh './odoo-docker/scripts/build.sh'
             sh "docker logs ${c.id}"
-            docker.image('odoo:16').withRun('-e "HOST=db"'
+            
+            docker.image('odoo:16').withRun('-e "HOST=postgres-db"'
             + ' -e "PORT=5432"' 
             + ' -e "USER=odoo"'
-            + ' -e "PASSWORD=odoo"'){z ->
-                sh "docker logs ${c.id}"
+            + ' -e "PASSWORD=odoo"'
+            + ' --network odoo-cicd-net'){z ->
+                sh "docker logs ${z.id}"
             }
+
         }
         
     }
