@@ -22,3 +22,5 @@ RUN apt-get update && \
 
 USER jenkins
 RUN jenkins-plugin-cli --plugins "docker-workflow github ssh-agent"
+
+#TODO: MOVE add github key here
