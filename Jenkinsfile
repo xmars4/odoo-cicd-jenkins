@@ -23,7 +23,7 @@ node {
             + ' --network odoo-cicd-net'
             + ' -v ./odoo-docker/etc/:/etc/odoo'){z ->
                 // sh "docker logs ${z.id}"
-                // sh 'tail /var/log/odoo/odoo.log'
+                sh 'tail /var/log/odoo/odoo.log'
                 sh 'pwd'
                 sh 'ls -lah /'
             
