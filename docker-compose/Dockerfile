@@ -25,3 +25,4 @@ RUN mkdir .ssh && touch .ssh/known_hosts
 RUN ssh-keyscan github.com >> .ssh/known_hosts
 
 USER jenkins
+RUN jenkins-plugin-cli --plugins "docker-workflow github ssh-agent"
