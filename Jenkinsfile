@@ -24,10 +24,10 @@ node {
             + ' -u root:root'
             + ' -v ./odoo-docker/etc/:/etc/odoo'){z ->
                 // sh "docker logs ${z.id}"
-                sh 'cat /var/log/odoo/odoo.log'
+                sh 'ls -lah /var/log/odoo'
                 sh 'pwd'
                 sh 'echo $USER && cat /etc/group'
-                sh 'ls -lah /'
+                sh 'ls -lah /etc/odoo'
             
             }
 
