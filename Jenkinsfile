@@ -26,7 +26,7 @@ node {
                 // sh 'tail /var/log/odoo/odoo.log'
                 sh 'pwd'
                 sh 'ls -lah /'
-                
+            
             }
 
         }
