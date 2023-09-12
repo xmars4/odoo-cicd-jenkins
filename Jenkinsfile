@@ -14,6 +14,13 @@ node {
         + ' -p 15430:5432'){c ->
             sh './odoo-docker/scripts/build.sh'
             sh "docker logs ${c.id}"
+            docker.image('odoo:16').withRun('-e "HOST=db"'
+            + ' -e "PORT=5432"' 
+            + ' -e "USER=odoo"'
+            + ' -e "PASSWORD=odoo"'){z ->
+                sh "docker logs ${c.id}"
+            }
         }
+        
     }
 }
