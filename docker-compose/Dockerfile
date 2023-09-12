@@ -20,9 +20,5 @@ RUN echo \
 RUN apt-get update && \
   apt-get install docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
-# add github to known hosts so we Github will be allowed to connect to Jenkins
-RUN mkdir .ssh && touch .ssh/known_hosts
-RUN ssh-keyscan github.com >> .ssh/known_hosts
-
 USER jenkins
 RUN jenkins-plugin-cli --plugins "docker-workflow github ssh-agent"

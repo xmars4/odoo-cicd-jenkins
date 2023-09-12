@@ -1,14 +1,19 @@
 # Setup
 
-1.  Install Jenkins and some useful plugins
+1.  Install Jenkins - using docker
 
-    1.1. [Install Jenkins](https://www.jenkins.io/doc/book/installing/)
+    1.1. Execute bash script to create Jenkins data folder
 
-    1.2. [Install Github plugin](https://plugins.jenkins.io/github/)
+    ```shell
+        sudo ./docker-compose/host-setup.sh
+    ```
 
-    1.3. [Install ssh-agent](https://plugins.jenkins.io/ssh-agent/)
+    1.2. Run Jenkins
 
-    1.4. [Install Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)
+    ```shell
+        cd docker-compose
+        docker-compose up -d --build
+    ```
 
 2.  Allow Jenkins connect to Github - with SSH key
 
@@ -24,12 +29,6 @@
     -   Kind: SSH Username with private key
     -   Username: your github username
     -   Private key / Enter directly: paste your private SSH key at step **2.1** here
-
-    2.5. Add github.com to known_hosts file (if you use a Jenkins image built from [docker-compose/Dockerfile], ignore this step)
-
-    ```bash
-    ssh-keyscan github.com >> /var/jenkins_home.ssh/known_hosts
-    ```
 
 3.  Config Github plugin - allow trigger job in Jenkins by Github webhook
 
@@ -96,8 +95,11 @@
     -> Solution:
 
     ```bash
-    $ sudo chown -R 1000:1000 docker-compose/var/jenkins_home/
+    $ sudo mkdir -p /var/jenkins_home && sudo chown -R 1000:1000 /var/jenkins_home/
     ```
 
+-   [Why use bind mount volume instead of volume for Jenkins' container](https://stackoverflow.com/questions/62678663/jenkins-in-docker-clarification-about-bind-mounts-in-pipelines/62679925#62679925)
+
 -   [SonarQube](https://docs.sonarsource.com/sonarqube/latest/) code quality inspection -> use to scan Odoo addons
+
 -   [wait-for-it.sh bash script](https://github.com/vishnubob/wait-for-it)
