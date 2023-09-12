@@ -100,3 +100,4 @@
     ```
 
 -   [SonarQube](https://docs.sonarsource.com/sonarqube/latest/) code quality inspection -> use to scan Odoo addons
+-   [wait-for-it.sh bash script](https://github.com/vishnubob/wait-for-it)
