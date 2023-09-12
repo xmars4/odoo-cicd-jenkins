@@ -12,6 +12,7 @@ node {
         + ' -e "POSTGRES_DB=postgres"'
         + ' --network odoo-cicd-net' 
         + ' -p 15430:5432'){c ->
+            sh 'docker logs ${c.id}'
             sh './odoo-docker/scripts/build.sh'
             
         }
