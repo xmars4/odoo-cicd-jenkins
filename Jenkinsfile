@@ -23,6 +23,8 @@ node {
             + ' --network odoo-cicd-net'
             + ' -u root' + ' -v ${WORKSPACE}/odoo-docker/etc:/etc/odoo'
             ){z ->
+                sh "docker logs ${z.id}"
+                sh "docker exec ${z.id} sh -c 'cat /etc/odoo/odoo.conf'"
                 sh "docker exec ${z.id} sh -c 'cat /var/log/odoo/odoo.log'"
             }
 
