@@ -21,8 +21,11 @@ node {
             + ' -e "USER=odoo"'
             + ' -e "PASSWORD=odoo"'
             + ' --network odoo-cicd-net'
-            + ' -u root' + ' -v ${WORKSPACE}/odoo-docker/etc:/etc/odoo'
+            + ' -u root' 
+            + ' -v ${WORKSPACE}/odoo-docker/etc:/etc/odoo'
+            + ' -- -i sale_stock'
             ){z ->
+                sh "sleep 30"
                 sh "docker logs ${z.id}"
                 sh "docker exec ${z.id} sh -c 'cat /etc/odoo/odoo.conf'"
                 sh "docker exec ${z.id} sh -c 'cat /var/log/odoo/odoo.log'"
