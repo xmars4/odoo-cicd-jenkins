@@ -36,4 +36,4 @@ function update_config_file {
 update_config_file
 
 docker compose up -d --wait --no-color
-docker compose ps
+docker ps
