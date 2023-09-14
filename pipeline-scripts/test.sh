@@ -13,11 +13,9 @@ ODOO_CONTAINER_ID=$(get_odoo_container_id)
 
 show_separator "Start analyzing log file"
 
-sleep 30
 function get_odoo_log {
-
-    # ERROR_LINES_FAIL=($(echo "foo|bar" | { grep -P '^.*ERROR.*odoo.addons.*\.tests\..*$' $LOG_FILE || true; }))
-    ERROR_LINES_FAIL=($(docker exec $ODOO_CONTAINER_ID sh -c "echo \"foo|bar\" | { grep -P '^.*ERROR.*odoo.addons.*\.tests\..*$' $LOG_FILE || true;"))
+    docker exec $ODOO_CONTAINER_ID sh -c "grep -P '^.*ERROR.*odoo.addons.*\.tests\..*$' $LOG_FILE || true;"
 }
 
-echo $(get_odoo_log)
+LINES_FAIL_TEST=$(get_odoo_log)
+echo $LINES_FAIL_TEST
