@@ -1,17 +1,18 @@
 #!/bin/bash
 
 source "${WORKSPACE}/pipeline-scripts/utils.sh"
+ODOO_WORKSPACE="${ODOO_WORKSPACE}"
+EXTRA_ADDONS_PATH="${ODOO_WORKSPACE}/extra-addons"
+ODOO_CONFIG_FILE="${ODOO_WORKSPACE}/etc/odoo.conf"
 #####
 #####
 show_separator "Rebuild Odoo image"
-cd "${WORKSPACE}/odoo-docker-compose"
+cd $ODOO_WORKSPACE
 cd dockerfile && docker build -t xmars/odoo16-cicd .
 
 ####
 #####
 show_separator "Install and run test cases for all modules in extra-addons folder"
-EXTRA_ADDONS_PATH="${WORKSPACE}/odoo-docker-compose/extra-addons"
-ODOO_CONFIG_FILE="${WORKSPACE}/odoo-docker-compose/etc/odoo.conf"
 
 #####
 function get_list_addons {
@@ -38,4 +39,7 @@ update_config_file
 docker compose up -d --wait --no-color
 docker compose ps
 
-cat "${WORKSPACE}/odoo-docker-compose/logs/odoo.log"
+cat $ODOO_CONFIG_FILE
+ls -lah $ODOO_WORKSPACE
+
+cat "${ODOO_WORKSPACE}/logs/odoo.log"
