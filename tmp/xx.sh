@@ -7,4 +7,5 @@ function get_list_addons {
     find . -maxdepth 1 -mindepth 1 -not -path '*/\.*' -type d -printf "%f,"
 }
 
-get_list_addons /home/xmars/dev/odoo-projects/sotatek-scs/custom-addons
+x=$(get_list_addons "/home/xmars/dev/odoo-projects/sotatek-scs/custom-addons")
+echo $x

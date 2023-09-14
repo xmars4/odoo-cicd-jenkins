@@ -3,11 +3,7 @@ node {
     checkout scm
 
     stage ('Verify tooling') {
-        sh '''
-            docker -v
-            docker compose version
-            curl -V
-        '''
+        sh './pipeline-scripts/build.sh'
     }
 
     stage ('Build') {
