@@ -1,5 +1,0 @@
-command = -i ""
-command = -i 
-command = -i report_xlsx_helper,scs_expense_approval,sota_website_title,report_xlsx,scs_freight_master,scs_payment_approval,kg_required_fields,sh_activities_management,web_chatter_position,sh_activity_base,sota_currency_rate_live,scs_approval
-command = -i report_xlsx_helper,scs_expense_approval,sota_website_title,report_xlsx,scs_freight_master,scs_payment_approval,kg_required_fields,sh_activities_management,web_chatter_position,sh_activity_base,sota_currency_rate_live,scs_approval
-command = -i "${zz}"
