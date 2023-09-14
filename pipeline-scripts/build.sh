@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source "${WORKSPACE}/pipeline-scripts/utils.sh"
 show_separator "Rebuild Odoo image"
 
 cd "${WORKSPACE}/odoo-docker-compose"

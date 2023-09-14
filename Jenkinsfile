@@ -2,7 +2,7 @@ node {
 
     checkout scm
 
-    stage ('Verify tooling') {
+    stage ('Prepare') {
         sh './pipeline-scripts/prepare.sh'
     }
 
