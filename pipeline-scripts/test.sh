@@ -14,6 +14,7 @@ ODOO_CONTAINER_ID=$(get_odoo_container_id)
 show_separator "Start analyzing log file"
 
 function get_odoo_log {
+    docker exec $ODOO_CONTAINER_ID sh -c "ls -lah /var/log/odoo && cat /var/log/odoo/odoo.log"
     docker exec $ODOO_CONTAINER_ID sh -c "grep -P '^.*ERROR.*odoo.addons.*\.tests\..*$' $LOG_FILE || true;"
 }
 
