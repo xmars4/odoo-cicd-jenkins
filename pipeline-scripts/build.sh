@@ -18,10 +18,10 @@ function get_list_addons {
 }
 
 function add_command_to_config {
-
+    echo 1
 }
 
-EXTRA_ADDONS=get_list_addons
+EXTRA_ADDONS=get_list_addons "$EXTRA_ADDONS_PATH"
 
 docker compose up -d --wait --no-color
 docker compose ps
