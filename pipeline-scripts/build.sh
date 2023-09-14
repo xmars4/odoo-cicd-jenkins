@@ -22,17 +22,17 @@ function get_list_addons {
     find . -maxdepth 1 -mindepth 1 -not -path '*/\.*' -type d -printf "%f," | sed 's/.$//'
 }
 EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
-
+echo $EXTRA_ADDONS
 #####
 function update_config_file {
     # we use log to analytic error, so log_level should be 'error'
     # remove old log level command
     sed -i "s/^\s*log_level\s*.*//g" $ODOO_CONFIG_FILE
-    echo "log_level = error" >>$ODOO_CONFIG_FILE
+    echo "\nlog_level = error" >>$ODOO_CONFIG_FILE
 
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $ODOO_CONFIG_FILE
-    echo "command = -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"" >>$ODOO_CONFIG_FILE
+    echo "\ncommand = -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"" >>$ODOO_CONFIG_FILE
 }
 update_config_file
 
