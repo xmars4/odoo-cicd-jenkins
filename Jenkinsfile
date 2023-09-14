@@ -4,10 +4,9 @@ node {
 
     stage ('Verify tooling') {
         sh '''
-            docker version
-            docker info
+            docker -v
             docker compose version
-            curl --version
+            curl -V
         '''
     }
 
