@@ -31,6 +31,7 @@ function update_config_file {
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
     echo -e "\ncommand = -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"" >>$CONFIG_FILE
+
 }
 update_config_file
 
