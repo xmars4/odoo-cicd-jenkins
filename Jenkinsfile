@@ -3,29 +3,22 @@ node {
     checkout scm
 
     stage ('Verify tooling') {
-        steps {
-            sh '''
-              docker version
-              docker info
-              docker compose version
-              curl --version
-            '''
-        }
+        sh '''
+            docker version
+            docker info
+            docker compose version
+            curl --version
+        '''
     }
 
-    stage ('Build'){
-        steps {
-            sh './pipeline-scripts/build.sh'
-        }
+    stage ('Build') {
+        sh './pipeline-scripts/build.sh'
     }
 
     stage ('Test') {
-        steps {
-            sh './pipeline-scripts/test.sh'
-        }
+        sh './pipeline-scripts/test.sh'
     }
 
-    stage ('')
 
     // def postgres_image = docker.image('postgres:15')
     // // make sure postgres and odoo base image is always the latest
