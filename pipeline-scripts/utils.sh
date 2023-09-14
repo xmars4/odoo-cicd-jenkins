@@ -8,4 +8,4 @@ function show_separator {
 }
 
 ODOO_WORKSPACE="${WORKSPACE}/odoo-docker-compose"
-ODOO_IMAGE_TAG="xmars/odoo-16-cicd"
+ODOO_IMAGE_TAG="xmars/odoo16-cicd"
