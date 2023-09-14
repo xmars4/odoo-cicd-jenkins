@@ -1,5 +1,8 @@
 #!/bin/bash
 
-cd ./odoo-docker-compose
-docker compose down --remove-orphan -v
+source "${WORKSPACE}/pipeline-scripts/utils.sh"
+show_separator "Cleaning"
+
+cd $ODOO_WORKSPACE
+docker compose down -v
 docker compose ps

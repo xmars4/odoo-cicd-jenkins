@@ -6,3 +6,5 @@ function show_separator {
     separator=($x $x "$1" $x $x)
     printf "%s\n" "${separator[@]}"
 }
+
+ODOO_WORKSPACE="${WORKSPACE}/odoo-docker-compose"

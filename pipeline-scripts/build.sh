@@ -1,7 +1,6 @@
 #!/bin/bash
 
 source "${WORKSPACE}/pipeline-scripts/utils.sh"
-ODOO_WORKSPACE="${WORKSPACE}/odoo-docker-compose"
 EXTRA_ADDONS_PATH="${ODOO_WORKSPACE}/extra-addons"
 ODOO_CONFIG_FILE="${ODOO_WORKSPACE}/etc/odoo.conf"
 #####
@@ -39,5 +38,4 @@ update_config_file
 docker compose up -d --wait --no-color
 docker compose ps
 
-cat $ODOO_CONFIG_FILE
-ls -lah $ODOO_WORKSPACE
+ls -lah "$ODOO_WORKSPACE/logs"
