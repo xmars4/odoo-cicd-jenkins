@@ -6,8 +6,8 @@ services:
             - POSTGRES_PASSWORD=odoo
             - POSTGRES_USER=odoo
             - POSTGRES_DB=postgres
-        ports:
-            - "15432:5432"
+        # ports:
+        #     - "15432:5432"
         volumes:
             - ./postgresql:/etc/postgresql
         command: -c 'config_file=/etc/postgresql/postgresql.conf'
@@ -24,9 +24,9 @@ services:
             - PORT=5432
             - USER=odoo
             - PASSWORD=odoo
-        ports:
-            - "18069:8069"
-            - "18072:8072"
+        # ports:
+        #     - "18069:8069"
+        #     - "18072:8072"
         volumes:
             - ./extra-addons:/mnt/extra-addons # customize addons
             - ./et-addons:/mnt/et-addons # odoo enterprise addons

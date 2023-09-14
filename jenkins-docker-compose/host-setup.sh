@@ -8,4 +8,5 @@ cd /var/jenkins_home/.ssh
 touch known_hosts
 # add github to known hosts so Github will be allowed to connect to Jenkins
 ssh-keyscan github.com >> known_hosts
+# add appropriate permission for jenkins user (inside container)
 chown -R 1000:1000 /var/jenkins_home

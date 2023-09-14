@@ -24,5 +24,3 @@ USER jenkins
 RUN jenkins-plugin-cli --plugins "docker-workflow github ssh-agent"
 
 RUN mkdir -p /.ssh/ && touch /.ssh/.known_hosts
-
-#TODO: MOVE add github key here
