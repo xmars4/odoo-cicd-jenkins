@@ -7,7 +7,7 @@ ODOO_CONFIG_FILE="${ODOO_WORKSPACE}/etc/odoo.conf"
 #####
 show_separator "Rebuild Odoo image"
 cd $ODOO_WORKSPACE
-cd dockerfile && docker build -q -t xmars/odoo16-cicd .
+cd dockerfile && docker build -q -t "${ODOO_IMAGE_TAG}" .
 
 #####
 #####
@@ -37,5 +37,3 @@ update_config_file
 
 docker compose up -d --wait --no-color
 docker compose ps
-
-ls -lah "$ODOO_WORKSPACE/logs"
