@@ -16,7 +16,7 @@ services:
         restart: always
 
     odoo16:
-        image: xmars/odoo:16
+        image: xmars/odoo16-cicd
         depends_on:
             - db
         environment:
