@@ -1,8 +1,0 @@
-node {
-  stage('do something with git') {  
-    sshagent (credentials: ['github-key']) {
-      // get the last commit id from a repository you own
-      sh 'git ls-remote -h --refs git@github.com:xmars4/docker-demo-1.git main |awk "{print $1}"'
-    }
-  }
-}
