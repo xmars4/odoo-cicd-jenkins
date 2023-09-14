@@ -11,6 +11,8 @@ services:
         networks:
             - jenkins
         volumes:
+            # we used bind mount instead of volume as a workaround
+            # when create a container through jenkins (inside a container)
             - /var/jenkins_home:/var/jenkins_home
             # allow jenkin instance running inside a container can execute docker command
             # two methods: dind and dood -> in this case, we used dood

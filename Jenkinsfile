@@ -6,8 +6,13 @@ node {
         sh './odoo-docker/scripts/prepare.sh'
     }
 
+    def postgres_image = docker.image('postgres:15')
+    // make sure postgres and odoo base image is always the latest
+    postgres_image.pull();
+    docker.image('odoo:16').pull() 
+
     stage ('Build') {
-        docker.image('postgres:15').withRun('-e "POSTGRES_PASSWORD=odoo"'
+        postgres_image.withRun('-e "POSTGRES_PASSWORD=odoo"'
         + ' -e "POSTGRES_USER=odoo"' 
         + ' -e "POSTGRES_DB=postgres"'
         + ' --network odoo-cicd-net' 
@@ -23,7 +28,6 @@ node {
             + ' --network odoo-cicd-net'
             + ' -u root' 
             + ' -v ${WORKSPACE}/odoo-docker/etc:/etc/odoo'
-            + ' -- -i sale_stock'
             ){z ->
                 sh "sleep 30"
                 sh "docker logs ${z.id}"
