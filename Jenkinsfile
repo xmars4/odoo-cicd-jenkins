@@ -7,7 +7,14 @@ node {
     }
 
     stage ('Build') {
-        sh './pipeline-scripts/build.sh'
+        try {
+            sh './pipeline-scripts/build.sh'
+        }
+        catch (exc) {
+            echo "Something went wrong, cleaning and stop this pipeline!"
+            sh './pipeline-scripts/clean.sh'
+            sh 'exit 1'    
+        }
     }
 
     stage ('Test') {

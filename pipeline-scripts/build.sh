@@ -10,7 +10,7 @@ show_separator "Rebuild Odoo image"
 cd $ODOO_WORKSPACE
 cd dockerfile && docker build -t xmars/odoo16-cicd .
 
-####
+#####
 #####
 show_separator "Install and run test cases for all modules in extra-addons folder"
 
@@ -41,5 +41,3 @@ docker compose ps
 
 cat $ODOO_CONFIG_FILE
 ls -lah $ODOO_WORKSPACE
-
-cat "${ODOO_WORKSPACE}/logs/odoo.log"
