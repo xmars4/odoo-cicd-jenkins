@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source "${WORKSPACE}/pipeline-scripts/utils.sh"
-ODOO_WORKSPACE="${ODOO_WORKSPACE}"
+ODOO_WORKSPACE="${WORKSPACE}/odoo-docker-compose"
 EXTRA_ADDONS_PATH="${ODOO_WORKSPACE}/extra-addons"
 ODOO_CONFIG_FILE="${ODOO_WORKSPACE}/etc/odoo.conf"
 #####
