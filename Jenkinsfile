@@ -3,7 +3,7 @@ node {
     checkout scm
 
     stage ('Verify tooling') {
-        streps {
+        steps {
             sh '''
               docker version
               docker info
