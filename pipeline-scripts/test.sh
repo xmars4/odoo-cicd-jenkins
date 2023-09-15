@@ -10,7 +10,6 @@ function get_odoo_container_id {
 }
 
 ODOO_CONTAINER_ID=$(get_odoo_container_id)
-show_separator "id here ${ODOO_CONTAINER_ID}"
 show_separator "Start analyzing log file"
 
 function get_odoo_log {
