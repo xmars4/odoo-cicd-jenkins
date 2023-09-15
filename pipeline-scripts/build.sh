@@ -20,6 +20,7 @@ function get_list_addons {
     find . -maxdepth 1 -mindepth 1 -not -path '*/\.*' -type d -printf "%f," | sed 's/.$//'
 }
 EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
+show_separator $EXTRA_ADDONS
 if [ -z $EXTRA_ADDONS ]; then
     echo "nothing for test"
     exit 1
