@@ -48,8 +48,19 @@ function waiting_for_odoo_fully_up {
     # but Odoo is still intalling and running test cases for modules
     # so have to wait Odoo is truly done process
     # before go to the next step (Test)
-    # TODO: WAIT here
-    echo 'fully up'
+    ODOO_CONTAINER_ID=$(get_odoo_container_id)
+    docker cp "${WORKSPACE}/pipeline-scripts/wait-for-it.sh" $ODOO_CONTAINER_ID:/tmp/
+    docker exec $ODOO_CONTAINER_ID sh -c "/tmp/wait-for-it.sh localhost:8069 -t 180"
+}
+function wait_until_odoo_available {
+    count=1
+    while (($count <= 30)); do
+        http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${ODOO_URL}" 2>&1 | awk 'NR==1{print $2}' || true; })
+        if [[ $http_status = '200' ]]; then break; fi
+        echo "..............................."
+        ((count++))
+        sleep 5
+    done
 }
 
 function main {
