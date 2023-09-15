@@ -1,18 +1,14 @@
 #!/bin/bash
 
 source "${WORKSPACE}/pipeline-scripts/utils.sh"
+EXTRA_ADDONS=
 
-#####
-#####
-show_separator "Rebuild Odoo image"
-cd $ODOO_WORKSPACE
-cd dockerfile && docker build -q -t "${ODOO_IMAGE_TAG}" .
+function build_odoo_image {
+    show_separator "Build Odoo image - tag: ${ODOO_IMAGE_TAG}"
+    cd "${ODOO_WORKSPACE}/dockerfile"
+    docker build -q -t "${ODOO_IMAGE_TAG}" .
+}
 
-#####
-#####
-show_separator "Install and run test cases for all modules in extra-addons folder"
-
-#####
 function get_list_addons {
     if [[ $# -gt 0 ]]; then
         cd "$1"
@@ -20,18 +16,14 @@ function get_list_addons {
     find . -maxdepth 1 -mindepth 1 -not -path '*/\.*' -type d -printf "%f," | sed 's/.$//'
 }
 
-EXTRA_ADDONS=
 function set_list_addons {
     EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
-    show_separator $EXTRA_ADDONS
     if [ -z $EXTRA_ADDONS ]; then
-        echo "Can't find any module in extra-addons folder"
+        show_separator "Can't find any module in extra-addons folder"
         exit 1
     fi
 }
-set_list_addons
 
-#####
 function update_config_file {
     # we use log to analytic error, so log_level should be 'error'
     # remove old log level command
@@ -45,7 +37,26 @@ function update_config_file {
     echo -e "\ncommand = -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"" >>$CONFIG_FILE
 
 }
-update_config_file
 
-docker compose up -d --wait --no-color
-docker ps
+function start_containers {
+    docker compose up -d --wait --no-color
+    docker ps
+}
+
+function waiting_for_odoo_fully_up {
+    # althrough docker check odoo + db services are healthy
+    # but Odoo is still intalling and running test cases for modules
+    # so have to wait Odoo is truly done process
+    # before go to the next step (Test)
+    # TODO: WAIT here
+    echo 'fully up'
+}
+
+function main {
+    show_separator "Install Odoo and run test cases for all modules in extra-addons folder"
+    build_odoo_image
+    set_list_addons
+    update_config_file
+    start_containers
+    waiting_for_odoo_fully_up
+}
