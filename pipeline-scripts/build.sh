@@ -21,6 +21,7 @@ function get_list_addons {
 }
 EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
 if [ -z $EXTRA_ADDONS ]; then
+    echo "nothing for test"
     exit 1
 fi
 #####
