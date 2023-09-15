@@ -17,7 +17,6 @@ function get_odoo_log {
     docker exec $ODOO_CONTAINER_ID sh -c "grep -P 'Starting' $LOG_FILE || true;"
     cat $CONFIG_FILE
     show_separator 'ok'
-    cat $LOG_FILE
 }
 
 LINES_FAIL_TEST=$(get_odoo_log)
