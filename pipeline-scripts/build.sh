@@ -60,3 +60,5 @@ function main {
     start_containers
     waiting_for_odoo_fully_up
 }
+
+main
