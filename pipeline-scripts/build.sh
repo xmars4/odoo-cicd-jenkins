@@ -32,9 +32,10 @@ function update_config_file {
     # FIXME: update info -> error
     # echo -e "\nlog_level = error" >>$CONFIG_FILE
 
+    # Odoo suggestion:  Unit testing in workers mode could fail; use --workers 0.
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
-    echo -e "\ncommand = -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"" >>$CONFIG_FILE
+    echo -e "\ncommand = --workers 0 -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"" >>$CONFIG_FILE
 
 }
 
@@ -46,7 +47,7 @@ function start_containers {
 function waiting_for_odoo_fully_up {
     # althrough docker check odoo + db services are healthy
     # but Odoo is still intalling and running test cases for modules
-    # so have to wait Odoo is truly done process
+    # so we have to wait until Odoo is truly done processing
     # before go to the next step (Test)
     ODOO_CONTAINER_ID=$(get_odoo_container_id)
     docker cp "${WORKSPACE}/pipeline-scripts/wait-for-it.sh" $ODOO_CONTAINER_ID:/tmp/
@@ -54,11 +55,22 @@ function waiting_for_odoo_fully_up {
     docker exec $ODOO_CONTAINER_ID sh -c "cat /var/log/odoo/odoo.log"
 }
 function wait_until_odoo_available {
-    count=1
-    while (($count <= 30)); do
-        http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${ODOO_URL}" 2>&1 | awk 'NR==1{print $2}' || true; })
+    ESITATE_TIME_EACH_ADDON=30
+    ODOO_CONTAINER_ID=$(get_odoo_container_id)
+    show_separator "Hang on, Modules are being installed ..."
+    # Assuming each addon needs 30s to install and run test cases
+    # -> we can calculate total sec we have to wait until Odoo is up
+    # -> the log file is complete
+    IFS=',' read -ra separate_addons_list <<<$EXTRA_ADDONS
+    total_addons=${#separate_addons_list[@]}
+    # each block wait 5s
+    maximum_count=$(((total_addons * ESITATE_TIME_EACH_ADDON) / 5))
+
+    count = 1
+    while (($count <= $maximum_count)); do
+        http_status=$(docker exec "$ODOO_CONTAINER_ID" sh -c 'echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "'"${ODOO_URL}"'" 2>&1 | awk '\''NR==1{print $2}'\'' || true; }')
+        # http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${ODOO_URL}" 2>&1 | awk 'NR==1{print $2}' || true; })
         if [[ $http_status = '200' ]]; then break; fi
-        echo "..............................."
         ((count++))
         sleep 5
     done
