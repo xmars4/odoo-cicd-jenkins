@@ -14,7 +14,12 @@ show_separator "id here ${ODOO_CONTAINER_ID}"
 show_separator "Start analyzing log file"
 
 function get_odoo_log {
-    docker exec $ODOO_CONTAINER_ID sh -c "ls -lah /var/log/odoo && cat /var/log/odoo/odoo.log"
+    # in case Odoo don't have any ERROR -> log file will be not generated
+    # so no need to analyze log anymore
+    docker exec $ODOO_CONTAINER_ID sh -c "-f /var/log/odoo/odoo.log"
+    if [ $? != 0 ]; then
+        return
+    fi
     # docker exec $ODOO_CONTAINER_ID sh -c "grep -P '^.*ERROR.*odoo.addons.*\.tests\..*$' $LOG_FILE || true;"
     docker exec $ODOO_CONTAINER_ID sh -c "grep -P 'Starting' $LOG_FILE || true;"
 }
