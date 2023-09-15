@@ -18,21 +18,6 @@ function analyze_log {
     return $?
 }
 
-function send_file_to_telegram (
-    curl --request POST \
-     --url https://api.telegram.org/bottoken/sendDocument \
-     --header 'accept: application/json' \
-     --header 'content-type: application/json' \
-     --data '
-{
-  "document": "Required",
-  "caption": "Optional",
-  "disable_notification": false,
-  "reply_to_message_id": null
-}
-'
-)
-
 function send_error_notice_to_dev {
     analyze_log_result=$(analyze_log)
     if [ $analyze_log_result eq 0 ]; then

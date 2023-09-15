@@ -19,10 +19,14 @@ node {
         }
     }
 
-    stage ('Test') {
-        sh './pipeline-scripts/test.sh'
-    }
+    
 
+    withCredentials([string(credentialsId: 'telegram-odoo-cicd-bot-token', variable: 'TELEGRAM_BOT_TOKEN')]) {
+        stage ('Test') {
+            sh './pipeline-scripts/test.sh'
+            sh "echo ${TELEGRAM_BOT_TOKEN}"
+        }
+    }
     stage ('Clean') {
         sh './pipeline-scripts/clean.sh'
     }
