@@ -50,7 +50,7 @@ function waiting_for_odoo_fully_up {
     # before go to the next step (Test)
     ODOO_CONTAINER_ID=$(get_odoo_container_id)
     docker cp "${WORKSPACE}/pipeline-scripts/wait-for-it.sh" $ODOO_CONTAINER_ID:/tmp/
-    docker exec $ODOO_CONTAINER_ID sh -c "/tmp/wait-for-it.sh localhost:8069 -t 180"
+    docker exec $ODOO_CONTAINER_ID sh -c "/tmp/wait-for-it.sh localhost:8072 -t 180"
     docker exec $ODOO_CONTAINER_ID sh -c "cat /var/log/odoo/odoo.log"
 }
 function wait_until_odoo_available {
