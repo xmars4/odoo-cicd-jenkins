@@ -19,12 +19,18 @@ function get_list_addons {
     fi
     find . -maxdepth 1 -mindepth 1 -not -path '*/\.*' -type d -printf "%f," | sed 's/.$//'
 }
-EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
-show_separator $EXTRA_ADDONS
-if [ -z $EXTRA_ADDONS ]; then
-    echo "nothing for test"
-    exit 1
-fi
+
+EXTRA_ADDONS=
+function set_list_addons {
+    EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
+    show_separator $EXTRA_ADDONS
+    if [ -z $EXTRA_ADDONS ]; then
+        echo "nothing for test"
+        exit 1
+    fi
+}
+set_list_addons
+
 #####
 function update_config_file {
     # we use log to analytic error, so log_level should be 'error'
