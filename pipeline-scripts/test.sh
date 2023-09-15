@@ -15,6 +15,9 @@ function get_odoo_log {
     fi
     # docker exec $ODOO_CONTAINER_ID sh -c "grep -P '^.*ERROR.*odoo.addons.*\.tests\..*$' $LOG_FILE || true;"
     docker exec $ODOO_CONTAINER_ID sh -c "grep -P 'Starting' $LOG_FILE || true;"
+    cat $CONFIG_FILE
+    show_separator 'ok'
+    cat $LOG_FILE
 }
 
 LINES_FAIL_TEST=$(get_odoo_log)
