@@ -65,11 +65,9 @@ function wait_until_odoo_available {
     total_addons=${#separate_addons_list[@]}
     # each block wait 5s
     maximum_count=$(((total_addons * ESITATE_TIME_EACH_ADDON) / 5))
-
-    count = 1
+    count=1
     while (($count <= $maximum_count)); do
         http_status=$(docker exec "$ODOO_CONTAINER_ID" sh -c 'echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "'"${ODOO_URL}"'" 2>&1 | awk '\''NR==1{print $2}'\'' || true; }')
-        # http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${ODOO_URL}" 2>&1 | awk 'NR==1{print $2}' || true; })
         if [[ $http_status = '200' ]]; then break; fi
         ((count++))
         sleep 5
@@ -82,7 +80,7 @@ function main {
     set_list_addons
     update_config_file
     start_containers
-    waiting_for_odoo_fully_up
+    wait_until_odoo_available
 }
 
 main
