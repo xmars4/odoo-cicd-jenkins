@@ -21,7 +21,7 @@ node {
         sh './pipeline-scripts/test.sh'
     }
 
-    // stage ('Clean') {
-    //     sh './pipeline-scripts/clean.sh'
-    // }
+    stage ('Clean') {
+        sh './pipeline-scripts/clean.sh'
+    }
 }
