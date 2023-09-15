@@ -13,10 +13,10 @@ function get_odoo_log {
     if [ $? != 0 ]; then
         return
     fi
+    # FIXME: grep real error here
     # docker exec $ODOO_CONTAINER_ID sh -c "grep -P '^.*ERROR.*odoo.addons.*\.tests\..*$' $LOG_FILE || true;"
     docker exec $ODOO_CONTAINER_ID sh -c "grep -P 'Starting' $LOG_FILE || true;"
-    cat $CONFIG_FILE
-    show_separator 'ok'
+    docker exec $ODOO_CONTAINER_ID sh -c "cat /var/log/odoo/odoo.log"
 }
 
 LINES_FAIL_TEST=$(get_odoo_log)
