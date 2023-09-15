@@ -13,7 +13,7 @@ node {
             sh './pipeline-scripts/build.sh'
         }
         catch (exc) {
-            echo "Something went wrong, cleaning and stop this pipeline!"
+            sh "show separator \"Something went wrong, cleaning and stop this pipeline!\""
             sh './pipeline-scripts/clean.sh'
             sh 'exit 1'    
         }

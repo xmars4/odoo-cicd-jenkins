@@ -25,7 +25,7 @@ function set_list_addons {
     EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
     show_separator $EXTRA_ADDONS
     if [ -z $EXTRA_ADDONS ]; then
-        echo "nothing for test"
+        echo "Can't find any module in extra-addons folder"
         exit 1
     fi
 }
