@@ -26,7 +26,7 @@ function update_config_file {
     # we use log to analytic error, so log_level should be 'error'
     # remove old log level command
     sed -i "s/^\s*log_level\s*.*//g" $CONFIG_FILE
-    echo -e "\nlog_level = error" >>$CONFIG_FILE
+    # echo -e "\nlog_level = error" >>$CONFIG_FILE
 
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
