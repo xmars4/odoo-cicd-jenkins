@@ -4,7 +4,7 @@ WORKDIR /var/jenkins_home
 USER root
 
 RUN groupadd -g 999 docker && \
- usermod -aG staff,docker jenkins
+  usermod -aG staff,docker jenkins
 
 RUN apt-get update
 RUN apt-get install ca-certificates curl gnupg
@@ -21,6 +21,6 @@ RUN apt-get update && \
   apt-get install docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 USER jenkins
-RUN jenkins-plugin-cli --plugins "docker-workflow github ssh-agent"
+RUN jenkins-plugin-cli --plugins "docker-workflow github ssh-agent ws-cleanup"
 
 RUN mkdir -p /.ssh/ && touch /.ssh/.known_hosts

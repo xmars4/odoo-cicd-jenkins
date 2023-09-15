@@ -1,5 +1,7 @@
 node {
 
+    // clean workspace
+    cleanWs()
     checkout scm
 
     stage ('Prepare') {
