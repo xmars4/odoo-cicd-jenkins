@@ -20,8 +20,8 @@ function analyze_log {
 
 function send_error_notice_to_dev {
     analyze_log_result=$(analyze_log)
-    if [ $analyze_log_result eq 0 ]; then
-        echo 'send log file to user here'
+    if [ $analyze_log_result -eq 0 ]; then
+        send_message $TELEGRAM_BOT_TOKEN $TELEGRAM_CHANNEL_ID "ez bro, i got it after first tried"
     fi
 }
 
