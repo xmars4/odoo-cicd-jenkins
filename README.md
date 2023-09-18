@@ -87,7 +87,7 @@
         -   **ID**: telegram-bot-token **Secret**: BOT token
         -   **ID**: telegram-channel-id **Secret**: Channel ID
 
---> **Congrats** : now your pipeline will automatic start building when the repo received a push event
+--> :zap::zap:**Congrats**:v::v: : now your pipeline will automatic start building when the repo received a push event
 
 # Reference
 
