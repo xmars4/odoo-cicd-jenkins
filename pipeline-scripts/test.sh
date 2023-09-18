@@ -11,7 +11,7 @@ function analyze_log {
     # so no need to analyze log anymore
     docker exec $ODOO_CONTAINER_ID sh -c "[ -f ${LOG_FILE} ]"
     if [ $? != 0 ]; then
-        return
+        return 1
     fi
 
     docker exec $ODOO_CONTAINER_ID sh -c "grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE"

@@ -24,7 +24,6 @@ node {
     withCredentials([string(credentialsId: 'telegram-odoo-cicd-bot-token', variable: 'TELEGRAM_BOT_TOKEN'), string(credentialsId: 'telegram-odoo-cicd-noti-channel-id', variable: 'TELEGRAM_CHANNEL_ID')]) {
         stage ('Test') {
             sh './pipeline-scripts/test.sh'
-            sh "echo ${TELEGRAM_BOT_TOKEN}"
         }
     }
     stage ('Clean') {
