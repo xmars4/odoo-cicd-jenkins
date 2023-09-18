@@ -1,7 +1,7 @@
 node {
 
     // clean workspace
-    cleanWs()
+    // cleanWs()
     checkout scm
 
     stage ('Prepare') {
@@ -21,7 +21,8 @@ node {
 
     
 
-    withCredentials([string(credentialsId: 'telegram-odoo-cicd-bot-token', variable: 'TELEGRAM_BOT_TOKEN'), string(credentialsId: 'telegram-odoo-cicd-noti-channel-id', variable: 'TELEGRAM_CHANNEL_ID')]) {
+    withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'), 
+                     string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')]) {
         stage ('Test') {
             sh './pipeline-scripts/test.sh'
         }
