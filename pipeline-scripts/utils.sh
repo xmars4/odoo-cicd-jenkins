@@ -14,7 +14,7 @@ function get_odoo_container_id {
 }
 
 # ------------------ Telegram functions -------------------------
-send_file() {
+send_file_telegram() {
     BOT_TOKEN=$1
     CHAT_ID=$2
     file_path=$3
@@ -25,7 +25,7 @@ send_file() {
         -F "caption=$caption"
 }
 
-send_message() {
+send_message_telegram() {
     BOT_TOKEN=$1
     CHAT_ID=$2
     message=$3

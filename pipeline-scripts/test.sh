@@ -24,7 +24,8 @@ function analyze_log {
 function send_error_notice_to_dev {
     analyze_log
     if [ $? -ne 0 ]; then
-        send_message $TELEGRAM_BOT_TOKEN $TELEGRAM_CHANNEL_ID "ez bro, i got it after first tried"
+        docker cp $ODOO_CONTAINER_ID:/var/log/odoo/odoo.log $ODOO_WORKSPACE/logs/odoo.log
+        send_file_telegram $TELEGRAM_BOT_TOKEN $TELEGRAM_CHANNEL_ID $ODOO_WORKSPACE/logs/odoo.log "Something went wrong, please check the log file"
     fi
 }
 
