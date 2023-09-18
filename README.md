@@ -81,6 +81,12 @@
 
     -   Path: Dashboard / Your pipeline / Build Now
 
+6.  Send message to Telegram from Jenkins
+    -   Follow [this link](https://gist.github.com/xmars4/25931e4e59476da70a183d0f5a1d9e9e) to obtain **BOT token** and **Channel ID**
+    -   Add two secret text credentails to your Jenkins instance
+        -   **ID**: telegram-bot-token **Secret**: BOT token
+        -   **ID**: telegram-channel-id **Secret**: Channel ID
+
 --> **Congrats** : now your pipeline will automatic start building when the repo received a push event
 
 # Reference
