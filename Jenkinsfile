@@ -2,6 +2,8 @@ node {
 
     checkout scm
 
+    env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+
     // stage ('Prepare') {
     //     sh './pipeline-scripts/prepare.sh'
     // }
@@ -19,7 +21,7 @@ node {
 
     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
         stage ('Test #1 (Sonarqube)') {
-            def sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+            // def sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
             sh './pipeline-scripts/sonarqube.sh'
         }
     }
