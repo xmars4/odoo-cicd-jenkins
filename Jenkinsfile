@@ -35,5 +35,4 @@ node {
     stage('Clean Test Resources') {
       sh './pipeline-scripts/clean.sh'
     }
-
 }
