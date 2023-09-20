@@ -22,7 +22,7 @@ node {
       stage('Test #1 (Sonarqube)') {
         sh './pipeline-scripts/sonarqube.sh'
       }
-    }
+    } 
 
     withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
       string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
