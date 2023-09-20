@@ -110,6 +110,8 @@
 
 # Reference
 
+-   ![Flow](img/CI-CD-flow.png)
+
 -   Run Jenkins from [docker-compose.yml](docker-compose/docker-compose.yml) file using a **[bind mount](https://github.com/jenkinsci/docker/blob/master/README.md#usage)** volume:
 
     ```bash
