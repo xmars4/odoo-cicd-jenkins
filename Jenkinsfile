@@ -2,8 +2,6 @@ node {
 
   checkout scm
 
-  // CHANGE_ID is set only for pull requests, so it is safe to access the pullRequest global variable
-  if (env.CHANGE_ID) {
     stage('Prepare') {
       sh './pipeline-scripts/prepare.sh'
     }
@@ -34,13 +32,8 @@ node {
       }
     }
 
-    stage('Deploy') {
-
-    }
-
     stage('Clean Test Resources') {
       sh './pipeline-scripts/clean.sh'
     }
-  }
 
 }
