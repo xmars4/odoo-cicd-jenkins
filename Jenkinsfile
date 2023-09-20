@@ -21,6 +21,7 @@ node {
 
       stage('Test #1 (Sonarqube)') {
         sh './pipeline-scripts/sonarqube.sh'
+        sh 'echo "something here"'
       }
     } 
 
