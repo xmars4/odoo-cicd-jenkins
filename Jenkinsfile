@@ -42,7 +42,7 @@ node {
       remote.allowAnyHosts = true
       
       sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
-      // sh "ssh root@103.229.42.127 -i ${STAGING_SERVER_PRIVATE_KEY}"
+      sh "ssh ubuntu@13.250.6.26 -i ${STAGING_SERVER_PRIVATE_KEY}"
       stage('Deploy') {
         sshCommand remote: remote, command: 'ls  /opt'
       }
