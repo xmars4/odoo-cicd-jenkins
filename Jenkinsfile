@@ -53,7 +53,6 @@ node {
       stage('Deploy') {
         sshCommand remote: remote, command: 'ls  /opt'
       }
-      
     }
   
 
