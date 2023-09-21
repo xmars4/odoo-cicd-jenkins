@@ -33,27 +33,19 @@ node {
   // }
 
   
-    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', 
+    stage('Deploy to server') {
+      withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', 
     keyFileVariable: 'server_privatekey', 
     passphraseVariable: '', 
     usernameVariable: 'server_username')]) {
-      // can't use SSH Pipeline Steps yet because it has a bug related to ssh
+      // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
       // ref: https://issues.jenkins.io/browse/JENKINS-65533
       // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
       // so we'll execute ssh manually
-      def remote = [:]
-      remote.name = 'test'
-      remote.host = STAGING_SERVER_HOST
-      remote.user = STAGING_SERVER_USER
-      // remote.password = PASSW
-      remote.indentityFile = server_privatekey
-      remote.allowAnyHosts = true
-      // sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
-      // sh "ssh ${STAGING_SERVER_USERNAME}@${STAGING_SERVER_HOST} -i ${STAGING_SERVER_PRIVATE_KEY} 'ls '"
-      stage('Deploy') {
-        sshCommand remote: remote, command: 'ls -la /opt'
-      }
+      sh './pipeline-scripts/deploy.sh'
     }
+    }
+    
 
   // stage('Clean Test Resources') {
   //   sh './pipeline-scripts/clean.sh'

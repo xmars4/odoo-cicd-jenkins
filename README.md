@@ -133,4 +133,4 @@
 -   [Manage java versions on controller and nodes
     ](https://www.youtube.com/watch?v=ZabUz6sl-8I)
 
--
+-   [Binding credentails to variable](https://www.jenkins.io/doc/pipeline/steps/credentials-binding/)
