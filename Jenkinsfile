@@ -35,6 +35,7 @@ node {
   
     withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: '', usernameVariable: 'STAGING_SERVER_USERNAME')]) {
       def remote = [:]
+      remote.name = "staging-server"
       remote.host = "103.229.42.127"
       remote.user = "root"
       remote.identityFile = STAGING_SERVER_PRIVATE_KEY
