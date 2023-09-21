@@ -1,12 +1,12 @@
 node {
 
-  checkout scm
+  // checkout scm
 
-  stage('Prepare') {
-    sh './pipeline-scripts/prepare.sh'
-    echo "${STAGING_SERVER_HOST}"
-    echo "${STAGING_SERVER_USER}"
-  }
+  // stage('Prepare') {
+  //   sh './pipeline-scripts/prepare.sh'
+  //   echo "${STAGING_SERVER_HOST}"
+  //   echo "${STAGING_SERVER_USER}"
+  // }
 
   // stage('Build') {
   //   try {
@@ -41,10 +41,10 @@ node {
       remote.identityFile = STAGING_SERVER_PRIVATE_KEY
       remote.allowAnyHosts = true
       
-      // echo "${STAGING_SERVER_PRIVATE_KEY}"
-      sh "ssh root@103.229.42.127 -i ${STAGING_SERVER_PRIVATE_KEY}"
+      sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
+      // sh "ssh root@103.229.42.127 -i ${STAGING_SERVER_PRIVATE_KEY}"
       stage('Deploy') {
-        sshCommand remote: remote, command: 'ls -lrt /opt'
+        sshCommand remote: remote, command: 'ls  /opt'
       }
       
     }
