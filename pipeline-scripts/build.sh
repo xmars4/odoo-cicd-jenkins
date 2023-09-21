@@ -39,7 +39,7 @@ function update_config_file {
 
 function start_containers {
     docker compose up -d --wait --no-color
-    docker ps
+    docker compose ps
 }
 
 function wait_until_odoo_available {
