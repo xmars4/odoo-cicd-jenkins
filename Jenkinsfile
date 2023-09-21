@@ -41,7 +41,7 @@ node {
       remote_server.identityFile = env.STAGING_SERVER_PRIVATE_KEY
       remote_server.allowAnyHosts = true
       stage('Deploy') {
-        sshCommand remote: remote_server, command "ls -lrt /opt"
+        sshCommand remote: remote_server, command: "ls -lrt /opt"
       }
       
     }
