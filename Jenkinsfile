@@ -38,7 +38,7 @@ node {
       remote_server.name = 'Staging server'
       remote_server.host = env.STAGING_SERVER_HOST
       remote_server.user = env.STAGING_SERVER_USERNAME
-      remote_server.identityFile = env.STAGING_SERVER_PRIVATE_KEY
+      remote_server.identity = env.STAGING_SERVER_PRIVATE_KEY
       remote_server.allowAnyHosts = true
       stage('Deploy') {
         sshCommand remote: remote_server, command: "ls -lrt /opt"
