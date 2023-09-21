@@ -15,15 +15,14 @@ node {
         sh 'exit 1'
       }
     }
-
+stage('Test #1 (Sonarqube)') {
     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-      env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-
-      stage('Test #1 (Sonarqube)') {
+      env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'      
         sh './pipeline-scripts/sonarqube.sh 2>&1 /dev/null'
         sh 'echo "something here ..."'
-      }
+      
     } 
+}
 
     withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
       string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
