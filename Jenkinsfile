@@ -45,7 +45,7 @@ node {
       sh './pipeline-scripts/deploy.sh'
     }
     }
-    
+  
   // stage('Clean Test Resources') {
   //   sh './pipeline-scripts/clean.sh'
   // }
