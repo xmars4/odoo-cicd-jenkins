@@ -32,14 +32,17 @@ node {
   //   }
   // }
 
-  // stage('Deploy') {
-  //   def remote_server = [:]
-  //   remote_server.name = 'Staging server'
-  //   remote_server.host = ''
-  //   remote_server.user = ''
-  //   remote_server.allowAnyHosts = true
-  //   withCredentials([])
-  // }
+  stage('Deploy') {
+    withCredentials([string(credentialsId: 'staging-server-private-key', variable: 'STAGING_SERVER_PRIVATE_KEY')]) {
+      def remote_server = [:]
+      remote_server.name = 'Staging server'
+      remote_server.host = env.STAGING_SERVER_HOST
+      remote_server.user = env.STAGING_SERVER_USER
+      remote_server.identity = env.STAGING_SERVER_PRIVATE_KEY
+      remote_server.allowAnyHosts = true
+      sshCommand remote: remote_server, command "ls -lrt /opt"
+    }
+  }
 
   // stage('Clean Test Resources') {
   //   sh './pipeline-scripts/clean.sh'
