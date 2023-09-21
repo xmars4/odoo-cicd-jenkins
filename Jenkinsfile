@@ -33,7 +33,7 @@ node {
   // }
 
   stage('Deploy') {
-    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-private-key', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: 'STAGING_SERVER_PASSPHASE', usernameVariable: 'STAGING_SERVER_USER')]) {
+    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: 'STAGING_SERVER_PASSPHASE', usernameVariable: 'STAGING_SERVER_USER')]) {
       def remote_server = [:]
       remote_server.name = 'Staging server'
       remote_server.host = env.STAGING_SERVER_HOST
