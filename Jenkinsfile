@@ -33,10 +33,10 @@ node {
   // }
 
   
-    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: 'STAGING_SERVER_PASSPHASE', usernameVariable: 'STAGING_SERVER_USERNAME')]) {
+    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: '', usernameVariable: 'STAGING_SERVER_USERNAME')]) {
       def remote_server = [:]
       remote_server.name = 'Staging server'
-      remote_server.host = env.STAGING_SERVER_HOST
+      remote_server.host = "103.229.42.127"
       remote_server.user = STAGING_SERVER_USERNAME
       remote_server.identity = STAGING_SERVER_PRIVATE_KEY
       remote_server.allowAnyHosts = true
