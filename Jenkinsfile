@@ -32,8 +32,6 @@ node {
   //   }
   // }
 
-    withCredentials([sshUserPrivateKey(credentialsId: sshCredentialId, keyFileVariable: 'SSH_KEY_FILE', passphraseVariable: '', usernameVariable: 'SSH_USERNAME')]) {
-
   stage('Deploy') {
     withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-private-key', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: 'STAGING_SERVER_PASSPHASE', usernameVariable: 'STAGING_SERVER_USER')]) {
       def remote_server = [:]
@@ -50,4 +48,5 @@ node {
   //   sh './pipeline-scripts/clean.sh'
   // }
 
+}
 }
