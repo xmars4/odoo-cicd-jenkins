@@ -41,7 +41,7 @@ node {
       // ref: https://issues.jenkins.io/browse/JENKINS-65533
       // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
       // so we execute ssh manually
-
+      def remote = [:]
       remote.name = 'test'
       remote.host = STAGING_SERVER_HOST
       remote.user = STAGING_SERVER_USER
