@@ -2,11 +2,11 @@ node {
 
   checkout scm
 
-  // stage('Prepare') {
-  //   sh './pipeline-scripts/prepare.sh'
-  //   echo "${STAGING_SERVER_HOST}"
-  //   echo "${STAGING_SERVER_USER}"
-  // }
+  stage('Prepare') {
+    sh './pipeline-scripts/prepare.sh'
+    echo "${STAGING_SERVER_HOST}"
+    echo "${STAGING_SERVER_USER}"
+  }
 
   // stage('Build') {
   //   try {
