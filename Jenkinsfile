@@ -1,6 +1,6 @@
 node {
 
-  // checkout scm
+  checkout scm
 
   stage('Prepare') {
     sh './pipeline-scripts/prepare.sh'
