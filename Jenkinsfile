@@ -51,10 +51,9 @@ node {
       // sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
       // sh "ssh ${STAGING_SERVER_USERNAME}@${STAGING_SERVER_HOST} -i ${STAGING_SERVER_PRIVATE_KEY} 'ls '"
       stage('Deploy') {
-        sshCommand remote: remote, command: 'ls  /opt'
+        sshCommand remote: remote, command: 'ls -la /opt'
       }
     }
-  
 
   // stage('Clean Test Resources') {
   //   sh './pipeline-scripts/clean.sh'
