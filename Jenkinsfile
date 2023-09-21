@@ -33,16 +33,22 @@ node {
   // }
 
   
-    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: '', usernameVariable: 'STAGING_SERVER_USERNAME')]) {
-      def remote = [:]
-      remote.name = "staging-server"
-      remote.host = "13.250.6.26"
-      remote.user = "ubuntu"
-      remote.identityFile = STAGING_SERVER_PRIVATE_KEY
+    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', 
+    keyFileVariable: 'server-privatekey', 
+    passphraseVariable: '', 
+    usernameVariable: 'server-username')]) {
+      // can't use SSH Pipeline Steps yet because it has a bug related to ssh
+      // ref: https://issues.jenkins.io/browse/JENKINS-65533
+      // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
+      // so we execute ssh manually
+
+      remote.name = 'test'
+      remote.host = STAGING_SERVER_HOST
+      remote.user = STAGING_SERVER_USER
+      remote.password = PASSW
       remote.allowAnyHosts = true
-      
-      sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
-      sh "ssh ubuntu@13.250.6.26 -i ${STAGING_SERVER_PRIVATE_KEY}"
+      // sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
+      // sh "ssh ${STAGING_SERVER_USERNAME}@${STAGING_SERVER_HOST} -i ${STAGING_SERVER_PRIVATE_KEY} 'ls '"
       stage('Deploy') {
         sshCommand remote: remote, command: 'ls  /opt'
       }
