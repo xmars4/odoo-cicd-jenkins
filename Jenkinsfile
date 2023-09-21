@@ -20,7 +20,7 @@ node {
       env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
 
       stage('Test #1 (Sonarqube)') {
-        sh './pipeline-scripts/sonarqube.sh'
+        sh './pipeline-scripts/sonarqube.sh 2>&1 /dev/null'
         sh 'echo "something here ..."'
       }
     } 
