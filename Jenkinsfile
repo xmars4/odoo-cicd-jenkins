@@ -40,6 +40,9 @@ node {
       remote_server.user = STAGING_SERVER_USERNAME
       remote_server.identity = STAGING_SERVER_PRIVATE_KEY
       remote_server.allowAnyHosts = true
+      
+      echo "${STAGING_SERVER_PRIVATE_KEY}"
+      sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
       stage('Deploy') {
         sshCommand remote: remote_server, command: "ls -lrt /opt"
       }
