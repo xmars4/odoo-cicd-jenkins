@@ -32,15 +32,18 @@ node {
   //   }
   // }
 
-  stage('Deploy') {
-    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: 'STAGING_SERVER_PASSPHASE', usernameVariable: 'STAGING_SERVER_USER')]) {
+  
+    withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: 'STAGING_SERVER_PASSPHASE', usernameVariable: 'STAGING_SERVER_USERNAME')]) {
       def remote_server = [:]
       remote_server.name = 'Staging server'
       remote_server.host = env.STAGING_SERVER_HOST
-      remote_server.user = env.STAGING_SERVER_USER
-      remote_server.identity = env.STAGING_SERVER_PRIVATE_KEY
+      remote_server.user = env.STAGING_SERVER_USERNAME
+      remote_server.identityFile = env.STAGING_SERVER_PRIVATE_KEY
       remote_server.allowAnyHosts = true
-      sshCommand remote: remote_server, command "ls -lrt /opt"
+      stage('Deploy') {
+        sshCommand remote: remote_server, command "ls -lrt /opt"
+      }
+      
     }
   }
 
