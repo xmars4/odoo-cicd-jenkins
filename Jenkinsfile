@@ -34,17 +34,16 @@ node {
 
   
     withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', keyFileVariable: 'STAGING_SERVER_PRIVATE_KEY', passphraseVariable: '', usernameVariable: 'STAGING_SERVER_USERNAME')]) {
-      def remote_server = [:]
-      remote_server.name = 'Staging server'
-      remote_server.host = "103.229.42.127"
-      remote_server.user = STAGING_SERVER_USERNAME
-      remote_server.identity = STAGING_SERVER_PRIVATE_KEY
-      remote_server.allowAnyHosts = true
+      def remote = [:]
+      remote.host = "103.229.42.127"
+      remote.user = "root"
+      remote.identityFile = STAGING_SERVER_PRIVATE_KEY
+      remote.allowAnyHosts = true
       
-      echo "${STAGING_SERVER_PRIVATE_KEY}"
+      // echo "${STAGING_SERVER_PRIVATE_KEY}"
       sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
       stage('Deploy') {
-        sshCommand remote: remote_server, command: "ls -lrt /opt"
+        sshCommand remote: remote, command: 'ls -lrt /opt'
       }
       
     }
