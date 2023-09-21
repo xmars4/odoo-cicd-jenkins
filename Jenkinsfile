@@ -45,7 +45,7 @@ node {
       remote.name = 'test'
       remote.host = STAGING_SERVER_HOST
       remote.user = STAGING_SERVER_USER
-      remote.password = PASSW
+      // remote.password = PASSW
       remote.indentityFile = server_privatekey
       remote.allowAnyHosts = true
       // sh "cat ${STAGING_SERVER_PRIVATE_KEY}"
