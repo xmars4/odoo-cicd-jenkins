@@ -6,6 +6,8 @@ EXTRA_ADDONS=
 
 pull_latest_addons() {
     cd "${server_extra_addons_path}"
+    echo "here all data"
+    ls -lah .
     git pull
 }
 
