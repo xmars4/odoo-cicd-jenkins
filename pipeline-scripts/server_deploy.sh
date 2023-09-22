@@ -26,8 +26,8 @@ set_list_addons() {
 
 update_config_file() {
     # replace old command argument
-    sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
-    echo -e "\ncommand = -u "${EXTRA_ADDONS}"\n" >>"${CONFIG_FILE}"
+    sed -i "s/^\s*command\s*.*//g" $server_config_file
+    echo -e "\ncommand = -u "${EXTRA_ADDONS}"\n" >>"${server_config_file}"
 }
 
 update_odoo_services() {
@@ -36,6 +36,7 @@ update_odoo_services() {
 }
 
 main() {
+    pull_latest_addons
     set_list_addons
     update_config_file
     update_odoo_services
