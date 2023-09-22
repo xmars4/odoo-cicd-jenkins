@@ -10,7 +10,7 @@ execute_remote_command() {
 execute_remote_script() {
     script_name=$1
     shift
-    echo "script name: ${scriptname} --- $@"
+    echo "script name: ${script_name} --- $@"
     execute_remote_command "chmod +x ${script_name}"
     ssh "${server_username}"@"${server_host}" -i "${server_privatekey}" "${script_name} $@"
 }
