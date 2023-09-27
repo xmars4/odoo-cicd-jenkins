@@ -5,7 +5,7 @@
     1.1. Execute bash script to create Jenkins data folder
 
     ```shell
-        sudo ./docker-compose/host-setup.sh
+        sudo ./jenkins-docker-compose/host-setup.sh
     ```
 
     1.2. Run Jenkins
@@ -77,10 +77,6 @@
     -   Credentials: select the credential you created at step **2.4**
     -   Branches to build / Branch Specifier: select apropriate branch
 
-    4.2. **You have to run build first time manually before Github webhook can trigger build automatically**
-
-    -   Path: Dashboard / Your pipeline / Build Now
-
 6.  Integration with SonarQube
 
     6.1. Install SonarQube
@@ -101,10 +97,17 @@
         -   **ID**: sonar-token **Secret**: the token was obtained from step 6.1
 
 7.  Send message to Telegram from Jenkins
+
     -   Follow [this link](https://gist.github.com/xmars4/25931e4e59476da70a183d0f5a1d9e9e) to obtain **BOT token** and **Channel ID**
     -   Add two secret text credentails to your Jenkins instance
         -   **ID**: telegram-bot-token **Secret**: BOT token
         -   **ID**: telegram-channel-id **Secret**: Channel ID
+
+8.  Trigger build process manually
+
+    -   **You have to trigger build process first time manually before Github webhook can trigger the build process automatically**
+
+    -   Path: Dashboard / Your pipeline / Build Now
 
 :zap::zap:**Congrats**:v::v: : now your pipeline will automatic start building when the repo received a push event
 
