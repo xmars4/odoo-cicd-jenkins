@@ -11,8 +11,8 @@
     1.2. Run Jenkins
 
     ```shell
-        cd docker-compose
-        docker-compose up -d --build
+        cd jenkins-docker-compose
+        docker compose up -d --build
     ```
 
 2.  Allow Jenkins connect to Github - with SSH key

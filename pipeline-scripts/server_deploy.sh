@@ -5,25 +5,35 @@ server_config_file=$3
 repo_remote_name="origin"
 EXTRA_ADDONS=
 
-access_git_remote_repo() {
-
+check_current_dir_is_a_git_repo() {
+    git status
+    if [[ $? -gt 0 ]]; then
+        echo "Can't execute git commands because current folder is not a git repo!"
+        exit 1
+    fi
 }
 
 get_git_remote_url() {
+    check_current_dir_is_a_git_repo
+    remote_url=$((git remote get-url $repo_remote_name | head -n 1) 2>/dev/null)
 
+    # provided remote named $repo_remote_name doesn't exist
+    if [ -z "$remote_url" ]; then
+        exist_remote_name=$(git remote show | head -n 1)
+        if [ -z "$exist_remote_name" ]; then
+            return
+        fi
+        remote_url=$(git remote get-url $exist_remote_name | head -n 1)
+    fi
+    echo "$remote_url"
 }
 
 setup_git_ssh_remote() {
-    # $1 parameter: git repo path
-    if [[ $# -eq 0 ]]; then
-        echo "Mising first param: path to git repo!"
-        exit 1
-    fi
-    cd "$1"
-    # 1. find existing remote name
-    remote_url=$(git remote get-url $repo_remote_name | head -n 1)
-
+    check_current_dir_is_a_git_repo
+    git remote add $repo_remote_name temp_url
+    remote_url=$(get_git_remote_url)
     remote_ssh_reg="^git@"
+
     if ! [[ $remote_url =~ $remote_ssh_reg ]]; then
         # the remote url is http(s) url
         repo_name=$(echo "$remote_url" | sed "s/.*:\/\/[^/]*\///")
@@ -31,29 +41,21 @@ setup_git_ssh_remote() {
         # re-build repo's ssh url
         # so we can setup and use git command authenticate by ssh private key
         remote_url="git@$repo_host:$repo_name"
-        git remote set-url $repo_remote_name $remote_url
     fi
-}
-
-setup_git_ssh_key_for_repo() {
-    # $1 - path to git repo directory (source code)
-    # empty if we stand in current path
-    if [[ $# -gt 0 ]]; then
-        cd "$1"
-    fi
-    git fetch
-    if [[ $? -gt 0 ]]; then
-        # if fetch command failed, try to setup private key for repo
-        remote_url=$(git remote get-url origin | head -n 1)
-        if [[ $remote_url =~ "^git@" ]]; then
-            echo 'hihi'
-        fi
-    fi
+    git remote set-url $repo_remote_name $remote_url
 }
 
 pull_latest_code() {
-    cd "${server_extra_addons_path}"
-    git pull
+    # $1 : path to ssh private key to authenticate with Github
+    check_current_dir_is_a_git_repo
+    git fetch
+    if [[ $? -gt 0 ]]; then
+        # fetch command failed because invalid git authentication
+        # setup ssh and re-try
+        setup_git_ssh_remote
+    fi
+    current_branch=$(git branch --show-current)
+    ssh-agent bash -c "ssh-add \"$1\"; git pull $repo_remote_name current_branch"
 }
 
 get_list_addons() {
