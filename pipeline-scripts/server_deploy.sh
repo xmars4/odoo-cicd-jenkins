@@ -73,17 +73,21 @@ setup_git_ssh_remote() {
 }
 
 pull_latest_code() {
-    # git fetch $original_repo_remote_name
     current_branch=$(git branch --show-current)
     remote_url=$(get_original_remote_url)
+    is_first_try_success=0
     if [[ $remote_url =~ ^git@ ]]; then
         # currently, this repo has a remote is ssh
         # so we try to use it first, before setup other remote ssh
         git pull $original_repo_remote_name $current_branch
+        is_first_try_success=$?
     else
         # we won't use https remote because it will ask for username and token
-        # so we setup a newly remote ssh
+        # so we'll setup a newly remote ssh
         setup_git_ssh_remote
+        git pull $custom_repo_remote_name $current_branch
+    fi
+    if [[ $is_first_try_success -eq 1 ]]; then
         git pull $custom_repo_remote_name $current_branch
     fi
 }
@@ -117,9 +121,9 @@ update_odoo_services() {
 main() {
     check_git_repo_folder
     pull_latest_code
-    set_list_addons
-    update_config_file
-    update_odoo_services
+    # set_list_addons
+    # update_config_file
+    # update_odoo_services
 }
 
 main
