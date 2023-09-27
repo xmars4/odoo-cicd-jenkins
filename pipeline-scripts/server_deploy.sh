@@ -11,7 +11,7 @@ EXTRA_ADDONS=
 
 check_git_repo_folder() {
     cd $server_extra_addons_path
-    git status 2 >/dev/null &>1
+    git status >/dev/null 2&>1
     if [[ $? -gt 0 ]]; then
         echo "Can't execute git commands because \"$PWD\" folder is not a git repository!"
         exit 1
