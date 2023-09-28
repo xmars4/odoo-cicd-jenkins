@@ -54,6 +54,7 @@ node {
  
 }
 
+// reference: https://gist.github.com/jonico/e205b16cf07451b2f475543cf1541e70
 void setBuildStatus(context, message, state) {
   step([
       $class: "GitHubCommitStatusSetter",
@@ -62,4 +63,11 @@ void setBuildStatus(context, message, state) {
       reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://octodemo.com/${getRepoSlug()}"],
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ]);
+}
+
+def getRepoSlug() {
+    tokens = "${env.JOB_NAME}".tokenize('/')
+    org = tokens[tokens.size()-3]
+    repo = tokens[tokens.size()-2]
+    return "${org}/${repo}"
 }
