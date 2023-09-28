@@ -55,12 +55,13 @@ node {
 }
 
 // reference: https://gist.github.com/jonico/e205b16cf07451b2f475543cf1541e70
+// https://www.jenkins.io/doc/pipeline/steps/github/#stepclass-githubcommitstatussetter-set-github-commit-status-universal
 void setBuildStatus(context, message, state) {
   step([
       $class: "GitHubCommitStatusSetter",
       contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://octodemo.com/${getRepoSlug()}"],
+      // reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://octodemo.com/${getRepoSlug()}"],
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ]);
 }
