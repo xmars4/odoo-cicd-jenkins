@@ -25,7 +25,6 @@ get_original_remote_url() {
     if [ -z "$remote_url" ]; then
         other_repo_remote_name=$(git remote show | head -n 1)
         if [ -z "$other_repo_remote_name" ]; then
-            echo "Can't determine git repository url for source code, no remote name found"
             exit 1
         fi
         remote_url=$(git remote get-url $other_repo_remote_name)
@@ -80,7 +79,11 @@ setup_git_ssh_remote() {
 pull_latest_code() {
     current_branch=$(git branch --show-current)
     remote_url=$(get_original_remote_url)
-    echo "can u come here: $remote_url"
+    if [ -z $remote_url ]; then
+        echo "Can't found any valid remote name of git repository in folder ${server_extra_addons_path}"
+        exit 1
+    fi
+
     is_first_try_success=1
     if [[ $remote_url =~ ^git@ ]]; then
         # currently, this repo has a remote with ssh url
