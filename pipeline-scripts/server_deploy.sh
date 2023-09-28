@@ -72,6 +72,8 @@ setup_git_ssh_remote() {
         repo_name=$(echo "$remote_url" | sed "s/.*://" | sed "s/\.git$//")
         repo_host=$(echo "$remote_url" | sed "s/^git@//" | sed "s/:.*//")
     fi
+    echo "find it"
+    echo $repo_name $repo_host
     add_custom_repo_remote $repo_name
     write_custom_git_host_to_ssh_config $repo_host
 }
@@ -84,15 +86,21 @@ pull_latest_code() {
     if [[ $remote_url =~ ^git@ ]]; then
         # currently, this repo has a remote is ssh
         # so we try to use it first, before setup other remote ssh
+        echo "find it"
+        echo $original_repo_remote_name $current_branch
         git pull $original_repo_remote_name $current_branch
         is_first_try_success=$?
     else
         # we won't use https remote because it will ask for username and token
         # so we'll setup a newly remote ssh
+        echo "find it again"
+        echo $original_repo_remote_name $current_branch
         setup_git_ssh_remote
         git pull $custom_repo_remote_name $current_branch
     fi
     if [[ $is_first_try_success -eq 1 ]]; then
+        echo "find it"
+        echo "sucess: $is_first_try_success"
         git pull $custom_repo_remote_name $current_branch
     fi
 }
