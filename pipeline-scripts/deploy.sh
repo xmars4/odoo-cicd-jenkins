@@ -21,6 +21,11 @@ copy_deploy_script_to_server() {
         "${WORKSPACE}/pipeline-scripts/server_deploy.sh" \
         "${server_username}"@"${server_host}":$server_deploy_script
 
+    echo $server_docker_compose_path
+    echo $server_extra_addons_path
+    echo $server_config_file
+    echo $git_private_key_file
+
     execute_remote_script $server_deploy_script \
         $server_docker_compose_path \
         $server_extra_addons_path \
