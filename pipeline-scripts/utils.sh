@@ -17,7 +17,8 @@ check_variable_missing_value() {
     variable_name=$1
     # ! used to get variable value instead of its name
     if [ -z ${!variable_name} ]; then
-        show_separator "Mising variable named $variable_name or it's empty"
+        show_separator "ERROR: Mising variable named $variable_name or it's empty"
+        exit 1
     fi
 }
 
