@@ -13,6 +13,14 @@ function get_odoo_container_id {
         awk -v img="${ODOO_IMAGE_TAG}" '$2 == img {print $1}'
 }
 
+check_variable_missing_value() {
+    variable_name=$1
+    # ! used to get variable value instead of its name
+    if [ -z ${!variable_name} ]; then
+        show_separator "Mising variable named $variable_name or it's empty"
+    fi
+}
+
 # ------------------ Telegram functions -------------------------
 send_file_telegram() {
     BOT_TOKEN=$1
