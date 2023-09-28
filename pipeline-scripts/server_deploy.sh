@@ -1,8 +1,9 @@
 #!/bin/bash
-server_docker_compose_path=$1 # the path to folder container Odoo docker-compose.yml file
-server_extra_addons_path=$2   # the absolute path to source code, also the git repository
-server_config_file=$3         # the path to Odoo config file
-git_private_key_file=$4       # private key on server use to authenticate on Github
+server_docker_compose_path=$1                           # the path to folder container Odoo docker-compose.yml file
+server_extra_addons_path=$2                             # the absolute path to source code, also the git repository
+server_config_file=$3                                   # the path to Odoo config file
+temp_git_private_key_file=$4                            # temporary git private key copied from Jenkins, we have to copy this file to a permanent place
+git_private_key_file="$HOME/.ssh/odoo-cicd-git-privkey" # private key on server use to authenticate on Github
 
 original_repo_remote_name="origin"
 custom_repo_remote_name="origin-ssh"
@@ -43,6 +44,7 @@ write_custom_git_host_to_ssh_config() {
     if [[ ! -d "$ssh_folder" ]]; then
         mkdir -p "$ssh_folder"
     fi
+    mv "$temp_git_private_key_file" "$git_private_key_file"
 
     config_value="
 \n# Custom git host for CI/CD process
