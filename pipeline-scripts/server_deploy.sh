@@ -82,25 +82,15 @@ pull_latest_code() {
 
     current_branch=$(git branch --show-current)
     remote_url=$(get_original_remote_url)
-    is_first_try_success=0
+    is_first_try_success=1
     if [[ $remote_url =~ ^git@ ]]; then
-        # currently, this repo has a remote is ssh
+        # currently, this repo has a remote with ssh url
         # so we try to use it first, before setup other remote ssh
-        echo "find it"
-        echo $original_repo_remote_name $current_branch
         git pull $original_repo_remote_name $current_branch
         is_first_try_success=$?
-    else
-        # we won't use https remote because it will ask for username and token
-        # so we'll setup a newly remote ssh
-        echo "find it again"
-        echo $original_repo_remote_name $current_branch
-        setup_git_ssh_remote
-        git pull $custom_repo_remote_name $current_branch
     fi
-    if [[ $is_first_try_success -eq 1 ]]; then
-        echo "find it"
-        echo "sucess: $is_first_try_success"
+    if [[ $is_first_try_success -ne 0 ]]; then
+        setup_git_ssh_remote
         git pull $custom_repo_remote_name $current_branch
     fi
 }
