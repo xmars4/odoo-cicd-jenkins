@@ -15,28 +15,34 @@
         docker compose up -d --build
     ```
 
-2.  Allow Jenkins connect to Github - with SSH key
+2.  Allow Jenkins connect to Github using SSH keys
 
-    2.1. [Generate SSH key or find an existing on Jenkins's host](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
+    2.1. Access (SSH) to Jenkins instance
 
-    2.2. [Add SSH key to ssh-agent](https://www.jenkins.io/doc/book/installing/)
+    -   [Generate SSH keys or find existing keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
 
-    2.3. [Add SSH public key (.pub) to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
+    -   [Add SSH keys to ssh-agent](https://www.jenkins.io/doc/book/installing/)
 
-    2.4. Create a **SSH Username with private key** credential in Jenkins
+    2.2. Create a **SSH Username with private key** credential in Jenkins
 
     -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
     -   Kind: SSH Username with private key
     -   Username: your github username
     -   Private key / Enter directly: paste your private SSH key at step **2.1** here
 
+    2.3. [Add SSH public key (.pub) at step **2.1.**to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
+
 3.  Config Github plugin - allow trigger job in Jenkins by Github webhook
 
     3.1. [Generate Github fine-grained personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with following scopes:
 
-    -   **admin:repo_hook** - for managing hooks (read, write and delete old ones)
+    -   **Repository access / Only select repositories**: select repo that the Jenkins instance will connect to
+    -   **Permissions**:
+        -   **Webhooks**: Access: Read and write
+
+    <!-- -   **admin:repo_hook** - for managing hooks (read, write and delete old ones)
     -   **repo** - to see private repos
-    -   **repo:status** - to manipulate commit statuses
+    -   **repo:status** - to manipulate commit statuses -->
 
     <end-list></end-list>
 
@@ -64,10 +70,41 @@
     -   Path: Settings / Webhooks / Add webhook
     -   Payload URL (the ending forward slash **/** is important): <public_jenkins_url>/github-webhook/
     -   Content type: application/json
+    -   Which events would you like to trigger this webhook? : select which events do you want to receive hook request
+    -   Click : Add webhook
 
-5.  Create and config Github pipeline
+5.  Config remote server info
 
-    4.1. Create new pipeline
+    5.1. Add server ssh credential in Jenkins
+
+    -   Jenkins will use this credential to connect to the server and execute commands, scripts.
+    -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
+    -   **Kind**: SSH Username with private key
+    -   **ID**: _server-credentail_ - this value mapped with Jenkinsfile, so if you want to change, you also need to change it Jenkinsfile
+    -   **Username**: the server's username
+    -   **Private Key / Enter directly / Key / Add**: the private key use to access the server
+
+    5.2. Allow remote server connect to Github using SSH keys
+
+    5.2.1. Access (SSH) to server
+
+    -   [Generate SSH keys or find existing keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
+
+    -   [Add SSH keys to ssh-agent](https://www.jenkins.io/doc/book/installing/)
+
+    5.2.2. [Add SSH public key (.pub) at step **5.2.1**to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
+
+    5.3. Add github private key credentail in Jenkins
+
+    -   Server will use this private key to connect to Github and pull latest code
+    -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
+    -   **Kind**: Secret file
+    -   **File**: Upload the ssh private key generated at step **5.2.1**
+    -   **ID**: _server-github-privatekey_
+
+6.  Create and config Github pipeline
+
+    6.1. Create new pipeline
 
     -   Path: Dashboard > New Item -> Pipeline
     -   Fill pipeline name. _warning_ [don't put space to pipeline name](https://www.jenkins.io/doc/book/pipeline/getting-started/#:~:text=In%20the%20Enter%20an%20item,handle%20spaces%20in%20directory%20paths.)
@@ -78,7 +115,7 @@
     -   Credentials: select the credential you created at step **2.4**
     -   Branches to build / Branch Specifier: select apropriate branch
 
-    4.2. Add remote server information
+    6.2. Add remote server information
 
     -   Jenkins will use these variable for CD process (deploy to remote server)
     -   Continuing update the pipeline in step **4.1**
@@ -103,33 +140,33 @@
         server_extra_addons_path=/opt/odoo/extra_addons
         ```
 
-6.  Integration with SonarQube
+7.  Integration with SonarQube
 
-    6.1. Install SonarQube
+    7.1. Install SonarQube
 
     -   Install SonarQube and allow Jenkins to connect to it (already done in docker compose file)
     -   Access SonarQube instance and [generate a user token](https://docs.sonarsource.com/sonarqube/latest/user-guide/user-account/generating-and-using-tokens/#generating-a-token)
 
-    6.2. Add SonarQube installer to Jenkins
+    7.2. Add SonarQube installer to Jenkins
 
     -   Path: Dasboard / Manage Jenkins / Tools / SonarQube Scanner
     -   Click _Add SonarQube Scanner_
         -   Input Name: **sonarqube-scanner**
         -   Check: **Install automatically**
 
-    6.3. Add SonarQube credentail to Jenkins
+    7.3. Add SonarQube credentail to Jenkins
 
     -   Add a secret text credentail to your Jenkins instance
         -   **ID**: sonar-token **Secret**: the token was obtained from step 6.1
 
-7.  Send message to Telegram from Jenkins
+8.  Send message to Telegram from Jenkins
 
     -   Follow [this link](https://gist.github.com/xmars4/25931e4e59476da70a183d0f5a1d9e9e) to obtain **BOT token** and **Channel ID**
     -   Add two secret text credentails to your Jenkins instance
         -   **ID**: telegram-bot-token **Secret**: BOT token
         -   **ID**: telegram-channel-id **Secret**: Channel ID
 
-8.  Trigger build process manually
+9.  Trigger build process manually
 
     -   **You have to trigger build process first time manually before Github webhook can trigger the build process automatically**
 

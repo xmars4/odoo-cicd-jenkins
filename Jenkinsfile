@@ -32,11 +32,11 @@ node {
 
   stage('Deploy to server') {
     withCredentials([
-      sshUserPrivateKey(credentialsId: 'staging-server-credentail',
+      sshUserPrivateKey(credentialsId: 'server-credentail',
         keyFileVariable: 'server_privatekey',
         passphraseVariable: '',
         usernameVariable: 'server_username'),
-      file(credentialsId: 'staging-server-github-privatekey',
+      file(credentialsId: 'server-github-privatekey',
         variable: 'server_github_privatekey_file')
     ]) {
       // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
