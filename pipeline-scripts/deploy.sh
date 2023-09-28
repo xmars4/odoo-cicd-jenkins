@@ -4,6 +4,14 @@ source "${WORKSPACE}/pipeline-scripts/utils.sh"
 server_deploy_script=/tmp/odoo-cicd-deploy.sh
 git_private_key_file="/tmp/odoo-cicd-git-privkey"
 
+check_required_variables() {
+    check_variable_missing_value "server_host"
+    check_variable_missing_value "server_docker_compose_path"
+    check_variable_missing_value "server_extra_addons_path"
+    check_variable_missing_value "server_config_file"
+    check_variable_missing_value "git_private_key_file"
+}
+
 execute_remote_command() {
     ssh "${server_username}"@"${server_host}" -i "${server_privatekey}" $1
 }
@@ -18,19 +26,13 @@ execute_remote_script() {
 copy_deploy_script_to_server() {
     scp -i "${server_privatekey}" \
         "${WORKSPACE}/pipeline-scripts/server_deploy.sh" \
-        "${server_username}"@"${server_host}":$server_deploy_script
-
-    check_variable_missing_value "server_docker_compose_path"
-    check_variable_missing_value "server_extra_addons_path"
-    check_variable_missing_value "server_config_file"
-    check_variable_missing_value "git_private_key_file"
+        "${server_username}"@"${server_host}":"${server_deploy_script}"
 
     execute_remote_script $server_deploy_script \
         $server_docker_compose_path \
         $server_extra_addons_path \
         $server_config_file \
         $git_private_key_file
-
 }
 
 copy_github_privatekey_to_server() {
@@ -40,6 +42,7 @@ copy_github_privatekey_to_server() {
 }
 
 main() {
+    check_required_variables
     copy_github_privatekey_to_server
     copy_deploy_script_to_server
 }

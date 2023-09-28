@@ -6,7 +6,7 @@ temp_git_private_key_file=$4  # temporary git private key copied from Jenkins, w
 cicd_privatekey_folder="$HOME/.ssh/cicd"
 git_private_key_file="${cicd_privatekey_folder}/odoo-cicd-git-privkey" # private key on server use to authenticate on Github
 
-original_repo_remote_name="origin1"
+original_repo_remote_name="origin"
 custom_repo_remote_name="origin-ssh"
 custom_repo_host="ssh.github.com"
 EXTRA_ADDONS=
@@ -25,7 +25,8 @@ get_original_remote_url() {
     if [ -z "$remote_url" ]; then
         other_repo_remote_name=$(git remote show | head -n 1)
         if [ -z "$other_repo_remote_name" ]; then
-            return
+            echo "Can't determine git repository url for source code, no remote name found"
+            exit 1
         fi
         remote_url=$(git remote get-url $other_repo_remote_name)
     fi
@@ -72,14 +73,11 @@ setup_git_ssh_remote() {
         repo_name=$(echo "$remote_url" | sed "s/.*://" | sed "s/\.git$//")
         repo_host=$(echo "$remote_url" | sed "s/^git@//" | sed "s/:.*//")
     fi
-    echo "find it"
-    echo $repo_name $repo_host
     add_custom_repo_remote $repo_name
     write_custom_git_host_to_ssh_config $repo_host
 }
 
 pull_latest_code() {
-
     current_branch=$(git branch --show-current)
     remote_url=$(get_original_remote_url)
     is_first_try_success=1
