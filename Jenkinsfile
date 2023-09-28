@@ -44,6 +44,7 @@ node {
       // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
       // so we'll execute ssh manually
       sh './pipeline-scripts/deploy.sh'
+      setBuildStatus ("ez", 'Checking out completed', 'SUCCESS')
     }
   }
 
@@ -51,4 +52,14 @@ node {
   //   sh './pipeline-scripts/clean.sh'
   // }
  
+}
+
+void setBuildStatus(context, message, state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://octodemo.com/${getRepoSlug()}"],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
 }
