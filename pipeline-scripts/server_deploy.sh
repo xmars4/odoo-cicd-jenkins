@@ -12,6 +12,7 @@ custom_repo_host="ssh.github.com"
 EXTRA_ADDONS=
 
 check_git_repo_folder() {
+    echo $@
     cd $server_extra_addons_path
     git status >/dev/null 2>&1
     if [[ $? -gt 0 ]]; then

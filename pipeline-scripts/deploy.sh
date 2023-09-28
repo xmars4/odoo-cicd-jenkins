@@ -13,6 +13,7 @@ execute_remote_script() {
     shift
     execute_remote_command "chmod +x ${script_name}"
     ssh "${server_username}"@"${server_host}" -i "${server_privatekey}" "${script_name} $@"
+    echo "execute with params: $@"
 }
 
 copy_deploy_script_to_server() {
