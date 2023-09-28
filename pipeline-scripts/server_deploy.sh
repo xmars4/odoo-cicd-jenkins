@@ -6,7 +6,7 @@ temp_git_private_key_file=$4  # temporary git private key copied from Jenkins, w
 cicd_privatekey_folder="$HOME/.ssh/cicd"
 git_private_key_file="${cicd_privatekey_folder}/odoo-cicd-git-privkey" # private key on server use to authenticate on Github
 
-original_repo_remote_name="origin"
+original_repo_remote_name="origin1"
 custom_repo_remote_name="origin-ssh"
 custom_repo_host="ssh.github.com"
 EXTRA_ADDONS=
