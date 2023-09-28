@@ -1,8 +1,8 @@
 #!/bin/bash
 server_docker_compose_path=$1 # the path to folder container Odoo docker-compose.yml file
-server_extra_addons_path=$2 # the absolute path to source code, also the git repository
-server_config_file=$3 # the path to Odoo config file
-git_private_key_file=$4 # private key on server use to authenticate on Github
+server_extra_addons_path=$2   # the absolute path to source code, also the git repository
+server_config_file=$3         # the path to Odoo config file
+git_private_key_file=$4       # private key on server use to authenticate on Github
 
 original_repo_remote_name="origin"
 custom_repo_remote_name="origin-ssh"
@@ -11,7 +11,7 @@ EXTRA_ADDONS=
 
 check_git_repo_folder() {
     cd $server_extra_addons_path
-    git status >/dev/null 2&>1
+    git status 2 >/dev/null &>1
     if [[ $? -gt 0 ]]; then
         echo "Can't execute git commands because \"$PWD\" folder is not a git repository!"
         exit 1
@@ -19,13 +19,13 @@ check_git_repo_folder() {
 }
 
 get_original_remote_url() {
-    remote_url=$((git remote get-url $original_repo_remote_name | head -n 1) 2>/dev/null)
+    remote_url=$(git remote get-url $original_repo_remote_name 2>/dev/null)
     if [ -z "$remote_url" ]; then
         other_repo_remote_name=$(git remote show | head -n 1)
         if [ -z "$other_repo_remote_name" ]; then
             return
         fi
-        remote_url=$(git remote get-url $other_repo_remote_name | head -n 1)
+        remote_url=$(git remote get-url $other_repo_remote_name)
     fi
     echo "$remote_url"
 }

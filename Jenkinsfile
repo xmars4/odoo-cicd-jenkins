@@ -2,9 +2,9 @@ node {
 
   checkout scm
 
-  stage('Prepare') {
-    sh './pipeline-scripts/prepare.sh'
-  }
+  // stage('Prepare') {
+  //   sh './pipeline-scripts/prepare.sh'
+  // }
 
   // stage('Build') {
   //   try {
@@ -30,22 +30,25 @@ node {
   //   }
   // }
 
-  
-    stage('Deploy to server') {
-      withCredentials([sshUserPrivateKey(credentialsId: 'staging-server-credentail', 
-    keyFileVariable: 'server_privatekey', 
-    passphraseVariable: '', 
-    usernameVariable: 'server_username')]) {
+  stage('Deploy to server') {
+    withCredentials([
+      sshUserPrivateKey(credentialsId: 'staging-server-credentail',
+        keyFileVariable: 'server_privatekey',
+        passphraseVariable: '',
+        usernameVariable: 'server_username'),
+      file(credentialsId: 'staging-server-github-privatekey',
+        variable: 'server_github_privatekey_file')
+    ]) {
       // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
       // ref: https://issues.jenkins.io/browse/JENKINS-65533
       // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
       // so we'll execute ssh manually
       sh './pipeline-scripts/deploy.sh'
-     }
     }
+  }
 
   // stage('Clean Test Resources') {
   //   sh './pipeline-scripts/clean.sh'
   // }
-   
+
 }
