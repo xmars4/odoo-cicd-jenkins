@@ -12,6 +12,11 @@ check_required_variables() {
     check_variable_missing_value "git_private_key_file"
 }
 
+presetup_ssh_remote() {
+    ssh-keygen -R $server_host
+    ssh-keyscan $server_host >>"${HOME}/.ssh/known_hosts"
+}
+
 execute_remote_command() {
     ssh "${server_username}"@"${server_host}" -i "${server_privatekey}" $1
 }
@@ -43,6 +48,7 @@ copy_github_privatekey_to_server() {
 
 main() {
     check_required_variables
+    presetup_ssh_remote
     copy_github_privatekey_to_server
     copy_deploy_script_to_server
 }
