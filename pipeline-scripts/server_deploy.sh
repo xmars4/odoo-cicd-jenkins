@@ -6,7 +6,7 @@ temp_git_private_key_file=$4  # temporary git private key copied from Jenkins, w
 cicd_privatekey_folder="$HOME/.ssh/cicd"
 git_private_key_file="${cicd_privatekey_folder}/odoo-cicd-git-privkey" # private key on server use to authenticate on Github
 
-original_repo_remote_name="origin1"
+original_repo_remote_name="origin"
 custom_repo_remote_name="origin-ssh"
 custom_repo_host="ssh.github.com"
 EXTRA_ADDONS=
@@ -77,8 +77,11 @@ setup_git_ssh_remote() {
 }
 
 pull_latest_code() {
+
     current_branch=$(git branch --show-current)
     remote_url=$(get_original_remote_url)
+    echo "current folder: $(pwd)"
+    echo "git url: $remote_url, $current_branch"
     is_first_try_success=0
     if [[ $remote_url =~ ^git@ ]]; then
         # currently, this repo has a remote is ssh
