@@ -70,6 +70,7 @@
     4.1. Create new pipeline
 
     -   Path: Dashboard > New Item -> Pipeline
+    -   Fill pipeline name. _warning_ [don't put space to pipeline name](https://www.jenkins.io/doc/book/pipeline/getting-started/#:~:text=In%20the%20Enter%20an%20item,handle%20spaces%20in%20directory%20paths.)
     -   Select option **GitHub hook trigger for GITScm polling**
     -   Pipeline / Definition, select **Pipeline script from SCM**
     -   SCM: Git
@@ -80,7 +81,27 @@
     4.2. Add remote server information
 
     -   Jenkins will use these variable for CD process (deploy to remote server)
-    -   Path: Dashboard > Pipeline ->
+    -   Continuing update the pipeline in step **4.1**
+    -   Select **Prepare an environment for the run**
+    -   Select **Keep Jenkins Environment Variables**
+    -   Select **Keep Jenkins Build Variables**
+    -   Properties Content: add below variables with appropriate value
+
+        ```
+        server_host=<server ip address here>
+        server_docker_compose_path=<path to folder contain odoo docker-compose.yml file>
+        server_config_file=<path to odoo config file>
+        server_extra_addons_path=<path to custom addons folder, also a git repo>
+        ```
+
+        for example:
+
+        ```
+        server_host=12.34.56.78
+        server_docker_compose_path=/opt/odoo/
+        server_config_file=/opt/odoo/odoo.conf
+        server_extra_addons_path=/opt/odoo/extra_addons
+        ```
 
 6.  Integration with SonarQube
 
