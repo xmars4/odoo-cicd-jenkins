@@ -82,6 +82,7 @@ pull_latest_code() {
     remote_url=$(get_original_remote_url)
     echo "current folder: $(pwd)"
     echo "git url: $remote_url, $current_branch"
+    echo 'try agian'
     is_first_try_success=0
     if [[ $remote_url =~ ^git@ ]]; then
         # currently, this repo has a remote is ssh
