@@ -80,6 +80,7 @@ setup_git_ssh_remote() {
 pull_latest_code() {
     current_branch=$(git branch --show-current)
     remote_url=$(get_original_remote_url)
+    echo "can u come here: $remote_url"
     is_first_try_success=1
     if [[ $remote_url =~ ^git@ ]]; then
         # currently, this repo has a remote with ssh url
