@@ -1,18 +1,19 @@
 #!/bin/bash
-server_docker_compose_path=$1                           # the path to folder container Odoo docker-compose.yml file
-server_extra_addons_path=$2                             # the absolute path to source code, also the git repository
-server_config_file=$3                                   # the path to Odoo config file
-temp_git_private_key_file=$4                            # temporary git private key copied from Jenkins, we have to copy this file to a permanent place
-git_private_key_file="$HOME/.ssh/odoo-cicd-git-privkey" # private key on server use to authenticate on Github
+server_docker_compose_path=$1 # the path to folder container Odoo docker-compose.yml file
+server_extra_addons_path=$2   # the absolute path to source code, also the git repository
+server_config_file=$3         # the path to Odoo config file
+temp_git_private_key_file=$4  # temporary git private key copied from Jenkins, we have to copy this file to a permanent place
+cicd_privatekey_folder="$HOME/.ssh/cicd"
+git_private_key_file="${cicd_privatekey_folder}/odoo-cicd-git-privkey" # private key on server use to authenticate on Github
 
 original_repo_remote_name="origin"
 custom_repo_remote_name="origin-ssh"
-custom_repo_host="git-host-ssh"
+custom_repo_host="ssh.github.com"
 EXTRA_ADDONS=
 
 check_git_repo_folder() {
     cd $server_extra_addons_path
-    git status 2 >/dev/null &>1
+    git status >/dev/null 2>&1
     if [[ $? -gt 0 ]]; then
         echo "Can't execute git commands because \"$PWD\" folder is not a git repository!"
         exit 1
@@ -44,6 +45,7 @@ write_custom_git_host_to_ssh_config() {
     if [[ ! -d "$ssh_folder" ]]; then
         mkdir -p "$ssh_folder"
     fi
+    mkdir -p "$cicd_privatekey_folder"
     mv "$temp_git_private_key_file" "$git_private_key_file"
 
     config_value="
