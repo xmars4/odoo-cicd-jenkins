@@ -92,7 +92,7 @@
 
     -   [Add SSH keys to ssh-agent](https://www.jenkins.io/doc/book/installing/)
 
-    5.2.2. [Add SSH public key (.pub) at step **5.2.1**to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
+    5.2.2. [Add SSH public key (.pub) at step **5.2.1** to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
 
     5.3. Add github private key credentail in Jenkins
 
