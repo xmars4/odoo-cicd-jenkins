@@ -12,7 +12,6 @@ custom_repo_host="ssh.github.com"
 EXTRA_ADDONS=
 
 check_git_repo_folder() {
-    echo $@
     cd $server_extra_addons_path
     git status >/dev/null 2>&1
     if [[ $? -gt 0 ]]; then
@@ -81,9 +80,6 @@ pull_latest_code() {
 
     current_branch=$(git branch --show-current)
     remote_url=$(get_original_remote_url)
-    echo "current folder: $(pwd)"
-    echo "git url: $remote_url, $current_branch"
-    echo 'try agian'
     is_first_try_success=0
     if [[ $remote_url =~ ^git@ ]]; then
         # currently, this repo has a remote is ssh
