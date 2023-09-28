@@ -2,7 +2,7 @@
 server_docker_compose_path=$1 # the path to folder container Odoo docker-compose.yml file
 server_extra_addons_path=$2   # the absolute path to source code, also the git repository
 server_config_file=$3         # the path to Odoo config file
-temp_git_private_key_file=$4  # temporary git private key copied from Jenkins, we have to copy this file to a permanent place
+temp_git_private_key_file=$4  # temporary git private key copied from Jenkins, we have to copy this file to a permanent place later
 cicd_privatekey_folder="$HOME/.ssh/cicd"
 git_private_key_file="${cicd_privatekey_folder}/odoo-cicd-git-privkey" # private key on server use to authenticate on Github
 

@@ -77,6 +77,11 @@
     -   Credentials: select the credential you created at step **2.4**
     -   Branches to build / Branch Specifier: select apropriate branch
 
+    4.2. Add remote server information
+
+    -   Jenkins will use these variable for CD process (deploy to remote server)
+    -   Path: Dashboard > Pipeline ->
+
 6.  Integration with SonarQube
 
     6.1. Install SonarQube
