@@ -82,6 +82,7 @@ pull_latest_code() {
     if [ -z $remote_url ]; then
         echo "Can't found any valid remote name of git repository in folder ${server_extra_addons_path}"
         exit 1
+
     fi
 
     is_first_try_success=1
