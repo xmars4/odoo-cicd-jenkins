@@ -29,6 +29,9 @@ copy_deploy_script_to_server() {
 }
 
 copy_github_privatekey_to_server() {
+    echo 'copy privatekey git'
+    echo $git_private_key_file
+    echo $server_host
     scp -i "${server_privatekey}" \
         "${server_github_privatekey_file}" \
         "${server_username}"@"${server_host}":"${git_private_key_file}"

@@ -44,7 +44,6 @@ node {
       // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
       // so we'll execute ssh manually
       sh './pipeline-scripts/deploy.sh'
-      echo 'finish'
     }
   }
 
