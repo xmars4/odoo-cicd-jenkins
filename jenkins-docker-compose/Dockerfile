@@ -13,8 +13,10 @@ ENV JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
 ENV PATH "${JAVA_HOME}/bin:${PATH}"
 
 # install docker and docker compose commands
+# docker group ID sometime different between OS : 998, 999 ...
 RUN groupadd -g 999 docker && \
-  usermod -aG staff,docker jenkins
+  groupadd -g 998 docker2 && \
+  usermod -aG staff,docker,docker2 jenkins
 RUN install -m 0755 -d /etc/apt/keyrings
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
   chmod a+r /etc/apt/keyrings/docker.gpg

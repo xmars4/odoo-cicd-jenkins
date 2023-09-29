@@ -39,10 +39,7 @@
     -   **Repository access / Only select repositories**: select repo that the Jenkins instance will connect to
     -   **Permissions**:
         -   **Webhooks**: Access: Read and write
-
-    <!-- -   **admin:repo_hook** - for managing hooks (read, write and delete old ones)
-    -   **repo** - to see private repos
-    -   **repo:status** - to manipulate commit statuses -->
+        -   **Commit statuses**: Access: Read and write
 
     <end-list></end-list>
 
