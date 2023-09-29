@@ -197,3 +197,5 @@
     ](https://www.youtube.com/watch?v=ZabUz6sl-8I)
 
 -   [Binding credentails to variable](https://www.jenkins.io/doc/pipeline/steps/credentials-binding/)
+-   permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock -> check Jenkins Dockerfile , line 17,18
+    to create a new group mapped with docker group on host
