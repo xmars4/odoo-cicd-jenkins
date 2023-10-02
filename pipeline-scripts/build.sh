@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#FIXME: remove redundant lines
+echo ${workspace}
+echo ${odoo_image_tag}
+echo ${odoo_workspace}
+echo ${odoo_addons_path}
+echo ${CONFIG_FILE}
+echo ${LOG_FILE}
+
 source "${workspace}/pipeline-scripts/utils.sh"
 EXTRA_ADDONS=
 
