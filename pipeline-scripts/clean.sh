@@ -3,6 +3,6 @@
 source "${WORKSPACE}/pipeline-scripts/utils.sh"
 show_separator "Cleaning"
 
-cd $odoo_workspace
+cd $ODOO_WORKSPACE
 docker compose down -v
 docker compose ps

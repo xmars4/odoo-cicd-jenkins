@@ -1,20 +1,12 @@
 #!/bin/bash
 
-#FIXME: remove redundant lines
-echo ${workspace}
-echo ${odoo_image_tag}
-echo ${odoo_workspace}
-echo ${odoo_addons_path}
-echo ${CONFIG_FILE}
-echo ${LOG_FILE}
-
-source "${workspace}/pipeline-scripts/utils.sh"
+source "${WORKSPACE}/pipeline-scripts/utils.sh"
 EXTRA_ADDONS=
 
 function build_odoo_image {
-    show_separator "Build Odoo image - tag: ${odoo_image_tag}"
-    cd "${odoo_workspace}/dockerfile"
-    docker build -q -t "${odoo_image_tag}" .
+    show_separator "Build Odoo image - tag: ${ODOO_IMAGE_TAG}"
+    cd "${ODOO_WORKSPACE}/dockerfile"
+    docker build -q -t "${ODOO_IMAGE_TAG}" .
 }
 
 function get_list_addons {
@@ -25,7 +17,7 @@ function get_list_addons {
 }
 
 function set_list_addons {
-    EXTRA_ADDONS=$(get_list_addons "$odoo_addons_path")
+    EXTRA_ADDONS=$(get_list_addons "$ODOO_ADDONS_PATH")
     if [ -z $EXTRA_ADDONS ]; then
         show_separator "Can't find any module in extra-addons folder"
         exit 1

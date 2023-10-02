@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source "${WORKSPACE}/pipeline-scripts/utils.sh"
-cd $odoo_workspace
+cd $ODOO_WORKSPACE
 
 ODOO_CONTAINER_ID=$(get_odoo_container_id)
 show_separator "Start analyzing log file"
@@ -24,8 +24,8 @@ function analyze_log {
 function send_error_notice_to_dev {
     analyze_log
     if [ $? -ne 0 ]; then
-        docker cp $ODOO_CONTAINER_ID:/var/log/odoo/odoo.log $odoo_workspace/logs/odoo.log
-        send_file_telegram $TELEGRAM_BOT_TOKEN $TELEGRAM_CHANNEL_ID $odoo_workspace/logs/odoo.log "Something went wrong, please check the log file"
+        docker cp $ODOO_CONTAINER_ID:/var/log/odoo/odoo.log $ODOO_WORKSPACE/logs/odoo.log
+        send_file_telegram $TELEGRAM_BOT_TOKEN $TELEGRAM_CHANNEL_ID $ODOO_WORKSPACE/logs/odoo.log "Something went wrong, please check the log file"
     fi
 }
 

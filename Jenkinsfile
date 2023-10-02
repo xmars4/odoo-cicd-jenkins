@@ -1,10 +1,9 @@
 node {
 
-    setup_global_variables()
-    git_checkout()
-
     stage('Prepare') {
         verify_tools()
+        setup_environment_variables()
+        git_checkout()
     }
 
     stage('Build') {
@@ -29,13 +28,12 @@ node {
 
 }
 
-def setup_global_variables() {
-    def workspace = env.WORKSPACE;
-    def odoo_image_tag = "xmars/odoo16-cicd"
-    def odoo_workspace = "${workspace}/odoo-docker-compose"
-    def odoo_addons_path = "${odoo_workspace}/extra-addons"
-    def CONFIG_FILE = "${odoo_workspace}/etc/odoo.conf"
-    def LOG_FILE = "/var/log/odoo/odoo.log" // file log is inside the odoo container
+def setup_environment_variables() {
+    env.ODOO_IMAGE_TAG = "xmars/odoo16-cicd"
+    env.ODOO_WORKSPACE = "${env.WORKSPACE}/odoo-docker-compose"
+    env.ODOO_ADDONS_PATH = "${ODOO_WORKSPACE}/extra-addons"
+    env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
+    env.LOG_FILE = "/var/log/odoo/odoo.log" // file log is inside the odoo container
 }
 
 def git_checkout() {
