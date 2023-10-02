@@ -4,9 +4,9 @@ source "${WORKSPACE}/pipeline-scripts/utils.sh"
 EXTRA_ADDONS=
 
 function build_odoo_image {
-    show_separator "Build Odoo image - tag: ${ODOO_IMAGE_TAG}"
-    cd "${ODOO_WORKSPACE}/dockerfile"
-    docker build -q -t "${ODOO_IMAGE_TAG}" .
+    show_separator "Build Odoo image - tag: ${odoo_image_tag}"
+    cd "${odoo_workspace}/dockerfile"
+    docker build -q -t "${odoo_image_tag}" .
 }
 
 function get_list_addons {

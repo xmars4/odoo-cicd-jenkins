@@ -50,9 +50,8 @@ def build() {
     try {
         sh './pipeline-scripts/build.sh'
     } catch (e) {
-        echo "Something went wrong, cleaning and stop this pipeline!"
         echo "$e"
-        sh './pipeline-scripts/clean.sh'
+        clean()
         sh 'exit 1'
     }
 }
@@ -65,7 +64,8 @@ def sonarqube_check_code_quality() {
 }
 
 def unit_test() {
-    withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
+    withCredentials([
+        string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
         string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
     ]) {
         try {
