@@ -30,7 +30,7 @@ node {
 
 def setup_environment_variables() {
     env.ODOO_IMAGE_TAG = "xmars/odoo16-cicd"
-    env.ODOO_WORKSPACE = "${env.WORKSPACE}/odoo-docker-compose"
+    env.ODOO_WORKSPACE = "${env.WORKSPACE}/odoo-docker-compose1"
     env.ODOO_ADDONS_PATH = "${ODOO_WORKSPACE}/extra-addons"
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // file log is inside the odoo container
@@ -49,12 +49,10 @@ def verify_tools() {
 }
 
 def build() {
-    try {
-        sh './pipeline-scripts/build.sh'
-    } catch (e) {
-        echo "$e"
+    def result = sh(script: './pipeline-scripts/build.sh', returnStatus:true)
+    if (result != 0){
         clean()
-        sh 'exit 1'
+        sh "exit $result"
     }
 }
 

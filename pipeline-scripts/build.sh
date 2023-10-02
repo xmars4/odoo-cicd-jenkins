@@ -44,6 +44,9 @@ function start_containers {
 function wait_until_odoo_available {
     ESITATE_TIME_EACH_ADDON=30
     ODOO_CONTAINER_ID=$(get_odoo_container_id)
+    if [ -z $ODOO_CONTAINER_ID ]; then
+        exit 1
+    fi
     show_separator "Hang on, Modules are being installed ..."
     # Assuming each addon needs 30s to install and run test cases
     # -> we can calculate total sec we have to wait until Odoo is up
