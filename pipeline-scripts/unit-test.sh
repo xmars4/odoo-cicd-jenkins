@@ -9,6 +9,7 @@ show_separator "Start analyzing log file"
 function analyze_log {
     # in case Odoo don't have any ERROR -> log file will be not generated
     # so no need to analyze log anymore
+    docker compose logs
     docker exec $ODOO_CONTAINER_ID sh -c "[ -f ${LOG_FILE} ]"
     # FIXMe: remove below line #14,15
     echo "can u see this log, checkkkk"
