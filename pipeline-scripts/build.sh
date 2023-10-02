@@ -43,7 +43,7 @@ function start_containers {
 
 function wait_until_odoo_available {
     ESITATE_TIME_EACH_ADDON=30
-    ODOO_CONTAINER_ID=$(get_odoo_container_id)
+    ODOO_CONTAINER_ID=
     if [ -z $ODOO_CONTAINER_ID ]; then
         exit 1
     fi
