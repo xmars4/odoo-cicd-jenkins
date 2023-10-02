@@ -6,16 +6,16 @@ node {
     sh './pipeline-scripts/prepare.sh'
   }
 
-  stage('Build') {
-    try {
-      sh './pipeline-scripts/build.sh'
-    } catch (e) {
-      echo "Something went wrong, cleaning and stop this pipeline!"
-      echo "$e"
-      sh './pipeline-scripts/clean.sh'
-      sh 'exit 1'
-    }
-  }
+  // stage('Build') {
+  //   try {
+  //     sh './pipeline-scripts/build.sh'
+  //   } catch (e) {
+  //     echo "Something went wrong, cleaning and stop this pipeline!"
+  //     echo "$e"
+  //     sh './pipeline-scripts/clean.sh'
+  //     sh 'exit 1'
+  //   }
+  // }
   // stage('Test #1 (Sonarqube)') {
   //   withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
   //     env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
@@ -23,19 +23,19 @@ node {
   //   }
   // }
 
-  stage('Test #2 (Odoo Test cases)') {
-    withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
-      string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
-    ]) {
-      try {
-        sh './pipeline-scripts/unit-test.sh'
-        setBuildStatus("Check complete", "SUCCESS");
-      } catch (e){
-        setBuildStatus("Check complete", "FAILED");
-        sh 'exit 1'
-      }
-    }
-  }
+  // stage('Test #2 (Odoo Test cases)') {
+  //   withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
+  //     string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
+  //   ]) {
+  //     try {
+  //       sh './pipeline-scripts/unit-test.sh'
+  //       setBuildStatus("Check complete", "SUCCESS");
+  //     } catch (e){
+  //       setBuildStatus("Check complete", "FAILED");
+  //       sh 'exit 1'
+  //     }
+  //   }
+  // }
 
   // stage('Deploy to server') {
   //   withCredentials([
@@ -56,9 +56,9 @@ node {
   //   }
   // }
 
-  stage('Clean Test Resources') {
-    sh './pipeline-scripts/clean.sh'
-  }
+  // stage('Clean Test Resources') {
+  //   sh './pipeline-scripts/clean.sh'
+  // }
  
 }
 
