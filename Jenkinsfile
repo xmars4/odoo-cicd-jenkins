@@ -1,9 +1,10 @@
 node {
 
-  // checkout scm
+  
 
   stage('Prepare') {
-    sh './pipeline-scripts/prepare.sh'
+    prepare()
+    // sh './pipeline-scripts/prepare.sh'
   }
 
   // stage('Build') {
@@ -73,3 +74,7 @@ void setBuildStatus(String message, String state) {
   ]);
 }
 
+def prepare() {
+  checkout scm
+  sh './pipeline-scripts/prepare.sh'
+}
