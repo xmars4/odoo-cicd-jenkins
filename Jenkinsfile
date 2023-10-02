@@ -1,7 +1,10 @@
 node {
 
+    setup_global_variables()
+    git_checkout()
+
     stage('Prepare') {
-        prepare()
+        verify_tools()
     }
 
     stage('Build') {
@@ -26,31 +29,25 @@ node {
 
 }
 
-// https://plugins.jenkins.io/github/#plugin-content-pipeline-examples
-void setBuildStatus(String message, String state) {
-    step([
-        $class: "GitHubCommitStatusSetter",
-        // reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/xmars4/odoo-cicd-jenkins"],
-        contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-        errorHandlers: [
-            [$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]
-        ],
-        statusResultSource: [$class: "ConditionalStatusResultSource", results: [
-            [$class: "AnyBuildResult", message: message, state: state]
-        ]]
-    ]);
-}
 
-def prepare() {
-    checkout scm
-    sh './pipeline-scripts/prepare.sh'
-    
+
+
+
+def setup_global_variables() {
     def workspace = env.WORKSPACE;
     def odoo_image_tag="xmars/odoo16-cicd"
     def odoo_workspace = "${workspace}/odoo-docker-compose"
     def odoo_addons_path= "${odoo_workspace}/extra-addons"
     def CONFIG_FILE="${odoo_workspace}/etc/odoo.conf"
     def LOG_FILE="/var/log/odoo/odoo.log" // file log is inside the odoo container
+}
+
+def git_checkout(){
+    checkout scm
+}
+
+def verify_tools() {
+    sh './pipeline-scripts/verify.sh'
 }
 
 def build() {
@@ -104,4 +101,19 @@ def deploy_to_server() {
 
 def clean_test_resource() {
     sh './pipeline-scripts/clean.sh'
+}
+
+// https://plugins.jenkins.io/github/#plugin-content-pipeline-examples
+void setBuildStatus(String message, String state) {
+    step([
+        $class: "GitHubCommitStatusSetter",
+        // reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/xmars4/odoo-cicd-jenkins"],
+        contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+        errorHandlers: [
+            [$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]
+        ],
+        statusResultSource: [$class: "ConditionalStatusResultSource", results: [
+            [$class: "AnyBuildResult", message: message, state: state]
+        ]]
+    ]);
 }

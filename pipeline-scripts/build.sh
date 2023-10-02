@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${WORKSPACE}/pipeline-scripts/utils.sh"
+source "${workspace}/pipeline-scripts/utils.sh"
 EXTRA_ADDONS=
 
 function build_odoo_image {
