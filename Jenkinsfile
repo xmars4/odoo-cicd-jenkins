@@ -37,28 +37,28 @@ node {
     }
   }
 
-  stage('Deploy to server') {
-    withCredentials([
-      sshUserPrivateKey(credentialsId: 'server-credentail',
-        keyFileVariable: 'server_privatekey',
-        passphraseVariable: '',
-        usernameVariable: 'server_username'),
-      file(credentialsId: 'server-github-privatekey',
-        variable: 'server_github_privatekey_file')
-    ]) {
-      // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
-      // ref: https://issues.jenkins.io/browse/JENKINS-65533
-      // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
-      // so we'll execute ssh manually
+  // stage('Deploy to server') {
+  //   withCredentials([
+  //     sshUserPrivateKey(credentialsId: 'server-credentail',
+  //       keyFileVariable: 'server_privatekey',
+  //       passphraseVariable: '',
+  //       usernameVariable: 'server_username'),
+  //     file(credentialsId: 'server-github-privatekey',
+  //       variable: 'server_github_privatekey_file')
+  //   ]) {
+  //     // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
+  //     // ref: https://issues.jenkins.io/browse/JENKINS-65533
+  //     // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
+  //     // so we'll execute ssh manually
 
-      sh './pipeline-scripts/deploy.sh'
+  //     sh './pipeline-scripts/deploy.sh'
       
-    }
-  }
+  //   }
+  // }
 
-  stage('Clean Test Resources') {
-    sh './pipeline-scripts/clean.sh'
-  }
+  // stage('Clean Test Resources') {
+  //   sh './pipeline-scripts/clean.sh'
+  // }
  
 }
 
