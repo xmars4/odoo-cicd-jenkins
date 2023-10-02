@@ -3,6 +3,7 @@ node {
   
 
   stage('Prepare') {
+    echo "runn..."
     prepare()
     // sh './pipeline-scripts/prepare.sh'
   }
