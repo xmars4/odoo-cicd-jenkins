@@ -44,7 +44,7 @@ def verify_tools() {
     def result = sh(script: './pipeline-scripts/verify.sh', returnStatus:true)
     if (result != 0) {
         // misisng required tools, stop pipeline immediately
-        exit 0
+        exit $result
     }
 }
 
