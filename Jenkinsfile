@@ -29,20 +29,16 @@ node {
 
 }
 
-
-
-
-
 def setup_global_variables() {
     def workspace = env.WORKSPACE;
-    def odoo_image_tag="xmars/odoo16-cicd"
+    def odoo_image_tag = "xmars/odoo16-cicd"
     def odoo_workspace = "${workspace}/odoo-docker-compose"
-    def odoo_addons_path= "${odoo_workspace}/extra-addons"
-    def CONFIG_FILE="${odoo_workspace}/etc/odoo.conf"
-    def LOG_FILE="/var/log/odoo/odoo.log" // file log is inside the odoo container
+    def odoo_addons_path = "${odoo_workspace}/extra-addons"
+    def CONFIG_FILE = "${odoo_workspace}/etc/odoo.conf"
+    def LOG_FILE = "/var/log/odoo/odoo.log" // file log is inside the odoo container
 }
 
-def git_checkout(){
+def git_checkout() {
     checkout scm
 }
 
