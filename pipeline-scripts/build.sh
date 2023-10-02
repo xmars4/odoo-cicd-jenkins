@@ -17,7 +17,7 @@ function get_list_addons {
 }
 
 function set_list_addons {
-    EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
+    EXTRA_ADDONS=$(get_list_addons "$odoo_addons_path")
     if [ -z $EXTRA_ADDONS ]; then
         show_separator "Can't find any module in extra-addons folder"
         exit 1

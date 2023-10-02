@@ -1,10 +1,10 @@
 #!/bin/bash
 
-odoo_workspace="${WORKSPACE}/odoo-docker-compose"
-odoo_image_tag="xmars/odoo16-cicd"
-EXTRA_ADDONS_PATH="${odoo_workspace}/extra-addons"
-CONFIG_FILE="${odoo_workspace}/etc/odoo.conf"
-LOG_FILE="/var/log/odoo/odoo.log" # inside odoo container
+# odoo_workspace="${WORKSPACE}/odoo-docker-compose"
+# odoo_image_tag="xmars/odoo16-cicd"
+# odoo_addons_path="${odoo_workspace}/extra-addons"
+# CONFIG_FILE="${odoo_workspace}/etc/odoo.conf"
+# LOG_FILE="/var/log/odoo/odoo.log" # inside odoo container
 
 # declare all useful functions here
 function show_separator {
