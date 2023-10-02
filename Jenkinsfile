@@ -30,7 +30,7 @@ node {
 
 def setup_environment_variables() {
     env.ODOO_IMAGE_TAG = "xmars/odoo16-cicd"
-    env.ODOO_WORKSPACE = "${env.WORKSPACE}/odoo-docker-compose1"
+    env.ODOO_WORKSPACE = "${env.WORKSPACE}/odoo-docker-compose"
     env.ODOO_ADDONS_PATH = "${ODOO_WORKSPACE}/extra-addons"
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // file log is inside the odoo container
