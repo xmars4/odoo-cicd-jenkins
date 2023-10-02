@@ -175,7 +175,7 @@
 
 -   ![Flow](img/CI-CD-flow.png)
 
--   Run Jenkins from [docker-compose.yml](docker-compose/docker-compose.yml) file using a **[bind mount](https://github.com/jenkinsci/docker/blob/master/README.md#usage)** volume:
+-   Run Jenkins from [docker-compose.yml](jenkins-docker-compose/docker-compose.yml) file using a **[bind mount](https://github.com/jenkinsci/docker/blob/master/README.md#usage)** volume:
 
     ```bash
     touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied
