@@ -45,11 +45,13 @@ def prepare() {
     checkout scm
     sh './pipeline-scripts/prepare.sh'
     
-    def odoo_workspace="${WORKSPACE}/odoo-docker-compose"
+    def workspace = env.WORKSPACE;
+    def odoo_workspace= workspace + "/odoo-docker-compose"
     def odoo_image_tag="xmars/odoo16-cicd"
-    def odoo_addons_path="${odoo_workspace}/extra-addons"
-    def CONFIG_FILE="${odoo_workspace}/etc/odoo.conf"
+    def odoo_addons_path=odoo_workspace + "/extra-addons"
+    def CONFIG_FILE=odoo_workspace +"/etc/odoo.conf"
     def LOG_FILE="/var/log/odoo/odoo.log" // file log is inside the odoo container
+    echo workspace odoo_workspace odoo_image_tag odoo_addons_path CONFIG_FILE LOG_FILE
 }
 
 def build() {
