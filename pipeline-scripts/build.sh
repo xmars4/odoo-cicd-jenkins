@@ -45,7 +45,7 @@ function wait_until_odoo_available {
     ESITATE_TIME_EACH_ADDON=30
     ODOO_CONTAINER_ID=$(get_odoo_container_id)
     if [ -z $ODOO_CONTAINER_ID ]; then
-        echo "Can't find an Odoo running instance!"
+        echo "Odoo instance is not running, stop immediately!"
         exit 1
     fi
     show_separator "Hang on, Modules are being installed ..."
