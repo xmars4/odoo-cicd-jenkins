@@ -18,6 +18,7 @@ node {
     //     unit_test()
     // }
 
+// TODO: if pull request is merge, after test success, we'll deploy it to remote server
     // stage('Deploy to server') {
     //     deploy_to_server()
     // }
