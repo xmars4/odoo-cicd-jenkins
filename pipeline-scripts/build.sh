@@ -17,7 +17,7 @@ function get_list_addons {
 }
 
 function set_list_addons {
-    EXTRA_ADDONS=$(get_list_addons "$EXTRA_ADDONS_PATH")
+    EXTRA_ADDONS=$(get_list_addons "$ODOO_ADDONS_PATH")
     if [ -z $EXTRA_ADDONS ]; then
         show_separator "Can't find any module in extra-addons folder"
         exit 1
@@ -33,7 +33,7 @@ function update_config_file {
     # Odoo's suggestion:  Unit testing in workers mode could fail; use --workers 0.
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
-    echo -e "\ncommand = --workers 0 -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
+    echo -e "\ncommand = --workers 0 -i "${EXTRA_ADDONS}"  --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
 }
 
 function start_containers {
@@ -44,10 +44,14 @@ function start_containers {
 function wait_until_odoo_available {
     ESITATE_TIME_EACH_ADDON=30
     ODOO_CONTAINER_ID=$(get_odoo_container_id)
+    if [ -z $ODOO_CONTAINER_ID ]; then
+        echo "Odoo instance is not running, stop immediately!"
+        exit 1
+    fi
     show_separator "Hang on, Modules are being installed ..."
     # Assuming each addon needs 30s to install and run test cases
     # -> we can calculate total sec we have to wait until Odoo is up
-    # so the log file will be complete
+    # and the log file will be complete
     IFS=',' read -ra separate_addons_list <<<$EXTRA_ADDONS
     total_addons=${#separate_addons_list[@]}
     # each block wait 5s

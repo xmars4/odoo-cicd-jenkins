@@ -29,7 +29,7 @@ services:
         #     - "18072:8072"
         volumes:
             - ./extra-addons:/mnt/extra-addons # customize addons
-            - ./et-addons:/mnt/et-addons # odoo enterprise addons
+            - ./et-addons:/mnt/et-addons # odoo enterprise addons.
             - ./etc:/etc/odoo
             # - ./logs:/var/log/odoo
         networks:

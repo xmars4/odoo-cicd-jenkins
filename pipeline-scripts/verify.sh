@@ -1,7 +1,7 @@
 #!/bin/bash
 source "${WORKSPACE}/pipeline-scripts/utils.sh"
-show_separator "Verify tooling"
+show_separator "Verify required tools in Jenkins"
 
-docker -v
+docker ps -n 1
 docker compose version
 curl -V

@@ -175,7 +175,7 @@
 
 -   ![Flow](img/CI-CD-flow.png)
 
--   Run Jenkins from [docker-compose.yml](docker-compose/docker-compose.yml) file using a **[bind mount](https://github.com/jenkinsci/docker/blob/master/README.md#usage)** volume:
+-   Run Jenkins from [docker-compose.yml](jenkins-docker-compose/docker-compose.yml) file using a **[bind mount](https://github.com/jenkinsci/docker/blob/master/README.md#usage)** volume:
 
     ```bash
     touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied
@@ -197,3 +197,5 @@
     ](https://www.youtube.com/watch?v=ZabUz6sl-8I)
 
 -   [Binding credentails to variable](https://www.jenkins.io/doc/pipeline/steps/credentials-binding/)
+-   permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock -> check Jenkins Dockerfile , line 17,18
+    to create a new group mapped with docker group on host

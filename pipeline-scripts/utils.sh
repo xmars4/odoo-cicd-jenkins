@@ -24,28 +24,22 @@ check_variable_missing_value() {
 
 # ------------------ Telegram functions -------------------------
 send_file_telegram() {
-    BOT_TOKEN=$1
-    CHAT_ID=$2
+    bot_token=$1
+    chat_id=$2
     file_path=$3
     caption=$4
-    curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
-        -F "chat_id=$CHAT_ID" \
+    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
+        -F "chat_id=$chat_id" \
         -F "document=@$file_path" \
         -F "caption=$caption"
 }
 
 send_message_telegram() {
-    BOT_TOKEN=$1
-    CHAT_ID=$2
+    bot_token=$1
+    chat_id=$2
     message=$3
-    curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
-        -d "chat_id=$CHAT_ID" \
+    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
+        -d "chat_id=$chat_id" \
         -d "text=$message"
 }
 # ------------------ Telegram functions -------------------------
-
-ODOO_WORKSPACE="${WORKSPACE}/odoo-docker-compose"
-ODOO_IMAGE_TAG="xmars/odoo16-cicd"
-EXTRA_ADDONS_PATH="${ODOO_WORKSPACE}/extra-addons"
-CONFIG_FILE="${ODOO_WORKSPACE}/etc/odoo.conf"
-LOG_FILE="/var/log/odoo/odoo.log"
