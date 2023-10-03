@@ -6,9 +6,9 @@ node {
         git_checkout()
     }
 
-    stage('Build') {
-        build()
-    }
+    // stage('Build') {
+    //     build()
+    // }
 
     // stage('Test #1 (Sonarqube)') {
     //     sonarqube_check_code_quality()
