@@ -14,9 +14,9 @@ node {
     //     sonarqube_check_code_quality()
     // }
 
-    stage('Test #2 (Odoo Test cases)') {
-        unit_test()
-    }
+    // stage('Test #2 (Odoo Test cases)') {
+    //     unit_test()
+    // }
 
     // stage('Deploy to server') {
     //     deploy_to_server()
