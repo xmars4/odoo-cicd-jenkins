@@ -1,6 +1,17 @@
 node {
 
+    properties([
+        pipelineTriggers([
+            [$class: 'GenericTrigger',
+              genericVariables: [
+                [key: 'action', value: '$.action']
+              ]
+            ]
+        ])
+    ])
+
     stage('Prepare') {
+        echo "$action =>> yeah"
         git_checkout()
         verify_tools()
         setup_environment_variables()
