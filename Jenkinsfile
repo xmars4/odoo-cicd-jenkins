@@ -11,7 +11,7 @@ node {
     // ])
 
     stage('Prepare') {
-        echo "$action =>> yeah"
+        echo "$action =>> yetry harder ah"
         git_checkout()
         verify_tools()
         setup_environment_variables()
