@@ -1,9 +1,9 @@
 node {
 
     stage('Prepare') {
+        git_checkout()
         verify_tools()
         setup_environment_variables()
-        git_checkout()
     }
 
     // stage('Build') {
