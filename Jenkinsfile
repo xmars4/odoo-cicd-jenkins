@@ -19,6 +19,7 @@ node {
     // }
 
     // TODO: if pull request is merge, after test success, we'll deploy it to remote server...
+    // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request-and-issue-comment.feature
     // stage('Deploy to server') {
     //     deploy_to_server()
     // }
