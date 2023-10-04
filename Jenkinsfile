@@ -1,14 +1,14 @@
 node {
 
-    properties([
-        pipelineTriggers([
-            [$class: 'GenericTrigger',
-              genericVariables: [
-                [key: 'action', value: '$.action']
-              ]
-            ]
-        ])
-    ])
+    // properties([
+    //     pipelineTriggers([
+    //         [$class: 'GenericTrigger',
+    //           genericVariables: [
+    //             [key: 'action', value: '$.action']
+    //           ]
+    //         ]
+    //     ])
+    // ])
 
     stage('Prepare') {
         echo "$action =>> yeah"
