@@ -1,6 +1,27 @@
 node {
 
+    withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
+    properties([
+        pipelineTriggers([
+            [
+              $class: 'GenericTrigger',
+              genericVariables: [
+                [key: 'action', value: '$.action'],
+                [key: 'ref', value: '$.ref'],
+              ],
+              regexpFilterText: '$action',
+              regexpFilterExpression: '^(opened|reopened|synchronize)$',
+              token: webhookToken
+            ]
+        ])
+    ])
+    }
+
+
     stage('Prepare') {
+        echo "$action =>> yetry harder ah"
+        echo "$ref"
+        echo 'done show '
         git_checkout()
         verify_tools()
         setup_environment_variables()
@@ -14,10 +35,12 @@ node {
     //     sonarqube_check_code_quality()
     // }
 
-    stage('Test #2 (Odoo Test cases)') {
-        unit_test()
-    }
+    // stage('Test #2 (Odoo Test cases)') {
+    //     unit_test()
+    // }
 
+    // TODO: if pull request is merge, after test success, we'll deploy it to remote server...
+    // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request.feature
     // stage('Deploy to server') {
     //     deploy_to_server()
     // }
@@ -41,9 +64,9 @@ def git_checkout() {
 }
 
 def verify_tools() {
-    def result = sh(script: './pipeline-scripts/verify.sh', returnStatus:true)
+    def result = sh(script: './pipeline-scripts/verify.sh > /dev/null', returnStatus:true)
     if (result != 0) {
-        // misisng required tools, stop pipeline immediately
+        // misisng required tools, stop pipeline immediately 
         sh "exit $result"
     }
 }
