@@ -6,9 +6,17 @@ node {
             [
               $class: 'GenericTrigger',
               genericVariables: [
-                [key: 'action', value: '$.action'],
-                [key: 'ref', value: '$.ref'],
-                [key: 'pr_url', value: '$.pull_request.html_url']
+                [key: 'action          ', value: '$.action                        ',expressionType: 'JSONPath'],
+                [key: 'pr_id           ', value: '$.pull_request.id               ',expressionType: 'JSONPath'],
+                [key: 'pr_state        ', value: '$.pull_request.state            ',expressionType: 'JSONPath'],
+                [key: 'pr_title        ', value: '$.pull_request.title            ',expressionType: 'JSONPath'],
+                [key: 'pr_from_ref     ', value: '$.pull_request.head.ref         ',expressionType: 'JSONPath'],
+                [key: 'pr_from_sha     ', value: '$.pull_request.head.sha         ',expressionType: 'JSONPath'],
+                [key: 'pr_from_git_url ', value: '$.pull_request.head.repo.clone_url',expressionType: 'JSONPath'],
+                [key: 'pr_to_ref       ', value: '$.pull_request.base.ref         ',expressionType: 'JSONPath'],
+                [key: 'pr_to_sha       ', value: '$.pull_request.base.sha         ',expressionType: 'JSONPath'],
+                [key: 'pr_to_git_url   ', value: '$.pull_request.base.repo.git_url',expressionType: 'JSONPath'],
+                [key: 'repo_git_url    ', value: '$.repository.git_url            ',expressionType: 'JSONPath']
               ],
               causeString: 'Triggered from PR: $pr_url',
               regexpFilterText: '$action',
@@ -25,8 +33,8 @@ node {
 
     stage('Prepare') {
         echo "$action =>> yetry harder ah"
-        echo "$ref"
-        echo 'done show '
+        echo "$pr_from_git_url"
+        echo '$pr_to_git_url'
         git_checkout()
         verify_tools()
         setup_environment_variables()
