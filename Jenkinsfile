@@ -14,7 +14,7 @@ node {
     stage('Prepare') {
         echo "$action =>> yetry harder ah"
         echo "$ref"
-        echo 'done show'
+        echo 'done show '
         git_checkout()
         verify_tools()
         setup_environment_variables()
