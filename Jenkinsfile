@@ -12,16 +12,18 @@ node {
                 [key: 'pr_title        ', value: '$.pull_request.title            ',expressionType: 'JSONPath'],
                 [key: 'pr_from_ref     ', value: '$.pull_request.head.ref         ',expressionType: 'JSONPath'],
                 [key: 'pr_from_sha     ', value: '$.pull_request.head.sha         ',expressionType: 'JSONPath'],
-                [key: 'pr_from_git_url ', value: '$.pull_request.head.repo.clone_url',expressionType: 'JSONPath'],
+                [key: 'pr_from_git_url ', value: '$.pull_request.head.repo.git_url',expressionType: 'JSONPath'],
                 [key: 'pr_to_ref       ', value: '$.pull_request.base.ref         ',expressionType: 'JSONPath'],
                 [key: 'pr_to_sha       ', value: '$.pull_request.base.sha         ',expressionType: 'JSONPath'],
                 [key: 'pr_to_git_url   ', value: '$.pull_request.base.repo.git_url',expressionType: 'JSONPath'],
-                [key: 'repo_git_url    ', value: '$.repository.git_url            ',expressionType: 'JSONPath']
+                [key: 'repo_git_url    ', value: '$.repository.git_url            ',expressionType: 'JSONPath'],
+                             [ key: 'draft_pr', value: '$.pull_request.draft'],
               ],
               causeString: 'Triggered from PR: $pr_url',
-              regexpFilterText: '$action',
-              regexpFilterExpression: '^(opened|reopened|synchronize)$',
               token: webhookToken,
+              regexpFilterText: '$action#$draft_pr',
+              regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)'
+     )
 
               printContributedVariables: true,
               printPostContent: true,
