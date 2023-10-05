@@ -18,14 +18,11 @@ node {
                         [key: 'pr_to_git_url', value: '$.pull_request.base.repo.git_url', expressionType: 'JSONPath'],
                         [key: 'repo_git_url', value: '$.repository.git_url', expressionType: 'JSONPath'],
                         [key: 'draft_pr', value: '$.pull_request.draft'],
-                        [key: 'changed_files', value: '$.commits[*].[\'modified\',\'added\',\'removed\'][*]', expressionType: 'JSONPath'],
                     ],
                     causeString: 'Triggered from PR: $pr_url',
                     token: webhookToken,
-                    //   regexpFilterText: '$action#$draft_pr',
-                    //   regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)',
-                    regexpFilterText: '$changed_files',
-                    regexpFilterExpression: '.*',
+                    regexpFilterText: '$action#$draft_pr',
+                    regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)',
                     printContributedVariables: true,
                     printPostContent: true,
                 ]
@@ -34,7 +31,7 @@ node {
     }
 
     stage('Prepare') {
-        echo "$action =>> yetry harder ah"
+        // echo "$action =>> yetry harder ah"
         echo "$pr_from_git_url"
         echo '$pr_to_git_url'
         git_checkout()
