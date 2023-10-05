@@ -7,7 +7,7 @@ node {
                     $class: 'GenericTrigger',
                     genericVariables: [
                         [key: 'action', value: '$.action', expressionType: 'JSONPath'],
-                        [key: 'pr_id', value: '$.pull_request.id', expressionType: 'JSONPath'],
+                        [key: 'pr_id', value: '$.pull_request.number', expressionType: 'JSONPath'],
                         [key: 'pr_state', value: '$.pull_request.state', expressionType: 'JSONPath'],
                         [key: 'pr_title', value: '$.pull_request.title', expressionType: 'JSONPath'],
                         [key: 'pr_from_ref', value: '$.pull_request.head.ref', expressionType: 'JSONPath'],
@@ -34,7 +34,9 @@ node {
         // echo "$action =>> yetry harder ah"
         echo "$pr_from_git_url"
         echo '$pr_to_git_url'
-        git_checkout()
+        git_checkout_pull_request
+        sh 'ls -lah .'
+        // git_checkout()
         verify_tools()
         setup_environment_variables()
     }
@@ -73,6 +75,13 @@ def setup_environment_variables() {
 
 def git_checkout() {
     checkout scm
+}
+
+def git_checkout_pull_request() {
+    checkout scmGit(
+    branches: [[name: "pr/$pr_id"]],
+    extensions: [ cloneOption(honorRefspec: true) ],
+    userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
 }
 
 def verify_tools() {
