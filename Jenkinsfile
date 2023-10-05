@@ -7,7 +7,7 @@ node {
                     $class: 'GenericTrigger',
                     genericVariables: [
                         [key: 'action', value: '$.action', expressionType: 'JSONPath'],
-                        [key: 'pr_id', value: '$.pull_request.number', expressionType: 'JSONPath'],
+                        [key: 'pr_id', value: '$.number', expressionType: 'JSONPath'],
                         [key: 'pr_state', value: '$.pull_request.state', expressionType: 'JSONPath'],
                         [key: 'pr_title', value: '$.pull_request.title', expressionType: 'JSONPath'],
                         [key: 'pr_from_ref', value: '$.pull_request.head.ref', expressionType: 'JSONPath'],
@@ -159,4 +159,4 @@ void setBuildStatus(String message, String state) {
         ]]
     ]);
 }
-// 1  .
+// 1  . 
