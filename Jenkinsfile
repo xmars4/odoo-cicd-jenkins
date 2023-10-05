@@ -17,6 +17,7 @@ node {
                         [key: 'pr_to_sha', value: '$.pull_request.base.sha', expressionType: 'JSONPath'],
                         [key: 'pr_to_git_url', value: '$.pull_request.base.repo.git_url', expressionType: 'JSONPath'],
                         [key: 'repo_git_url', value: '$.repository.git_url', expressionType: 'JSONPath'],
+                        [key: 'pr_url', value: '$.pull_request.html_url'],
                         [key: 'draft_pr', value: '$.pull_request.draft'],
                     ],
                     causeString: 'Triggered from PR: $pr_url',
@@ -53,7 +54,7 @@ node {
     //     unit_test()
     // }
 
-    // TODO: if pull request is merge, after test success, we'll deploy it to remote server...
+    // TODO: if pull request is merge, after test success, we'll deploy it to remote server..
     // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request.feature
     // stage('Deploy to server') {
     //     deploy_to_server()
