@@ -8,10 +8,15 @@ node {
               genericVariables: [
                 [key: 'action', value: '$.action'],
                 [key: 'ref', value: '$.ref'],
+                [key: 'pr_url', value: '$.pull_request.html_url']
               ],
+              causeString: 'Triggered from PR: $pr_url',
               regexpFilterText: '$action',
               regexpFilterExpression: '^(opened|reopened|synchronize)$',
-              token: webhookToken
+              token: webhookToken,
+
+              printContributedVariables: true,
+              printPostContent: true,
             ]
         ])
     ])
