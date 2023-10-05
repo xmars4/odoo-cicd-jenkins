@@ -54,7 +54,7 @@ def git_checkout() {
 }
 
 def verify_tools() {
-    def result = sh(script: 'pwd && ./pipeline-scripts/verify.sh', returnStatus:true)
+    def result = sh(script: './pipeline-scripts/verify.sh > /dev/null 2&>1', returnStatus:true)
     if (result != 0) {
         // misisng required tools, stop pipeline immediately
         sh "exit $result"
