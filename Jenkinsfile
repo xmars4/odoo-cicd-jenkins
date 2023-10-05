@@ -1,15 +1,22 @@
 node {
 
+    withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
     properties([
         pipelineTriggers([
-            [$class: 'GenericTrigger',
+            [
+              $class: 'GenericTrigger',
               genericVariables: [
                 [key: 'action', value: '$.action'],
                 [key: 'ref', value: '$.ref'],
-              ]
+              ],
+              regexpFilterText: '$action',
+              regexpFilterExpression: '^(opened|reopened|synchronize)$',
+              token: webhookToken
             ]
         ])
     ])
+    }
+
 
     stage('Prepare') {
         echo "$action =>> yetry harder ah"
@@ -33,7 +40,7 @@ node {
     // }
 
     // TODO: if pull request is merge, after test success, we'll deploy it to remote server...
-    // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request-and-issue-comment.feature
+    // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request.feature
     // stage('Deploy to server') {
     //     deploy_to_server()
     // }
