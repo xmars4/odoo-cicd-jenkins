@@ -37,8 +37,8 @@ node {
         git_checkout_pull_request()
         sh 'ls -lah .'
         // git_checkout()
-        verify_tools()
-        setup_environment_variables()
+        // verify_tools()
+        // setup_environment_variables()
     }
 
     // stage('Build') {
@@ -79,9 +79,10 @@ def git_checkout() {
 
 def git_checkout_pull_request() {
     checkout scmGit(
-    branches: [[name: "pr/$pr_id"]],
-    extensions: [ cloneOption(honorRefspec: true) ],
-    userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
+        branches: [[name: "pr/$pr_id"]],
+        // extensions: [ cloneOption(honorRefspec: true) ],
+        userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']]
+    )
 }
 
 def verify_tools() {
