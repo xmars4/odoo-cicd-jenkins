@@ -21,10 +21,11 @@ node {
               ],
               causeString: 'Triggered from PR: $pr_url',
               token: webhookToken,
-              regexpFilterText: '$action#$draft_pr',
-              regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)'
+            //   regexpFilterText: '$action#$draft_pr',
+            //   regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)',
+              regexpFilterText: '$repo_git_url',
+              regexpFilterExpression: '.*',
      )
-
               printContributedVariables: true,
               printPostContent: true,
             ]
