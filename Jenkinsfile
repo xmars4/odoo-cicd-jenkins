@@ -24,7 +24,6 @@ node {
               regexpFilterText: '$action#$draft_pr',
               regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)'
      )
-
               printContributedVariables: true,
               printPostContent: true,
             ]
