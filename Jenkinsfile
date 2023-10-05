@@ -4,7 +4,8 @@ node {
         pipelineTriggers([
             [$class: 'GenericTrigger',
               genericVariables: [
-                [key: 'action', value: '$.action']
+                [key: 'action', value: '$.action'],
+                [key: 'ref', value: '$.ref'],
               ]
             ]
         ])
@@ -12,6 +13,8 @@ node {
 
     stage('Prepare') {
         echo "$action =>> yetry harder ah"
+        echo "$ref"
+        echo 'done'
         git_checkout()
         verify_tools()
         setup_environment_variables()
