@@ -23,7 +23,7 @@ node {
                     token: webhookToken,
                     regexpFilterText: '$action#$draft_pr',
                     regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)',
-                    printContributedVariables: true,
+                    printContributedVariables: false,
                     printPostContent: false,
                 ]
             ])
@@ -33,7 +33,7 @@ node {
     stage('Prepare') {
         // echo "$action =>> yetry harder ah"
         echo "$pr_from_git_url"
-        echo '$pr_to_git_url'
+        echo '\$pr_to_git_url'
         git_checkout_pull_request()
         sh 'ls -lah .'
         // git_checkout()
