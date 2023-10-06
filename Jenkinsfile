@@ -79,7 +79,10 @@ def git_checkout() {
     
     checkout scmGit(
     branches: [[name: '*/pr/4*']],
-    extensions: [ cloneOption(honorRefspec: true) ],
+    extensions: [
+        cloneOption(honorRefspec: true), 
+        [$class: 'LocalBranch', localBranch: "release/0.0.1"] 
+    ],
     userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
 }
 
