@@ -1,7 +1,9 @@
+// disable default checkout, so we can checkout specified branch
 skipDefaultCheckout()
+
 node {
 
-    // disable default checkout, so we can checkout specified branch
+    
     
     withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
         properties([
