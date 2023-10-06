@@ -7,7 +7,7 @@ node {
                     $class: 'GenericTrigger',
                     genericVariables: [
                         [key: 'action', value: '$.action', expressionType: 'JSONPath'],
-                        [key: 'pr_id', value: '$.pull_request.number', expressionType: 'JSONPath'],
+                        [key: 'pr_id', value: '$.number', expressionType: 'JSONPath'],
                         [key: 'pr_state', value: '$.pull_request.state', expressionType: 'JSONPath'],
                         [key: 'pr_title', value: '$.pull_request.title', expressionType: 'JSONPath'],
                         [key: 'pr_from_ref', value: '$.pull_request.head.ref', expressionType: 'JSONPath'],
@@ -17,6 +17,7 @@ node {
                         [key: 'pr_to_sha', value: '$.pull_request.base.sha', expressionType: 'JSONPath'],
                         [key: 'pr_to_git_url', value: '$.pull_request.base.repo.git_url', expressionType: 'JSONPath'],
                         [key: 'repo_git_url', value: '$.repository.git_url', expressionType: 'JSONPath'],
+                        [key: 'pr_url', value: '$.pull_request.html_url'],
                         [key: 'draft_pr', value: '$.pull_request.draft'],
                     ],
                     causeString: 'Triggered from PR: $pr_url',
@@ -32,11 +33,11 @@ node {
 
     stage('Prepare') {
         // echo "$action =>> yetry harder ah"
-            checkout scmGit(
-    branches: [[name: 'pr/4/*']],
-    extensions: [ cloneOption(honorRefspec: true) ],
-    userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
+        echo "$pr_from_git_url"
+        echo "$pr_to_git_url"
+        git_checkout()
         sh 'ls -lah .'
+        echo 'hihi'
         // git_checkout()
         // verify_tools()
         // setup_environment_variables()
@@ -54,7 +55,7 @@ node {
     //     unit_test()
     // }
 
-    // TODO: if pull request is merge, after test success, we'll deploy it to remote server...
+    // TODO: if pull request is merge, after test success, we'll deploy it to remote server.
     // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request.feature
     // stage('Deploy to server') {
     //     deploy_to_server()
@@ -75,13 +76,16 @@ def setup_environment_variables() {
 }
 
 def git_checkout() {
-    checkout scm
+    
+    checkout scmGit(
+    branches: [[name: '*/pr/4*']],
+    extensions: [ cloneOption(honorRefspec: true) ],
+    userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
 }
 
 def git_checkout_pull_request() {
     checkout scmGit(
-        branches: [[name: "pr/$pr_id"]],
-        extensions: [ cloneOption(honorRefspec: true) ],
+        branches: [[name: "refs/pull/4/head"]],
     )
 }
 
@@ -158,3 +162,4 @@ void setBuildStatus(String message, String state) {
         ]]
     ]);
 }
+// 1  . 
