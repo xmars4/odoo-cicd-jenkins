@@ -1,3 +1,0 @@
-add sometext here, and stop it
-
-^(refs\/remotes\/origin).*|^(pr\/[0-9]+).*
