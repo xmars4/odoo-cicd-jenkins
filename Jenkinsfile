@@ -1,8 +1,8 @@
+skipDefaultCheckout()
 node {
 
     // disable default checkout, so we can checkout specified branch
-    skipDefaultCheckout()
-
+    
     withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
         properties([
             pipelineTriggers([
