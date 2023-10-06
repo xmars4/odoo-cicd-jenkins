@@ -1,5 +1,8 @@
 node {
 
+    // disable default checkout, so we can checkout specified branch
+    skipDefaultCheckout()
+
     withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
         properties([
             pipelineTriggers([
@@ -17,6 +20,7 @@ node {
                         [key: 'pr_to_sha', value: '$.pull_request.base.sha', expressionType: 'JSONPath'],
                         [key: 'pr_to_git_url', value: '$.pull_request.base.repo.git_url', expressionType: 'JSONPath'],
                         [key: 'repo_git_url', value: '$.repository.git_url', expressionType: 'JSONPath'],
+                        [key: 'main_repo_ssh_url', value: '$.pull_request.base.repo.ssh_url'],
                         [key: 'pr_url', value: '$.pull_request.html_url'],
                         [key: 'draft_pr', value: '$.pull_request.draft'],
                     ],
@@ -35,7 +39,7 @@ node {
         // echo "$action =>> yetry harder ah"
         echo "$pr_from_git_url"
         echo "$pr_to_git_url"
-        // git_checkout()
+        git_checkout_pull_request()
         sh 'git status'
         sh 'ls -lah .'
         echo 'hihi'
@@ -79,18 +83,25 @@ def setup_environment_variables() {
 def git_checkout() {
     
     checkout scmGit(
-    branches: [[name: '*/pr/4*']],
+    branches: [[name: 'refs/pull/*']],
     extensions: [
         cloneOption(honorRefspec: true), 
-        [$class: 'LocalBranch', localBranch: "release/0.0.1"] 
+        [$class: 'LocalBranch', localBranch: "pr/${pr_id}"] 
     ],
     userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
 }
 
 def git_checkout_pull_request() {
-    checkout scmGit(
-        branches: [[name: "refs/pull/4/head"]],
-    )
+    checkout scmGit(branches: [
+    [name: 'refs/pull/*']
+    ], 
+    extensions: [
+        cloneOption(honorRefspec: true), 
+        [$class: 'LocalBranch', localBranch: "pr/${pr_id}"] 
+    ],
+     userRemoteConfigs: [
+    [credentialsId: 'github-ssh-sotatek', name: 'origin', refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*', url: 'git@github.com:xmars4/odoo-cicd-jenkins.git']
+    ])
 }
 
 def verify_tools() {
