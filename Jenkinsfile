@@ -32,7 +32,7 @@ node {
     }
 
     stage('Prepare') {
-        // echo "$action =>> yetry harde ra a a h"
+        // echo "$action =>> yetry harder ah"
         echo "$pr_from_git_url"
         echo "$pr_to_git_url"
         git_checkout()
@@ -78,8 +78,11 @@ def setup_environment_variables() {
 def git_checkout() {
     
     checkout scmGit(
-    branches: [[name: '*/master']],
-    extensions: [ cloneOption(honorRefspec: true) ],
+    branches: [[name: '*/pr/4*']],
+    extensions: [
+        cloneOption(honorRefspec: true), 
+        [$class: 'LocalBranch', localBranch: "release/0.0.1"] 
+    ],
     userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
 }
 
