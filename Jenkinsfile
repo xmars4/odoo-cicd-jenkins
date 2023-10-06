@@ -76,14 +76,16 @@ def setup_environment_variables() {
 }
 
 def git_checkout() {
-    checkout scm
+    checkout([
+            $class: 'GitSCM',
+            branches: 'refs/pull/4/head',
+            extensions: scm.extensions + [[$class: 'LocalBranch']],
+        ])
 }
 
 def git_checkout_pull_request() {
     checkout scmGit(
-        branches: [[name: "pr/$pr_id"]],
-        // extensions: [ cloneOption(honorRefspec: true) ],
-        userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']]
+        branches: [[name: "refs/pull/4/head"]],
     )
 }
 
