@@ -32,7 +32,7 @@ node {
     }
 
     stage('Prepare') {
-        // echo "$action =>> yetry harder a h"
+        // echo "$action =>> yetry hardera a h"
         echo "$pr_from_git_url"
         echo "$pr_to_git_url"
         git_checkout()
