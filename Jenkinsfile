@@ -37,6 +37,7 @@ node {
         echo "$pr_to_git_url"
         git_checkout()
         sh 'ls -lah .'
+        echo 'hihi'
         // git_checkout()
         // verify_tools()
         // setup_environment_variables()
