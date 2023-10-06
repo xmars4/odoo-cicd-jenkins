@@ -28,7 +28,7 @@ node {
                     token: webhookToken,
                     regexpFilterText: '$action#$draft_pr',
                     regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)',
-                    printContributedVariables: false,
+                    printContributedVariables: true,
                     printPostContent: false,
                 ]
             ])
