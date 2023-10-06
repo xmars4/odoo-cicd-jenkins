@@ -32,9 +32,10 @@ node {
 
     stage('Prepare') {
         // echo "$action =>> yetry harder ah"
-        echo "$pr_from_git_url"
-        echo '\$pr_to_git_url'
-        git_checkout_pull_request()
+            checkout scmGit(
+    branches: [[name: 'pr/4/*']],
+    extensions: [ cloneOption(honorRefspec: true) ],
+    userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
         sh 'ls -lah .'
         // git_checkout()
         // verify_tools()
@@ -80,8 +81,7 @@ def git_checkout() {
 def git_checkout_pull_request() {
     checkout scmGit(
         branches: [[name: "pr/$pr_id"]],
-        // extensions: [ cloneOption(honorRefspec: true) ],
-        userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']]
+        extensions: [ cloneOption(honorRefspec: true) ],
     )
 }
 
