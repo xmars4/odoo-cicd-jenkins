@@ -39,7 +39,7 @@ node {
         echo "$pr_from_git_url"
         echo "$pr_to_git_url"
         git_checkout_pull_request()
-        sh 'git status'
+        sh 'git log -1 --pretty=format:"%H"'
         sh 'ls -lah .'
         echo 'hihi'
         // git_checkout()
