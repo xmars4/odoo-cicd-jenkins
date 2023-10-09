@@ -1,3 +1,7 @@
+// before pipeline start, Jenkins will checkout repo with branch specified in 'Branches to build'
+// to get the Jenkinsfile
+
+
 node {
     // withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
     //     properties([
@@ -172,4 +176,4 @@ void setBuildStatus(String message, String state) {
         ]]
     ]);
 }
-// 1  . . .......
+// 1  . . ........
