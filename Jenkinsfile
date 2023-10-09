@@ -21,7 +21,7 @@ node {
     //                 causeString: 'Triggered from PR: $pr_url',
     //                 token: webhookToken,
     //                 regexpFilterText: '$action#$draft_pr',
-    //                 regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review|closed)#(false)',
+    //                 regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)|(closed)#(true)',
     //                 printContributedVariables: false,
     //                 printPostContent: false,
     //             ]
@@ -31,32 +31,27 @@ node {
 
     stage('Prepare') {
         if (pr_state != 'closed') {
-            // the pull request was rejected also has state = closed, but merged = false
-            // we ignore this type of pull request
-            // if (!pr_merged) {
-            //     sh "exit 1"
-            // }
             // TODO: do we need a different test process when code was merged to main repo
             git_checkout_pull_request_branch()
         }
         else {
             git_checkout_main_branch()
         }
-        // verify_tools()
-        // setup_environment_variables()
+        verify_tools()
+        setup_environment_variables()
     }
 
-    // stage('Build') {
-    //     build()
-    // }
+    stage('Build') {
+        build()
+    }
 
     // stage('Test #1 (Sonarqube)') {
     //     sonarqube_check_code_quality()
     // }
 
-    // stage('Test #2 (Odoo Test cases)') {
-    //     unit_test()
-    // }
+    stage('Test #2 (Odoo Test cases)') {
+        unit_test()
+    }
 
     // TODO: if pull request is merge, after test success, we'll deploy it to remote server.
     // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request.feature
@@ -82,13 +77,13 @@ def git_checkout_main_branch() {
     // the branch that pull request is merge 'TO'
     checkout scmGit(branches: [
     [name: "origin/${pr_to_ref}"]
-    ], 
+    ],
     extensions: [
-        cloneOption(honorRefspec: true), 
+        cloneOption(honorRefspec: true),
     ],
      userRemoteConfigs: [
-    [credentialsId: 'github-ssh-sotatek', name: 'origin', 
-    refspec: '+refs/heads/*:refs/remotes/origin/*', 
+    [credentialsId: 'github-ssh-sotatek', name: 'origin',
+    refspec: '+refs/heads/*:refs/remotes/origin/*',
     url: "${pr_to_repo_ssh_url}"]
     ])
 }
@@ -97,13 +92,13 @@ def git_checkout_pull_request_branch() {
     // the branch that pull request is merge 'FROM'
     checkout scmGit(branches: [
     [name: "origin/pr/${pr_id}"]
-    ], 
+    ],
     extensions: [
-        cloneOption(honorRefspec: true), 
+        cloneOption(honorRefspec: true),
     ],
      userRemoteConfigs: [
-    [credentialsId: 'github-ssh-sotatek', name: 'origin', 
-    refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*', 
+    [credentialsId: 'github-ssh-sotatek', name: 'origin',
+    refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*',
     url: "${pr_to_repo_ssh_url}"]
     ])
 }
@@ -111,7 +106,7 @@ def git_checkout_pull_request_branch() {
 def verify_tools() {
     def result = sh(script: './pipeline-scripts/verify.sh > /dev/null', returnStatus: true)
     if (result != 0) {
-        // missing required tools, stop pipeline immediately 
+        // missing required tools, stop pipeline immediately
         sh "exit $result"
     }
 }
@@ -181,4 +176,3 @@ void setBuildStatus(String message, String state) {
         ]]
     ]);
 }
-// 1  . . ...........
