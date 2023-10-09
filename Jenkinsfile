@@ -31,7 +31,7 @@ node {
 
     stage('Prepare') {
         if (pr_state != 'closed') {
-            // TODO: do we need a different test process when code was merged to main repo
+            // TODO: do we need a different test process when code was merged to main repo 
             git_checkout_pull_request_branch()
         }
         else {
