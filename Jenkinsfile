@@ -96,7 +96,7 @@ def git_checkout() {
 
 def git_checkout_pull_request() {
     checkout scmGit(branches: [
-    [name: "refs/pull/${pr_id}"]
+    [name: "refs/pull/*"]
     ], 
     extensions: [
         cloneOption(honorRefspec: true), 
