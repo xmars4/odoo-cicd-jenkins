@@ -166,7 +166,7 @@ def clean_test_resource() {
 void setBuildStatus(String message, String state) {
     step([
         $class: "GitHubCommitStatusSetter",
-        // reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/xmars4/odoo-cicd-jenkins"],
+        reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/Sotatek-TruongPham2/odoo-cicd-jenkins"],
         contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
         errorHandlers: [
             [$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]
