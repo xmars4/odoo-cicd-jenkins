@@ -190,9 +190,7 @@ def setBuildStatus(String message, String state) {
     statusResultSource: [
       $class: 'ConditionalStatusResultSource',
       results: [
-        [$class: 'BetterThanOrEqualBuildResult', result: 'SUCCESS', state: state, message: message],
-        [$class: 'BetterThanOrEqualBuildResult', result: 'FAILURE', state: state, message: message],
-        [$class: 'AnyBuildResult', state: 'FAILURE', message: 'Loophole']
+        [$class: 'AnyBuildResult', state: state, message: message]
       ]
     ]
   ])
