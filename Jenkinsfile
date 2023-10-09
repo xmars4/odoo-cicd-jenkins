@@ -1,4 +1,4 @@
-// By default, before pipeline start,
+// By default, before pipeline start, 
 // Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile
 // so we can't ignore check out default
 // Instead, we will perform second checkout with specific branch  (from pull request)
@@ -13,7 +13,7 @@ node {
     //                     [key: 'pr_id', value: '$.number', expressionType: 'JSONPath'],
     //                     [key: 'pr_state', value: '$.pull_request.state', expressionType: 'JSONPath'],
     //                     [key: 'pr_to_ref', value: '$.pull_request.base.ref', expressionType: 'JSONPath'],
-    //                     [key: 'pr_to_repo_ssh_url', value: '$.pull_request.base.repo.ssh_url'],
+    //                     [key: 'pr_to_repo_ssh_url', value: '$.pull_request.base.repo.ssh_url', expressionType: 'JSONPath'],
     //                     [key: 'pr_url', value: '$.pull_request.html_url'],
     //                     [key: 'draft_pr', value: '$.pull_request.draft'],
     //                 ],
@@ -37,7 +37,7 @@ node {
             git_checkout_main_branch()
         }
         sh 'git log -1 --pretty=format:"%H"'
-        sh 'ls -lah .'
+        sh 'ls -lah .'        
         sh 'ls -lah .'
         // git_checkout()
         // verify_tools()
@@ -80,13 +80,13 @@ def git_checkout_main_branch() {
     // the branch that pull request is merge 'TO'
     checkout scmGit(branches: [
     [name: "origin/${pr_to_ref}"]
-    ],
+    ], 
     extensions: [
-        cloneOption(honorRefspec: true),
+        cloneOption(honorRefspec: true), 
     ],
      userRemoteConfigs: [
-    [credentialsId: 'github-ssh-sotatek', name: 'origin',
-    refspec: '+refs/heads/*:refs/remotes/origin/*',
+    [credentialsId: 'github-ssh-sotatek', name: 'origin', 
+    refspec: '+refs/heads/*:refs/remotes/origin/*', 
     url: "${pr_to_repo_ssh_url}"]
     ])
 }
@@ -95,13 +95,13 @@ def git_checkout_pull_request_branch() {
     // the branch that pull request is merge 'FROM'
     checkout scmGit(branches: [
     [name: "origin/pr/${pr_id}"]
-    ],
+    ], 
     extensions: [
-        cloneOption(honorRefspec: true),
+        cloneOption(honorRefspec: true), 
     ],
      userRemoteConfigs: [
-    [credentialsId: 'github-ssh-sotatek', name: 'origin',
-    refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*',
+    [credentialsId: 'github-ssh-sotatek', name: 'origin', 
+    refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*', 
     url: "${pr_to_repo_ssh_url}"]
     ])
 }
@@ -109,7 +109,7 @@ def git_checkout_pull_request_branch() {
 def verify_tools() {
     def result = sh(script: './pipeline-scripts/verify.sh > /dev/null', returnStatus: true)
     if (result != 0) {
-        // missing required tools, stop pipeline immediately
+        // missing required tools, stop pipeline immediately 
         sh "exit $result"
     }
 }
