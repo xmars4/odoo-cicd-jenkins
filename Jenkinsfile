@@ -21,7 +21,7 @@ node {
     //                 causeString: 'Triggered from PR: $pr_url',
     //                 token: webhookToken,
     //                 regexpFilterText: '$action#$draft_pr',
-    //                 regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review|closed)#(false)',
+    //                 regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)|(closed)#(true)',
     //                 printContributedVariables: false,
     //                 printPostContent: false,
     //             ]
