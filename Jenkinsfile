@@ -12,6 +12,7 @@ node {
     //                     [key: 'action', value: '$.action', expressionType: 'JSONPath'],
     //                     [key: 'pr_id', value: '$.number', expressionType: 'JSONPath'],
     //                     [key: 'pr_state', value: '$.pull_request.state', expressionType: 'JSONPath'],
+    //                     [key: 'pr_merged', value: '$.pull_request.merged', expressionType: 'JSONPath'],
     //                     [key: 'pr_to_ref', value: '$.pull_request.base.ref', expressionType: 'JSONPath'],
     //                     [key: 'pr_to_repo_ssh_url', value: '$.pull_request.base.repo.ssh_url', expressionType: 'JSONPath'],
     //                     [key: 'pr_url', value: '$.pull_request.html_url'],
@@ -30,6 +31,11 @@ node {
 
     stage('Prepare') {
         if (pr_state != 'closed') {
+            // the pull request was rejected also has state = closed, but merged = false
+            // we ignore this type of pull request
+            if (!pr_merged) {
+                sh "exit 1"
+            }
             // TODO: do we need a different test process when code was merged to main repo
             git_checkout_pull_request_branch()
         }
