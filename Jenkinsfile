@@ -41,6 +41,8 @@ node {
         git_checkout_pull_request_branch()
         sh 'git log -1 --pretty=format:"%H"'
         sh 'ls -lah .'
+        git_checkout_main_branch()
+        sh 'ls -lah .'
         // git_checkout()
         // verify_tools()
         // setup_environment_variables()
@@ -80,13 +82,17 @@ def setup_environment_variables() {
 
 def git_checkout_main_branch() {
     // the branch that pull request is merge 'TO'
-    checkout scmGit(
-    branches: [[name: 'refs/pull/*']],
+    checkout scmGit(branches: [
+    [name: "origin/${pr_to_ref}"]
+    ], 
     extensions: [
         cloneOption(honorRefspec: true), 
-        [$class: 'LocalBranch', localBranch: "pr/${pr_id}"] 
     ],
-    userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
+     userRemoteConfigs: [
+    [credentialsId: 'github-ssh-sotatek', name: 'origin', 
+    refspec: '+refs/heads/*:refs/remotes/origin/*', 
+    url: "${main_repo_ssh_url}"]
+    ])
 }
 
 def git_checkout_pull_request_branch() {
@@ -107,7 +113,7 @@ def git_checkout_pull_request_branch() {
 def verify_tools() {
     def result = sh(script: './pipeline-scripts/verify.sh > /dev/null', returnStatus: true)
     if (result != 0) {
-        // misisng required tools, stop pipeline immediately 
+        // missing required tools, stop pipeline immediately 
         sh "exit $result"
     }
 }
