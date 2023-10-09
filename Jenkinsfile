@@ -31,7 +31,7 @@ node {
                     regexpFilterText: '$action#$draft_pr',
                     regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)',
                     printContributedVariables: true,
-                    printPostContent: true,
+                    printPostContent: false,
                 ]
             ])
         ])
@@ -40,7 +40,6 @@ node {
     skipDefaultCheckout()
 
     stage('Prepare') {
-        // echo "$action =>> yetry harder ah222"
         echo "$pr_from_git_url"
         echo "$pr_to_git_url"
         git_checkout_pull_request()
@@ -101,7 +100,7 @@ def git_checkout_pull_request() {
     ], 
     extensions: [
         cloneOption(honorRefspec: true), 
-        [$class: 'LocalBranch', localBranch: "pr/${pr_id}"] 
+        [$class: 'LocalBranch', localBranch: "origin/pr/${pr_id}"] 
     ],
      userRemoteConfigs: [
     [credentialsId: 'github-ssh-sotatek', name: 'origin', refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*', url: 'git@github.com:xmars4/odoo-cicd-jenkins.git']
