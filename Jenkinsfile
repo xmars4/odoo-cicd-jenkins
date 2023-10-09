@@ -1,5 +1,5 @@
 // disable default checkout, so we can checkout specified branch
-skipDefaultCheckout()
+// skipDefaultCheckout()
 
 node {
 
