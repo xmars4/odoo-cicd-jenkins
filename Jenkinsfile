@@ -1,10 +1,4 @@
-// disable default checkout, so we can checkout specified branch
-// skipDefaultCheckout()
-
 node {
-
-    
-    
     withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
         properties([
             pipelineTriggers([
@@ -30,14 +24,12 @@ node {
                     token: webhookToken,
                     regexpFilterText: '$action#$draft_pr',
                     regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)',
-                    printContributedVariables: true,
+                    printContributedVariables: false,
                     printPostContent: false,
                 ]
             ])
         ])
     }
-
-    skipDefaultCheckout()
 
     stage('Prepare') {
         echo "$pr_from_git_url"
