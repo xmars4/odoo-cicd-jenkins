@@ -1,7 +1,7 @@
-// before pipeline start, Jenkins will checkout repo with branch specified in 'Branches to build'
-// to get the Jenkinsfile
-
-
+// By default, before pipeline start, 
+// Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile
+// so we can't ignore check out default
+// Instead, we will perform second checkout with specific branch  (from pull request)
 node {
     // withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
     //     properties([
@@ -176,4 +176,4 @@ void setBuildStatus(String message, String state) {
         ]]
     ]);
 }
-// 1  . . ..........
+// 1  . . ...........
