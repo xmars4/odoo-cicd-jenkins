@@ -29,17 +29,13 @@ node {
     // }
 
     stage('Prepare') {
-        // TODO: check out condition based on pull request state
         if (pr_state != 'closed') {
+            // TODO: do we need a different test process when code was merged to main repo
             git_checkout_pull_request_branch()
         }
         else {
             git_checkout_main_branch()
         }
-        sh 'git log -1 --pretty=format:"%H"'
-        sh 'ls -lah .'        
-        sh 'ls -lah .'
-        // git_checkout()
         // verify_tools()
         // setup_environment_variables()
     }
