@@ -33,9 +33,9 @@ node {
         if (pr_state != 'closed') {
             // the pull request was rejected also has state = closed, but merged = false
             // we ignore this type of pull request
-            if (!pr_merged) {
-                sh "exit 1"
-            }
+            // if (!pr_merged) {
+            //     sh "exit 1"
+            // }
             // TODO: do we need a different test process when code was merged to main repo
             git_checkout_pull_request_branch()
         }
