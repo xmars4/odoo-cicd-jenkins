@@ -92,11 +92,11 @@ def git_checkout() {
 
 def git_checkout_pull_request() {
     checkout scmGit(branches: [
-    [name: "refs/pull/*"]
+    [name: "origin/pr/${pr_id}"]
     ], 
     extensions: [
         cloneOption(honorRefspec: true), 
-        [$class: 'LocalBranch', localBranch: "origin/pr/${pr_id}"] 
+        // [$class: 'LocalBranch', localBranch: "origin/pr/${pr_id}"] 
     ],
      userRemoteConfigs: [
     [credentialsId: 'github-ssh-sotatek', name: 'origin', refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*', url: 'git@github.com:xmars4/odoo-cicd-jenkins.git']
