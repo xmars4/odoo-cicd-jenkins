@@ -30,4 +30,4 @@ RUN apt-get update && \
   apt-get install docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 USER jenkins
-RUN jenkins-plugin-cli --plugins "docker-workflow github ssh-agent versioncolumn sonar ssh-steps envinject generic-webhook-trigger"
+RUN jenkins-plugin-cli --plugins "github ssh-agent versioncolumn sonar ssh-steps envinject generic-webhook-trigger"

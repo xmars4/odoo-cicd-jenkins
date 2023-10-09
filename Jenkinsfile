@@ -31,32 +31,27 @@ node {
 
     stage('Prepare') {
         if (pr_state != 'closed') {
-            // the pull request was rejected also has state = closed, but merged = false
-            // we ignore this type of pull request
-            // if (!pr_merged) {
-            //     sh "exit 1"
-            // }
             // TODO: do we need a different test process when code was merged to main repo
             git_checkout_pull_request_branch()
         }
         else {
             git_checkout_main_branch()
         }
-        // verify_tools()
-        // setup_environment_variables()
+        verify_tools()
+        setup_environment_variables()
     }
 
-    // stage('Build') {
-    //     build()
-    // }
+    stage('Build') {
+        build()
+    }
 
     // stage('Test #1 (Sonarqube)') {
     //     sonarqube_check_code_quality()
     // }
 
-    // stage('Test #2 (Odoo Test cases)') {
-    //     unit_test()
-    // }
+    stage('Test #2 (Odoo Test cases)') {
+        unit_test()
+    }
 
     // TODO: if pull request is merge, after test success, we'll deploy it to remote server.
     // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request.feature
@@ -181,4 +176,3 @@ void setBuildStatus(String message, String state) {
         ]]
     ]);
 }
-// 1  . . ...........
