@@ -13,7 +13,7 @@ node {
     //                     [key: 'pr_id', value: '$.number', expressionType: 'JSONPath'],
     //                     [key: 'pr_state', value: '$.pull_request.state', expressionType: 'JSONPath'],
     //                     [key: 'pr_to_ref', value: '$.pull_request.base.ref', expressionType: 'JSONPath'],
-    //                     [key: 'pr_to_repo_ssh_url', value: '$.pull_request.base.repo.ssh_url'],
+    //                     [key: 'pr_to_repo_ssh_url', value: '$.pull_request.base.repo.ssh_url', expressionType: 'JSONPath'],
     //                     [key: 'pr_url', value: '$.pull_request.html_url'],
     //                     [key: 'draft_pr', value: '$.pull_request.draft'],
     //                 ],
