@@ -1,7 +1,7 @@
-// before pipeline start, Jenkins will checkout repo with branch specified in 'Branches to build'
-// to get the Jenkinsfile
-
-
+// By default, before pipeline start,
+// Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile
+// so we can't ignore check out default
+// Instead, we will perform second checkout with specific branch  (from pull request)
 node {
     // withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
     //     properties([
@@ -38,10 +38,9 @@ node {
     stage('Prepare') {
         echo "$pr_from_git_url"
         echo "$pr_to_git_url"
-        git_checkout_pull_request()
+        git_checkout_pull_request_branch()
         sh 'git log -1 --pretty=format:"%H"'
         sh 'ls -lah .'
-        echo 'hihi'
         // git_checkout()
         // verify_tools()
         // setup_environment_variables()
@@ -79,8 +78,8 @@ def setup_environment_variables() {
     env.LOG_FILE = "/var/log/odoo/odoo.log" // file log is inside the odoo container
 }
 
-def git_checkout() {
-
+def git_checkout_main_branch() {
+    // the branch that pull request is merge 'TO'
     checkout scmGit(
     branches: [[name: 'refs/pull/*']],
     extensions: [
@@ -90,16 +89,18 @@ def git_checkout() {
     userRemoteConfigs: [[refspec: '+refs/pull/*/head:refs/remotes/origin/pr/*']])
 }
 
-def git_checkout_pull_request() {
+def git_checkout_pull_request_branch() {
+    // the branch that pull request is merge 'FROM'
     checkout scmGit(branches: [
     [name: "origin/pr/${pr_id}"]
     ],
     extensions: [
         cloneOption(honorRefspec: true),
-        // [$class: 'LocalBranch', localBranch: "origin/pr/${pr_id}"]
     ],
      userRemoteConfigs: [
-    [credentialsId: 'github-ssh-sotatek', name: 'origin', refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*', url: 'git@github.com:xmars4/odoo-cicd-jenkins.git']
+    [credentialsId: 'github-ssh-sotatek', name: 'origin',
+    refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*',
+    url: "${main_repo_ssh_url}"]
     ])
 }
 
@@ -176,4 +177,4 @@ void setBuildStatus(String message, String state) {
         ]]
     ]);
 }
-// 1  . . .........
+// 1  . . ...........
