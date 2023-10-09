@@ -37,6 +37,8 @@ node {
         ])
     }
 
+    skipDefaultCheckout()
+
     stage('Prepare') {
         // echo "$action =>> yetry harder ah222"
         echo "$pr_from_git_url"
