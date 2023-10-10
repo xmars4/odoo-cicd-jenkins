@@ -49,13 +49,6 @@ set_github_commit_status() {
     message=$5
     build_url=$6
     context=$7
-    echo $repo_name
-    echo $commit_sha
-    echo $github_access_token
-    echo $state
-    echo $message
-    echo $build_url
-    echo $context
 
     if [ -z $context ]; then
         context="continuous-integration/jenkins"
@@ -65,7 +58,6 @@ set_github_commit_status() {
     fi
 
     request_content="{\"state\":\"${state}\",\"target_url\":\"${build_url}\",\"description\":\"${message}\",\"context\":\"${context}\"}"
-    echo "request here $request_content"
 
     curl -L \
         -X POST \
