@@ -22,6 +22,10 @@ check_variable_missing_value() {
     fi
 }
 
+get_repo_url() {
+    echo $(git config --get remote.origin.url)
+}
+
 get_repo_name() {
     repo_url=$1
     if ! [[ "$repo_url" =~ ^git@ ]]; then
@@ -62,7 +66,8 @@ set_github_commit_status() {
 }
 
 set_github_commit_status_default() {
-    repo_name=$(get_repo_name)
+    repo_url=$(get_repo_url)
+    repo_name=$(get_repo_name "$repo_url")
     commit_sha=$(get_commit_sha)
     github_access_token=$1
     state=$2
