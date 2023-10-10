@@ -57,6 +57,7 @@ set_github_commit_status() {
     fi
 
     request_content="{\"state\":\"${state}\",\"target_url\":\"${build_url}\",\"description\":\"${message}\",\"context\":\"${context}\"}"
+    echo "request here $request_content"
 
     curl -L \
         -X POST \
