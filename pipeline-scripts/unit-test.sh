@@ -26,6 +26,7 @@ function send_error_notice_to_dev {
     if [ $? -ne 0 ]; then
         docker cp $ODOO_CONTAINER_ID:/var/log/odoo/odoo.log $ODOO_WORKSPACE/logs/odoo.log
         send_file_telegram $TELEGRAM_BOT_TOKEN $TELEGRAM_CHANNEL_ID $ODOO_WORKSPACE/logs/odoo.log "Something went wrong, please check the log file"
+        return 1
     fi
 }
 
