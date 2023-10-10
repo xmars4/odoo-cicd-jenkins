@@ -44,6 +44,7 @@ set_github_commit_status() {
     message=$5
     build_url=$6
     context=$7
+    echo $@
     if [ -z $context ]; then
         context="continuous-integration/jenkins"
     fi
