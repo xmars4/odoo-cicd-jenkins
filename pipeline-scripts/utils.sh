@@ -42,6 +42,7 @@ get_commit_sha() {
 }
 
 set_github_commit_status() {
+    echo "all here $@"
     repo_name=$1
     commit_sha=$2
     github_access_token=$3
