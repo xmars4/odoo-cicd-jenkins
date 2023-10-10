@@ -44,7 +44,7 @@ set_github_commit_status() {
     message=$5
     build_url=$6
     context=$7
-    echo $@
+
     if [ -z $context ]; then
         context="continuous-integration/jenkins"
     fi
@@ -67,6 +67,10 @@ set_github_commit_status_default() {
     github_access_token=$1
     state=$2
     message=$3
+    echo $repo_name
+    echo $commit_sha
+    echo $state
+    echo $message
     set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
 }
 
