@@ -1,5 +1,6 @@
 #!/bin/bash
 
+global_github_access_token=${github_access_token}
 # declare all useful functions here
 function show_separator {
     x="==============================================="
@@ -72,9 +73,9 @@ set_github_commit_status_default() {
     repo_url=$(get_repo_url)
     repo_name=$(get_repo_name "$repo_url")
     commit_sha=$(get_commit_sha)
-    github_access_token=$1
-    state=$2
-    message=$3
+    github_access_token=${global_github_access_token}
+    state=$1
+    message=$2
     set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
 }
 
