@@ -112,7 +112,7 @@ if [ $# -gt 0 ]; then
     function_name=$1
     shift
     if declare -f "$function_name" >/dev/null; then
-        "$function_name" $@
+        "$function_name" "$@"
     else
         echo "Function '$function_name' does not exist."
         exit 1
