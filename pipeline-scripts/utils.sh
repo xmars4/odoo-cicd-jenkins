@@ -42,7 +42,6 @@ get_commit_sha() {
 }
 
 set_github_commit_status() {
-    echo "all here $@"
     repo_name=$1
     commit_sha=$2
     github_access_token=$3
@@ -50,6 +49,13 @@ set_github_commit_status() {
     message=$5
     build_url=$6
     context=$7
+    echo $repo_name
+    echo $commit_sha
+    echo $github_access_token
+    echo $state
+    echo $message
+    echo $build_url
+    echo $context
 
     if [ -z $context ]; then
         context="continuous-integration/jenkins"
