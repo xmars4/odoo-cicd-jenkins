@@ -56,13 +56,15 @@ set_github_commit_status() {
         build_url=$BUILD_URL
     fi
 
+    request_content="{\"state\":\"${state}\",\"target_url\":\"${build_url}\",\"description\":\"${message}\",\"context\":\"${context}\"}"
+
     curl -L \
         -X POST \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${github_access_token}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/${repo_name}/statuses/${commit_sha} \
-        -d '{"state":'"${state}"',"target_url":'"${build_url}"',"description":'"${message}"',"context":'"${context}"'}'
+        -d "$request_content"
 }
 
 set_github_commit_status_default() {
@@ -72,11 +74,6 @@ set_github_commit_status_default() {
     github_access_token=$1
     state=$2
     message=$3
-    echo $repo_name
-    echo $commit_sha
-    echo $state
-    echo $message
-    pwd ls -lah
     set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
 }
 
@@ -106,15 +103,9 @@ if [ $# -gt 0 ]; then
     function_name=$1
     shift
     if declare -f "$function_name" >/dev/null; then
-        echo "come here bro $@"
-        echo $(ls -lah .)
-        echo $(pwd)
-        pwd
-        ls -lah .
         "$function_name" $@
     else
         echo "Function '$function_name' does not exist."
         exit 1
     fi
 fi
-#.
