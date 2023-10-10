@@ -71,8 +71,6 @@ set_github_commit_status_default() {
     echo $commit_sha
     echo $state
     echo $message
-    pwd
-    ls -lah .
     set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
 }
 
