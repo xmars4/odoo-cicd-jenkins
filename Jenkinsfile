@@ -39,7 +39,7 @@ node {
         }
         // verify_tools()
         // setup_environment_variables()
-        set_github_commit_status("The build succeed!", "success");
+        set_github_commit_status("success", "The build succeed!");
     }
 
     // stage('Build') {
