@@ -22,6 +22,53 @@ check_variable_missing_value() {
     fi
 }
 
+get_repo_name() {
+    repo_url=$1
+    if ! [[ "$repo_url" =~ ^git@ ]]; then
+        repo_name=$(echo "$repo_url" | sed "s/.*:\/\/[^/]*\///" | sed "s/\.git$//")
+    else
+        repo_name=$(echo "$repo_url" | sed "s/.*://" | sed "s/\.git$//")
+    fi
+    echo $repo_name
+}
+
+get_commit_sha() {
+    echo $(git rev-parse HEAD)
+}
+
+set_github_commit_status() {
+    repo_name=$1
+    commit_sha=$2
+    github_access_token=$3
+    state=$4
+    message=$5
+    build_url=$6
+    context=$7
+    if [ -z $context ]; then
+        context="continuous-integration/jenkins"
+    fi
+    if [ -z $build_url ]; then
+        build_url=$BUILD_URL
+    fi
+
+    curl -L \
+        -X POST \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer ${github_access_token}" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        https://api.github.com/repos/${repo_name}/statuses/${commit_sha} \
+        -d '{"state":'"${state}"',"target_url":'"${build_url}"',"description":'"${message}"',"context":'"${context}"'}'
+}
+
+set_github_commit_status_default() {
+    repo_name=$(get_repo_name)
+    commit_sha=$(get_commit_sha)
+    github_access_token=$1
+    state=$2
+    message=$3
+    set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
+}
+
 # ------------------ Telegram functions -------------------------
 send_file_telegram() {
     bot_token=$1
@@ -43,3 +90,14 @@ send_message_telegram() {
         -d "text=$message"
 }
 # ------------------ Telegram functions -------------------------
+
+if [ $# -gt 0 ]; then
+    function_name=$1
+    shift
+    if declare -f "$function_name" >/dev/null; then
+        "$function_name" $@
+    else
+        echo "Function '$function_name' does not exist."
+        exit 1
+    fi
+fi

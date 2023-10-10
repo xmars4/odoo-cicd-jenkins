@@ -39,7 +39,7 @@ node {
         }
         // verify_tools()
         // setup_environment_variables()
-        setBuildStatus("The build succeed!", "success");
+        set_github_commit_status("The build succeed!", "success");
     }
 
     // stage('Build') {
@@ -163,6 +163,14 @@ def clean_test_resource() {
     sh './pipeline-scripts/clean.sh'
 }
 
+def set_github_commit_status(String state, String message) {
+    withCredentials([
+        string(credentialsId: 'xmars4-github-access-token', variable: 'github_access_token')
+        ]){
+            sh "./pipeline-scripts/utils.sh set_github_commit_status_default \"$github_access_token\" \"$state\" \"$message\""
+        }
+}
+
 // https://plugins.jenkins.io/github/#plugin-content-pipeline-examples
 def getCommitSha() {
   sh "git rev-parse HEAD > .git/current-commit"
@@ -174,9 +182,31 @@ def getRepoURL() {
   return readFile(".git/remote-url").trim()
 }
 
+def get_repo_name() {
+    remote_url = getRepoURL()
+    def sh_result= sh(script: '''
+        if ! [[ "$url" =~ ^git@ ]]; then
+            repo_name=$(echo "$url" | sed "s/.*:\/\/[^/]*\///" | sed "s/\.git$//")
+        else
+            repo_name=$(echo "$url" | sed "s/.*://" | sed "s/\.git$//")
+        fi
+        echo "$repo_name"
+    ''', returnStdout: true)
+    echo "${sh_result.returnStdout}"
+    sh '''
+        if ! [[ "$url" =~ ^git@ ]]; then
+            repo_name=$(echo "$url" | sed "s/.*:\/\/[^/]*\///" | sed "s/\.git$//")
+        else
+            repo_name=$(echo "$url" | sed "s/.*://" | sed "s/\.git$//")
+        fi
+        echo "$repo_name"
+    '''
+}
+
 def setBuildStatus(String message, String state) {
   repoUrl = getRepoURL()
   commitSha = getCommitSha()
+  api_url = "https://api.github.com/repos/" + ""
 
     withCredentials([
         string(credentialsId: 'xmars4-github-access-token', variable: 'github_access_token')
