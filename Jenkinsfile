@@ -37,22 +37,22 @@ node {
         else {
             git_checkout_main_branch()
         }
-        // verify_tools()
-        // setup_environment_variables()
-        set_github_commit_status("success", "The build succeed!");
+        verify_tools()
+        setup_environment_variables()
+
     }
 
-    // stage('Build') {
-    //     build()
-    // }
+    stage('Build') {
+        build()
+    }
 
     // stage('Test #1 (Sonarqube)') {
     //     sonarqube_check_code_quality()
     // }
 
-    // stage('Test #2 (Odoo Test cases)') {
-    //     unit_test()
-    // }
+    stage('Test #2 (Odoo Test cases)') {
+        unit_test()
+    }
 
     // TODO: if pull request is merge, after test success, we'll deploy it to remote server.
     // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request.feature
@@ -60,9 +60,9 @@ node {
     //     deploy_to_server()
     // }
 
-    // stage('Clean Test Resources') {
-    //     clean_test_resource()
-    // }
+    stage('Clean Test Resources') {
+        clean_test_resource()
+    }
 
 }
 
@@ -134,9 +134,10 @@ def unit_test() {
     ]) {
         try {
             sh './pipeline-scripts/unit-test.sh'
-            setBuildStatus("Check complete", "SUCCESS");
+            set_github_commit_status("success", "The build succeed!");
         } catch (e) {
             setBuildStatus("Check complete", "FAILED");
+            set_github_commit_status("failure", "The build failed, please re-check the code!");
             sh 'exit 1'
         }
     }
@@ -170,4 +171,3 @@ def set_github_commit_status(String state, String message) {
             sh "./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}'"
         }
 }
-//
