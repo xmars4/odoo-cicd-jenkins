@@ -102,6 +102,10 @@ if [ $# -gt 0 ]; then
     shift
     if declare -f "$function_name" >/dev/null; then
         echo "come here bro $@"
+        echo $(ls -lah .)
+        echo $(pwd)
+        pwd
+        ls -lah .
         "$function_name" $@
     else
         echo "Function '$function_name' does not exist."
