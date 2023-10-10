@@ -39,7 +39,7 @@ node {
         }
         // verify_tools()
         // setup_environment_variables()
-        setBuildStatus("Check complete", "SUCCESS");
+        setBuildStatus("The build succeed!", "success");
     }
 
     // stage('Build') {
@@ -175,37 +175,20 @@ def getRepoURL() {
 }
 
 def setBuildStatus(String message, String state) {
-  // workaround https://issues.jenkins-ci.org/browse/JENKINS-38674
   repoUrl = getRepoURL()
   commitSha = getCommitSha()
-  echo "=========^^+++++++++++++++=================="
-  echo "$repoUrl"
-  echo "$commitSha"
 
-  step([
-    $class: 'GitHubCommitStatusSetter',
-    reposSource: [$class: "ManuallyEnteredRepositorySource", url: repoUrl],
-    commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitSha],
-    errorHandlers: [[$class: 'ShallowAnyErrorHandler']],
-    statusResultSource: [
-      $class: 'ConditionalStatusResultSource',
-      results: [
-        [$class: 'AnyBuildResult', state: state, message: message]
-      ]
-    ]
-  ])
+    withCredentials([
+        string(credentialsId: 'xmars4-github-access-token', variable: 'github_access_token')
+        ]){
+  echo '''
+  curl -L \
+    -X POST \
+    -H "Accept: application/vnd.github+json" \
+    -H "Authorization: Bearer ${github_access_token}" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    https://api.github.com/repos/xmars4/odoo-cicd-jenkins/statuses/${commitSha} \
+    -d '{"state":"${state}","target_url":"${env.BUILD_URL}","description":"${message}","context":"continuous-integration/jenkins"}'
+    '''
+        }
 }
-
-// void setBuildStatus(String message, String state) {
-//     step([
-//         $class: "GitHubCommitStatusSetter",
-//         reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/Sotatek-TruongPham2/odoo-cicd-jenkins"],
-//         contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-//         errorHandlers: [
-//             [$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]
-//         ],
-//         statusResultSource: [$class: "ConditionalStatusResultSource", results: [
-//             [$class: "AnyBuildResult", message: message, state: state]
-//         ]]
-//     ]);
-// }
