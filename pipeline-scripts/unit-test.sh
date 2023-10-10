@@ -10,6 +10,8 @@ function analyze_log {
     # in case Odoo don't have any ERROR -> log file will be not generated
     # so no need to analyze log anymore
     docker exec $ODOO_CONTAINER_ID sh -c "[ -f ${LOG_FILE} ]"
+    docker exec $ODOO_CONTAINER_ID sh -c "cat ${LOG_FILE}"
+
     if [ $? != 0 ]; then
         return 0
     fi
