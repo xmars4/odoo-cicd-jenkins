@@ -167,6 +167,6 @@ def set_github_commit_status(String state, String message) {
     withCredentials([
         string(credentialsId: 'xmars4-github-access-token', variable: 'github_access_token')
         ]){
-            sh "./pipeline-scripts/utils.sh set_github_commit_status_default \"$github_access_token\" \"$state\" \"$message\""
+            sh './pipeline-scripts/utils.sh set_github_commit_status_default $github_access_token $state $message'
         }
 }
