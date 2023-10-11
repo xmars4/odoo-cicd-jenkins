@@ -26,9 +26,7 @@ node {
     }
 
     stage('Deploy to server') {
-        if (pr_state == 'merged'){
-            deploy_to_server()
-        }
+        deploy_to_server()
     }
 
     stage('Clean Test Resources') {
@@ -43,6 +41,7 @@ def setup_environment_variables() {
     env.ODOO_ADDONS_PATH = "${ODOO_WORKSPACE}/extra-addons"
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // file log is inside the odoo container
+    env.LOG_FILE_OUTSIDE = "${ODOO_WORKSPACE}/logs/odoo.log" // file log is outside the odoo container (copied from odoo container)
 }
 
 def git_checkout_main_branch() {
@@ -101,34 +100,33 @@ def sonarqube_check_code_quality() {
 }
 
 def unit_test() {
-    withCredentials([
-        string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
-        string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
-    ]) {
-        try {
-            sh './pipeline-scripts/unit-test.sh'
-            set_github_commit_status("success", "The build succeed!");
-        } catch (e) {
+    
+        def result = sh(script: './pipeline-scripts/unit-test.sh', returnStatus: true)
+        if (result != 0){
             set_github_commit_status("failure", "The build failed, please re-check the code!");
-            sh 'exit 1'
+            send_telegram_file(LOG_FILE_OUTSIDE, "The [pull request ${pr_id}](${pr_url}) checking has failed, please check the log file!")
+            clean_test_resource()
+            sh "exit $result"
         }
-    }
+        set_github_commit_status("success", "The build succeed!");
 }
 
 def deploy_to_server() {
-    withCredentials([
-        sshUserPrivateKey(credentialsId: 'remote-server-credentail',
-            keyFileVariable: 'server_privatekey',
-            passphraseVariable: '',
-            usernameVariable: 'server_username'),
-        file(credentialsId: 'server-github-privatekey',
-            variable: 'server_github_privatekey_file')
-    ]) {
-        // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
-        // ref: https://issues.jenkins.io/browse/JENKINS-65533
-        // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
-        // so we'll execute ssh manually
-        sh './pipeline-scripts/deploy.sh'
+    if (pr_state == 'merged'){
+        withCredentials([
+            sshUserPrivateKey(credentialsId: 'remote-server-credentail',
+                keyFileVariable: 'server_privatekey',
+                passphraseVariable: '',
+                usernameVariable: 'server_username'),
+            file(credentialsId: 'server-github-privatekey',
+                variable: 'server_github_privatekey_file')
+        ]) {
+            // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
+            // ref: https://issues.jenkins.io/browse/JENKINS-65533
+            // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
+            // so we'll execute ssh manually
+            sh './pipeline-scripts/deploy.sh'
+        }
     }
 }
 
@@ -142,4 +140,20 @@ def set_github_commit_status(String state, String message) {
         ]){
             sh "./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}'"
         }
+}
+
+def send_telegram_file(String file_path, String message){
+    withCredentials([
+        string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
+        string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
+    ]) {
+        sh "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'"
+    }
+}
+def send_telegram_message(){
+    withCredentials([
+        string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
+        string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
+    ]) {}
+    
 }

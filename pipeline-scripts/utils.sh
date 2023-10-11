@@ -1,6 +1,9 @@
 #!/bin/bash
 
 global_github_access_token=${github_access_token}
+global_telegram_bot_token=${telegram-bot-token}
+global_telegram_channel_id=${telegram-channel-id}
+
 # declare all useful functions here
 function show_separator {
     x="==============================================="
@@ -97,6 +100,17 @@ send_message_telegram() {
     curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
         -d "text=$message"
+}
+
+send_file_telegram_default() {
+    file_path=$1
+    caption=$2
+    send_file_telegram "$global_telegram_bot_token" "$global_telegram_channel_id" "$file_path" "$caption"
+}
+
+send_message_telegram_default() {
+    message=$1
+    send_message_telegram "$global_telegram_bot_token" "$global_telegram_channel_id" "$message"
 }
 # ------------------ Telegram functions -------------------------
 
