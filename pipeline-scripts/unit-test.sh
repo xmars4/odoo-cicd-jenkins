@@ -15,10 +15,14 @@ function analyze_log {
     fi
 
     docker exec $ODOO_CONTAINER_ID sh -c "grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE"
+    error_exist=$?
     docker exec $ODOO_CONTAINER_ID sh -c "cat $LOG_FILE"
 
-    if [ $? -eq 0 ]; then
+    echo "last result of unit test --- $?"
+
+    if [ $error_exist -eq 0 ]; then
         # we copied the log file to Jenkins instance so we can send it to Telegram
+        echo "we copied the log file to Jenkins instance so we can send it to Telegram"
         echo 'do u go here'
         cat $LOG_FILE_OUTSIDE
         rm -rf $LOG_FILE_OUTSIDE
