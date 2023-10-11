@@ -32,9 +32,11 @@ node {
     stage('Prepare') {
         if (pr_state != 'closed') {
             // TODO: do we need a different test process when code was merged to main repo 
+            echo "Checkout pull request branch!s"
             git_checkout_pull_request_branch()
         }
         else {
+            echo "Checkout main branch!"
             git_checkout_main_branch()
         }
         verify_tools()
