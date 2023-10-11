@@ -23,7 +23,7 @@ function analyze_log {
         docker cp $ODOO_CONTAINER_ID:$LOG_FILE $LOG_FILE_OUTSIDE
         exit 1
     fi
-    echo "why go outside haaaaaaaaaaaaa"
+    echo "why go outside haaaaaaaaaaaaaa"
     return 0
 }
 
