@@ -63,6 +63,7 @@ function wait_until_odoo_available {
         ((count++))
         sleep 5
     done
+    show_separator "did you finish..."
     docker exec $ODOO_CONTAINER_ID sh -c "cat ${LOG_FILE}"
 }
 
