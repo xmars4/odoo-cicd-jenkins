@@ -1,9 +1,9 @@
 node {
   stage('Prepare') {
-    clean_test_resource() // in case previous job can't clean
     git_checkout()
     verify_tools()
     setup_environment_variables()
+    clean_test_resource() // in case previous job can't clean
   }
 
   stage('Build') {
