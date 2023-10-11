@@ -17,6 +17,7 @@ function analyze_log {
     docker exec $ODOO_CONTAINER_ID sh -c "grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE"
     error_exist=$?
     docker exec $ODOO_CONTAINER_ID sh -c "cat $LOG_FILE"
+    docker cp $ODOO_CONTAINER_ID:$LOG_FILE /tmp/fuk.log
 
     echo "last result of unit test $error_exist"
     echo $LOG_FILE
