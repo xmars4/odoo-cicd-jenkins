@@ -15,6 +15,8 @@ function analyze_log {
     fi
 
     docker exec $ODOO_CONTAINER_ID sh -c "grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE"
+    docker exec $ODOO_CONTAINER_ID sh -c "cat $LOG_FILE"
+
     if [ $? -eq 0 ]; then
         # we copied the log file to Jenkins instance so we can send it to Telegram
         echo 'do u go here'
@@ -23,8 +25,6 @@ function analyze_log {
         docker cp $ODOO_CONTAINER_ID:$LOG_FILE $LOG_FILE_OUTSIDE
         exit 1
     fi
-    echo "why go outside haaaaaaaaaaaaaa"
-    return 0
 }
 
 analyze_log
