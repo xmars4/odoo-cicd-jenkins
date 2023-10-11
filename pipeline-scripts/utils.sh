@@ -105,6 +105,9 @@ send_message_telegram() {
 send_file_telegram_default() {
     file_path=$1
     caption=$2
+    show_separator "send telee here"
+    echo "$file_path"
+    echo "$caption"
     send_file_telegram "$global_telegram_bot_token" "$global_telegram_channel_id" "$file_path" "$caption"
 }
 
