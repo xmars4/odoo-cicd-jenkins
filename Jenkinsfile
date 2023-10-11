@@ -3,11 +3,9 @@ node {
     stage('Prepare') {
         if (pr_state != 'closed') {
             // TODO: do we need a different test process when code was merged to main repo 
-            echo "Checkout pull request branch!s"
             git_checkout_pull_request_branch()
         }
         else {
-            echo "Checkout main branch!"
             git_checkout_main_branch()
         }
         verify_tools()
@@ -49,6 +47,7 @@ def setup_environment_variables() {
 
 def git_checkout_main_branch() {
     // the branch that pull request is merge 'TO'
+    echo "Checkout main branch!"
     checkout scmGit(branches: [
     [name: "origin/${pr_to_ref}"]
     ], 
@@ -64,6 +63,7 @@ def git_checkout_main_branch() {
 
 def git_checkout_pull_request_branch() {
     // the branch that pull request is merge 'FROM'
+    echo "Checkout pull request branch!"
     checkout scmGit(branches: [
     [name: "origin/pr/${pr_id}"]
     ], 
