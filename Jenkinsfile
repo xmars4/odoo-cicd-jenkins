@@ -18,13 +18,13 @@ node {
     unit_test()
   }
 
-  stage('Deploy to server') {
-    deploy_to_server()
-  }
-
-  stage('Clean Test Resources') {
-    clean_test_resource()
-  }
+//   stage('Deploy to server') {
+//     deploy_to_server()
+//   }
+//
+//   stage('Clean Test Resources') {
+//     clean_test_resource()
+//   }
 
 }
 
