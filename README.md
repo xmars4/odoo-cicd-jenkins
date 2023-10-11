@@ -30,10 +30,11 @@
     2.2. Create a **SSH Username with private key** credential in Jenkins
 
     -   Access Jenkins Web UI
-    -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
-    -   Kind: SSH Username with private key
-    -   Username: your github username
-    -   Private key / Enter directly: paste your private SSH key at step **2.1** here
+    -   **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
+    -   **_ID_**: **github-ssh-cred**
+    -   **_Kind_**: SSH Username with private key
+    -   **_Username_**: your github username
+    -   **_Private key / Enter directly_**: paste your private SSH key at step **2.1** here
 
     2.3. [Add SSH public key (.pub) at step **2.1.** to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
 
@@ -51,7 +52,7 @@
     -   Access Jenkins Web UI
     -   **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
     -   **_Secret_**: generated token at step **3.1**
-    -   **_ID_**: **github-access-token**
+    -   **_ID_**: **github-access-token-cred**
 
     3.3. Config Github Server
 
@@ -70,7 +71,7 @@
     -   Jenkins will use this credential to connect to the server and execute commands, scripts.
     -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
     -   **Kind**: SSH Username with private key
-    -   **ID**: **remote-server-credentail**
+    -   **ID**: **remote-server-cred**
     -   **Username**: the server's username
     -   **Private Key / Enter directly / Key / Add**: the private key use to access the server
 
@@ -90,7 +91,7 @@
     -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
     -   **Kind**: Secret file
     -   **File**: Upload the ssh private key generated at step **5.2.1**
-    -   **ID**: _server-github-privatekey_
+    -   **ID**: **remote-server-github-privatekey-cred**
 
 5.  Create and config Github pipeline
 
@@ -182,14 +183,14 @@
     7.3. Add SonarQube credentail to Jenkins
 
     -   Add a secret text credentail to your Jenkins instance
-        -   **ID**: sonar-token **Secret**: the token was obtained from step 6.1
+        -   **_ID_**: **sonar-token** **_Secret_**: the token was obtained from step 6.1
 
 8.  Send message to Telegram from Jenkins
 
     -   Follow [this link](https://gist.github.com/xmars4/25931e4e59476da70a183d0f5a1d9e9e) to obtain **BOT token** and **Channel ID**
     -   Add two secret text credentails to your Jenkins instance
-        -   **ID**: telegram-bot-token **Secret**: BOT token
-        -   **ID**: telegram-channel-id **Secret**: Channel ID
+        -   **_ID_**: **telegram-bot-token** **_Secret_**: BOT token
+        -   **_ID_**: **telegram-channel-id** **_Secret_**: Channel ID
 
 9.  Trigger build process manually
 
@@ -242,7 +243,7 @@
 
     ```
     node {
-        withCredentials([string(credentialsId: 'github-access-token', variable: 'webhookToken')]) {
+        withCredentials([string(credentialsId: 'github-access-token-cred', variable: 'webhookToken')]) {
             properties([
                 pipelineTriggers([
                     [
