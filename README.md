@@ -111,16 +111,16 @@
     -   Check **_Build Triggers/Generic Webhook Trigger_**
     -   Given the following **_Post content parameters_** are configured:
 
-        | variable           | expression                       | expressionType | defaultValue | regexpFilter |
-        | ------------------ | -------------------------------- | -------------- | ------------ | ------------ |
-        | action             | $.action                         | JSONPath       |              |              |
-        | pr_id              | $.number                         | JSONPath       |              |              |
-        | pr_state           | $.pull_request.state             | JSONPath       |              |              |
-        | pr_merged          | $.pull_request.merged            | JSONPath       |              |              |
-        | pr_to_ref          | $.pull_request.base.ref          | JSONPath       |              |              |
-        | pr_to_repo_ssh_url | $.pull_request.base.repo.ssh_url | JSONPath       |              |              |
-        | pr_url             | $.pull_request.html_url          | JSONPath       |              |              |
-        | pr_draft           | $.pull_request.draft             | JSONPath       |              |              |
+        | Variable           | Expression                       | Expression Type | Default value | Value filter |
+        | ------------------ | -------------------------------- | --------------- | ------------- | ------------ |
+        | action             | $.action                         | JSONPath        |               |              |
+        | pr_id              | $.number                         | JSONPath        |               |              |
+        | pr_state           | $.pull_request.state             | JSONPath        |               |              |
+        | pr_merged          | $.pull_request.merged            | JSONPath        |               |              |
+        | pr_to_ref          | $.pull_request.base.ref          | JSONPath        |               |              |
+        | pr_to_repo_ssh_url | $.pull_request.base.repo.ssh_url | JSONPath        |               |              |
+        | pr_url             | $.pull_request.html_url          | JSONPath        |               |              |
+        | pr_draft           | $.pull_request.draft             | JSONPath        |               |              |
 
     -   Given **_Optional filter_** is configured with **_text_**: $action#$pr_draft|$action#pr_merged
     -   Given **_Optional filter_** is configured with **_expression_**: (reopened|opened|synchronize|ready_for_review)#(false)|(closed)#(true)
