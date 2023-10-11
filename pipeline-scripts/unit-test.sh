@@ -23,6 +23,7 @@ function analyze_log {
     echo $LOG_FILE
     echo $LOG_FILE_OUTSIDE
     echo $ODOO_CONTAINER_ID
+    echo $(date)
 
     if [ $error_exist -eq 0 ]; then
         # we copied the log file to Jenkins instance so we can send it to Telegram
