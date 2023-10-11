@@ -18,7 +18,10 @@ function analyze_log {
     error_exist=$?
     docker exec $ODOO_CONTAINER_ID sh -c "cat $LOG_FILE"
 
-    echo "last result of unit test --- $?"
+    echo "last result of unit test $error_exist"
+    echo $LOG_FILE
+    echo $LOG_FILE_OUTSIDE
+    echo $ODOO_CONTAINER_ID
 
     if [ $error_exist -eq 0 ]; then
         # we copied the log file to Jenkins instance so we can send it to Telegram
