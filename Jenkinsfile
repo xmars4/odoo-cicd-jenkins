@@ -91,7 +91,7 @@ def verify_tools() {
 def build() {
   def result = sh(script: './pipeline-scripts/build.sh', returnStatus: true)
   if (result != 0) {
-    clean_test_resource()
+//     clean_test_resource()
     sh "exit $result"
   }
 }
