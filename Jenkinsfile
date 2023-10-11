@@ -1,40 +1,13 @@
-// By default, before pipeline start, 
-// Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile
-// so we can't ignore check out default
-// Instead, we will perform second checkout with specific branch  (from pull request)
-node {
-    // withCredentials([string(credentialsId: 'github-webhook-secret-token', variable: 'webhookToken')]) {
-    //     properties([
-    //         pipelineTriggers([
-    //             [
-    //                 $class: 'GenericTrigger',
-    //                 genericVariables: [
-    //                     [key: 'action', value: '$.action', expressionType: 'JSONPath'],
-    //                     [key: 'pr_id', value: '$.number', expressionType: 'JSONPath'],
-    //                     [key: 'pr_state', value: '$.pull_request.state', expressionType: 'JSONPath'],
-    //                     [key: 'pr_merged', value: '$.pull_request.merged', expressionType: 'JSONPath'],
-    //                     [key: 'pr_to_ref', value: '$.pull_request.base.ref', expressionType: 'JSONPath'],
-    //                     [key: 'pr_to_repo_ssh_url', value: '$.pull_request.base.repo.ssh_url', expressionType: 'JSONPath'],
-    //                     [key: 'pr_url', value: '$.pull_request.html_url'],
-    //                     [key: 'draft_pr', value: '$.pull_request.draft'],
-    //                 ],
-    //                 causeString: 'Triggered from PR: $pr_url',
-    //                 token: webhookToken,
-    //                 regexpFilterText: '$action#$draft_pr',
-    //                 regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)|(closed)#(true)',
-    //                 printContributedVariables: false,
-    //                 printPostContent: false,
-    //             ]
-    //         ])
-    //     ])
-    // }
 
+node {
     stage('Prepare') {
         if (pr_state != 'closed') {
             // TODO: do we need a different test process when code was merged to main repo
+            echo "Checkout pull request branch!s"
             git_checkout_pull_request_branch()
         }
         else {
+            echo "Checkout main branch!"
             git_checkout_main_branch()
         }
         verify_tools()
@@ -54,11 +27,11 @@ node {
         unit_test()
     }
 
-    // TODO: if pull request is merge, after test success, we'll deploy it to remote server.
-    // https://github.com/jenkinsci/generic-webhook-trigger-plugin/blob/master/src/test/resources/org/jenkinsci/plugins/gwt/bdd/github/github-pull-request.feature
-    // stage('Deploy to server') {
-    //     deploy_to_server()
-    // }
+    stage('Deploy to server') {
+        if (pr_state == 'merged'){
+            deploy_to_server()
+        }
+    }
 
     stage('Clean Test Resources') {
         clean_test_resource()
@@ -136,7 +109,6 @@ def unit_test() {
             sh './pipeline-scripts/unit-test.sh'
             set_github_commit_status("success", "The build succeed!");
         } catch (e) {
-            setBuildStatus("Check complete", "FAILED");
             set_github_commit_status("failure", "The build failed, please re-check the code!");
             sh 'exit 1'
         }
@@ -145,7 +117,7 @@ def unit_test() {
 
 def deploy_to_server() {
     withCredentials([
-        sshUserPrivateKey(credentialsId: 'server-credentail',
+        sshUserPrivateKey(credentialsId: 'remote-server-credentail',
             keyFileVariable: 'server_privatekey',
             passphraseVariable: '',
             usernameVariable: 'server_username'),
@@ -166,7 +138,7 @@ def clean_test_resource() {
 
 def set_github_commit_status(String state, String message) {
     withCredentials([
-        string(credentialsId: 'xmars4-github-access-token', variable: 'github_access_token')
+        string(credentialsId: 'github-access-token', variable: 'github_access_token')
         ]){
             sh "./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}'"
         }
