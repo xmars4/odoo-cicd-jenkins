@@ -25,8 +25,6 @@ function set_list_addons {
 }
 
 function update_config_file {
-    show_separator 'current config file'
-    cat $CONFIG_FILE
     # we use log to analytic error, so log_level should be 'error'
     # remove old log level command
     sed -i "s/^\s*log_level\s*.*//g" $CONFIG_FILE
