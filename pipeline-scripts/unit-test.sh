@@ -25,6 +25,8 @@ function analyze_log {
     echo $ODOO_CONTAINER_ID
     echo $(date)
     # FIXME: odoo available but test cases is not fully finished yet
+    # try to use this command, loop until odoo container stopped (exited status)
+    # container_id
 
     if [ $error_exist -eq 0 ]; then
         # we copied the log file to Jenkins instance so we can send it to Telegram
