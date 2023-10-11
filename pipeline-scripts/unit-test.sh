@@ -16,17 +16,11 @@ function analyze_log {
 
     docker exec $ODOO_CONTAINER_ID sh -c "grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE"
     if [ $? -eq 0 ]; then
-        return 1
+        # we copied the log file to Jenkins instance so we can send it to Telegram
+        docker cp $ODOO_CONTAINER_ID:$LOG_FILE $LOG_FILE_OUTSIDE
+        exit 1
     fi
     return 0
 }
 
-function send_error_notice_to_dev {
-    analyze_log
-    if [ $? -ne 0 ]; then
-        docker cp $ODOO_CONTAINER_ID:/var/log/odoo/odoo.log $ODOO_WORKSPACE/logs/odoo.log
-        send_file_telegram $TELEGRAM_BOT_TOKEN $TELEGRAM_CHANNEL_ID $ODOO_WORKSPACE/logs/odoo.log "Something went wrong, please check the log file"
-    fi
-}
-
-send_error_notice_to_dev
+analyze_log

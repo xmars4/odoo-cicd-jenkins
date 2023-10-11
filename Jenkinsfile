@@ -1,9 +1,9 @@
 node {
   stage('Prepare') {
+    clean_test_resource() // in case previous job can't clean
     git_checkout()
     verify_tools()
     setup_environment_variables()
-
   }
 
   stage('Build') {
@@ -39,7 +39,7 @@ def setup_environment_variables() {
 
 def git_checkout() {
   if (pr_state != 'closed') {
-    // TODO: do we need a different test process when code was merged to main repo
+    // TODO: do we need a different test process when code was merged to main repo 
     git_checkout_pull_request_branch()
   } else {
     git_checkout_main_branch()
@@ -56,7 +56,7 @@ def git_checkout_main_branch() {
       cloneOption(honorRefspec: true),
     ],
     userRemoteConfigs: [
-      [credentialsId: 'github-ssh-sotatek', name: 'origin',
+      [credentialsId: 'github-ssh-cred', name: 'origin',
         refspec: '+refs/heads/*:refs/remotes/origin/*',
         url: "${pr_to_repo_ssh_url}"
       ]
@@ -73,7 +73,7 @@ def git_checkout_pull_request_branch() {
       cloneOption(honorRefspec: true),
     ],
     userRemoteConfigs: [
-      [credentialsId: 'github-ssh-sotatek', name: 'origin',
+      [credentialsId: 'github-ssh-cred', name: 'origin',
         refspec: '+refs/pull/*/head:refs/remotes/origin/pr/* +refs/heads/*:refs/remotes/origin/*',
         url: "${pr_to_repo_ssh_url}"
       ]
@@ -118,11 +118,11 @@ def unit_test() {
 def deploy_to_server() {
   if (pr_state == 'merged') {
     withCredentials([
-      sshUserPrivateKey(credentialsId: 'remote-server-credentail',
+      sshUserPrivateKey(credentialsId: 'remote-server-cred',
         keyFileVariable: 'server_privatekey',
         passphraseVariable: '',
         usernameVariable: 'server_username'),
-      file(credentialsId: 'server-github-privatekey',
+      file(credentialsId: 'remote-server-github-privatekey-cred',
         variable: 'server_github_privatekey_file')
     ]) {
       // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
@@ -140,7 +140,7 @@ def clean_test_resource() {
 
 def set_github_commit_status(String state, String message) {
   withCredentials([
-    string(credentialsId: 'github-access-token', variable: 'github_access_token')
+    string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
   ]) {
     sh "./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}'"
   }
@@ -159,5 +159,4 @@ def send_telegram_message() {
     string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
     string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
   ]) {}
-
 }

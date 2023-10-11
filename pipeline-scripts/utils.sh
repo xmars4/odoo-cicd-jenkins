@@ -1,5 +1,9 @@
 #!/bin/bash
 
+global_github_access_token=${github_access_token}
+global_telegram_bot_token=${telegram-bot-token}
+global_telegram_channel_id=${telegram-channel-id}
+
 # declare all useful functions here
 function show_separator {
     x="==============================================="
@@ -20,6 +24,10 @@ check_variable_missing_value() {
         show_separator "ERROR: Mising variable named '$variable_name' or its value is empty"
         exit 1
     fi
+}
+
+get_repo_url() {
+    echo $(git config --get remote.origin.url)
 }
 
 get_repo_name() {
@@ -52,25 +60,24 @@ set_github_commit_status() {
         build_url=$BUILD_URL
     fi
 
+    request_content="{\"state\":\"${state}\",\"target_url\":\"${build_url}\",\"description\":\"${message}\",\"context\":\"${context}\"}"
+
     curl -L \
         -X POST \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${github_access_token}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/${repo_name}/statuses/${commit_sha} \
-        -d '{"state":'"${state}"',"target_url":'"${build_url}"',"description":'"${message}"',"context":'"${context}"'}'
+        -d "$request_content"
 }
 
 set_github_commit_status_default() {
-    repo_name=$(get_repo_name)
+    repo_url=$(get_repo_url)
+    repo_name=$(get_repo_name "$repo_url")
     commit_sha=$(get_commit_sha)
-    github_access_token=$1
-    state=$2
-    message=$3
-    echo $repo_name
-    echo $commit_sha
-    echo $state
-    echo $message
+    github_access_token=${global_github_access_token}
+    state=$1
+    message=$2
     set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
 }
 
@@ -94,16 +101,26 @@ send_message_telegram() {
         -d "chat_id=$chat_id" \
         -d "text=$message"
 }
+
+send_file_telegram_default() {
+    file_path=$1
+    caption=$2
+    send_file_telegram "$global_telegram_bot_token" "$global_telegram_channel_id" "$file_path" "$caption"
+}
+
+send_message_telegram_default() {
+    message=$1
+    send_message_telegram "$global_telegram_bot_token" "$global_telegram_channel_id" "$message"
+}
 # ------------------ Telegram functions -------------------------
 
 if [ $# -gt 0 ]; then
     function_name=$1
     shift
     if declare -f "$function_name" >/dev/null; then
-        "$function_name" $@
+        "$function_name" "$@"
     else
         echo "Function '$function_name' does not exist."
         exit 1
     fi
 fi
-#
