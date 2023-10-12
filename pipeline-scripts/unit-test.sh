@@ -31,7 +31,7 @@ function analyze_log {
 
     if [ $error_exist -eq 0 ]; then
         # we copied the log file to Jenkins instance so we can send it to Telegram
-        # echo "we copied the log file to Jenkins instance so we can send it to Telegram"
+        # echo "we copied the log file to Jenkins instance so we can send it to Telegram."
         # echo 'do u go here'
         # cat $LOG_FILE_OUTSIDE
         # rm -rf $LOG_FILE_OUTSIDE
