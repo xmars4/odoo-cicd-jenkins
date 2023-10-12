@@ -56,7 +56,7 @@ function wait_until_odoo_shutdown {
     sleep_block=5
     total_waited_time=0
     while (($total_waited_time <= $maximum_waiting_time)); do
-        container_exited_id=$(docker ps -q --filter "id=$odoo_container_id" --filter "status=exitted")
+        container_exited_id=$(docker ps -q --filter "id=$odoo_container_id" --filter "status=exited")
         if [[ -n $container_exited_id ]]; then break; fi
         total_waited_time=$((total_waited_time + sleep_block))
         sleep $sleep_block
