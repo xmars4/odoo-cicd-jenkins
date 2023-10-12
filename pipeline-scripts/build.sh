@@ -33,7 +33,7 @@ function update_config_file {
     # Odoo's suggestion:  Unit testing in workers mode could fail; use --workers 0.
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
-    echo -e "\ncommand = --workers 0 --database test --logfile "$LOG_FILE" -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
+    echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
 }
 
 function start_containers {
@@ -41,11 +41,33 @@ function start_containers {
     docker compose ps
 }
 
+function wait_until_odoo_shutdown {
+    # because we put --stop-after-init option to odoo command
+    # so after Odoo finish install and run test cases
+    # It will shutdown automatically
+    # we just need to wait until odoo container stopped (status=exited)
+    # and we can analyze the log file
+    maximum_waiting_time=3600 # maximum wait time is 60', in the case there is unexpected problem
+    odoo_container_id=$(get_odoo_container_id)
+    if [ -z $odoo_container_id ]; then
+        echo "Can't find the Odoo container, stop pipeline immediately!"
+        exit 1
+    fi
+    sleep_block=5
+    total_waited_time=0
+    while (($total_waited_time <= $maximum_waiting_time)); do
+        container_exited_id=$(docker ps -q --filter "id=$odoo_container_id" --filter "status=exitted")
+        if [[ -n $container_exited_id ]]; then break; fi
+        total_waited_time=$((total_waited_time + sleep_block))
+        sleep $sleep_block
+    done
+}
+
 function wait_until_odoo_available {
     ESITATE_TIME_EACH_ADDON=30
     ODOO_CONTAINER_ID=$(get_odoo_container_id)
     if [ -z $ODOO_CONTAINER_ID ]; then
-        echo "Odoo instance is not running, stop immediately!"
+        echo "Can't find the Odoo container, stop pipeline immediately!"
         exit 1
     fi
     show_separator "Hang on, Modules are being installed ..."
@@ -71,7 +93,7 @@ function main {
     set_list_addons
     update_config_file
     start_containers
-    wait_until_odoo_available
+    wait_until_odoo_shutdown
 }
 
 main

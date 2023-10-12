@@ -12,7 +12,7 @@ function show_separator {
 }
 
 function get_odoo_container_id {
-    docker compose ps -q |
+    docker compose ps -q -a |
         xargs docker inspect --format '{{.Id}} {{.Config.Image}}' |
         awk -v img="${ODOO_IMAGE_TAG}" '$2 == img {print $1}'
 }
