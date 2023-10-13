@@ -30,7 +30,7 @@ execute_remote_script() {
 
 copy_and_execute_deploy_script_on_server() {
     echo 'a=============================\\\\\\\\\\\\\\\\\'
-    cat ${WORKSPACE}/pipeline-scripts/server_deploy.sh
+    execute_remote_command "ls -lah /tmp"
     scp -i "${server_privatekey}" \
         -f "${WORKSPACE}/pipeline-scripts/server_deploy.sh" \
         "${server_username}"@"${server_host}":"${server_deploy_script}"
