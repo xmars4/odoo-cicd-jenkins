@@ -36,7 +36,7 @@ function update_config_file {
 }
 
 function start_containers {
-    docker compose up -d --wait --no-color >/dev/null
+    docker compose up -d --wait --no-color
     docker compose ps
 }
 
@@ -91,8 +91,8 @@ function main {
     build_odoo_image
     set_list_addons
     update_config_file
-    # start_containers
-    # wait_until_odoo_shutdown
+    start_containers
+    wait_until_odoo_shutdown
 }
 
 main
