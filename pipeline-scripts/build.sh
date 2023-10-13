@@ -4,7 +4,6 @@ source "${WORKSPACE}/pipeline-scripts/utils.sh"
 EXTRA_ADDONS=
 
 function build_odoo_image {
-    show_separator "Build Odoo image - tag: ${ODOO_IMAGE_TAG}"
     cd "${ODOO_WORKSPACE}/dockerfile"
     docker build -q -t "${ODOO_IMAGE_TAG}" .
 }
@@ -37,7 +36,7 @@ function update_config_file {
 }
 
 function start_containers {
-    docker compose up -d --wait --no-color
+    docker compose up -d --wait --no-color >/dev/null
     docker compose ps
 }
 
