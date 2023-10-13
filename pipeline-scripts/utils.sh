@@ -83,7 +83,7 @@ set_github_commit_status_default() {
     github_access_token=${global_github_access_token}
     state=$1
     message=$2
-    set_github_commit_status "$repo_name" "$commit_sha" "$github_access_toke" "$state" "$message"
+    set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
 }
 
 # ------------------ Telegram functions -------------------------
@@ -113,11 +113,14 @@ send_message_telegram() {
     parse_mode=$5
     [ -z $parse_mode ] && parse_mode="MarkdownV2"
 
-    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
+    response=$(curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
         -d "text=$message" \
         -d "parse_mode=$parse_mode" \
-        -d "disable_notification=true"
+        -d "disable_notification=true")
+    if [[ $reponse =~ "{\"ok\":false," ]]; then
+        echo $response
+    fi
 }
 
 send_file_telegram_default() {

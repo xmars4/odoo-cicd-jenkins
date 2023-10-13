@@ -40,6 +40,7 @@ def setup_environment_variables() {
 def git_checkout() {
   if (pr_state != 'closed') {
     // TODO: do we need a different test process when code was merged to main repo 
+    // like running test cases on existing database instead of empty database
     git_checkout_pull_request_branch()
   } else {
     git_checkout_main_branch()
@@ -133,7 +134,11 @@ def deploy_to_server() {
       // ref: https://issues.jenkins.io/browse/JENKINS-65533
       // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
       // so we'll execute ssh manually
-      sh './pipeline-scripts/deploy.sh'
+      def result = sh(script:sh './pipeline-scripts/deploy.sh', returnStatus:true)
+      if (result == 0){
+        def message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
+        send_telegram_message(message)
+      }
     }
   }
 }
@@ -165,9 +170,14 @@ def send_telegram_file(String file_path, String message) {
   }
 }
 
-def send_telegram_message() {
+def send_telegram_message(String message) {
   withCredentials([
     string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
     string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
-  ]) {}
+  ]) {
+    result = sh(script: "./pipeline-scripts/utils.sh send_message_telegram_default '${message}'", returnStdout:true).trim()
+    if (result) {
+      echo "$result"
+    }
+  }
 }
