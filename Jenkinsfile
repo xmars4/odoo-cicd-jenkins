@@ -110,7 +110,7 @@ def unit_test() {
     def git_commit_message = "The build failed, please re-check the code!"
     set_github_commit_status("failure", git_commit_message);
 
-    def telegram_message = "The [pull request ${pr_id}](${pr_url}) checking has failed, please check the log file 🔬"
+    def telegram_message = "The [Pull request #${pr_id}](${pr_url}) check has failed, please check the log file below 🔬"
     send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 
     clean_test_resource()
@@ -146,7 +146,7 @@ def set_github_commit_status(String state, String message) {
   withCredentials([
     string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
   ]) {
-    sh "./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}'"
+    sh "./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}' > /dev/null"
   }
 }
 
@@ -155,7 +155,7 @@ def send_telegram_file(String file_path, String message) {
     string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
     string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
   ]) {
-    sh "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'"
+    sh "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}' > /dev/null"
   }
 }
 
