@@ -92,10 +92,10 @@ send_file_telegram() {
         -F "document=@$file_path" \
         -F "caption=$caption"
     show_separator "my command here======="
-    echo "curl -s -X POST \"https://api.telegram.org/bot$bot_token/sendDocument\"" \
-        \" -F chat_id=$chat_id\" \
-        \" -F document=@$file_path\" \
-        "\" -F caption=$caption\""
+    echo "curl -s -X POST \"https://api.telegram.org/bot$bot_token/sendDocument\" \
+        -F \"chat_id=$chat_id\" \
+        -F \"document=@$file_path\" \
+        -F \"caption=$caption\""
 
 }
 
