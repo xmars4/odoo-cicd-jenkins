@@ -94,7 +94,8 @@ send_file_telegram() {
         -F "chat_id=$chat_id" \
         -F "document=@$file_path" \
         -F "caption=$caption" \
-        -F "parse_mode=$parse_mode"
+        -F "parse_mode=$parse_mode" \
+        -F "disable_notification=true"
 }
 
 send_message_telegram() {
@@ -107,7 +108,8 @@ send_message_telegram() {
     curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
         -d "text=$message" \
-        -d "parse_mode=$parse_mode"
+        -d "parse_mode=$parse_mode" \
+        -d "disable_notification=true"
 }
 
 send_file_telegram_default() {
