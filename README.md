@@ -267,8 +267,8 @@
                         ],
                         causeString: 'Triggered from PR: $pr_url',
                         token: webhookToken,
-                        regexpFilterText: 'action#pr_draft|$action#$pr_merged',
-                        regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)|(closed)#(true)',
+                        regexpFilterText: '$action#$pr_draft##$action#$pr_merged',
+                        regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)##|##(closed)#(true)',
                         printContributedVariables: false,
                         printPostContent: false,
                     ]
