@@ -91,6 +91,13 @@ send_file_telegram() {
         -F "chat_id=$chat_id" \
         -F "document=@$file_path" \
         -F "caption=$caption"
+    show_separator "my command here======="
+    curl """
+    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
+        -F "chat_id=$chat_id" \
+        -F "document=@$file_path" \
+        -F "caption=$caption"
+    """
 }
 
 send_message_telegram() {
