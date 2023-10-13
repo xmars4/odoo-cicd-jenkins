@@ -18,9 +18,9 @@ node {
     unit_test()
   }
 
-  // stage('Deploy to server') {
-  //   deploy_to_server()
-  // }
+  stage('Deploy to server') {
+    deploy_to_server()
+  }
 
   stage('Clean Test Resources') {
     clean_test_resource()
@@ -107,8 +107,12 @@ def unit_test() {
 
   def result = sh(script: './pipeline-scripts/unit-test.sh', returnStatus: true)
   if (result != 0) {
-    set_github_commit_status("failure", "The build failed, please re-check the code!");
-    send_telegram_file(LOG_FILE_OUTSIDE, "The [pull request ${pr_id}](${pr_url}) checking has failed, please check the log file\!")
+    def git_commit_message = "The build failed, please re-check the code!"
+    set_github_commit_status("failure", git_commit_message);
+
+    def telegram_message = "The [pull request ${pr_id}](${pr_url}) checking has failed, please check the log file 🔬"
+    send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
+
     clean_test_resource()
     sh "exit $result"
   }
