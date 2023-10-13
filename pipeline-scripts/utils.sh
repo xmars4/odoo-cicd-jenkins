@@ -87,27 +87,27 @@ send_file_telegram() {
     chat_id=$2
     file_path=$3
     caption=$4
+    parse_mode=$5
+    [ -z $parse_mode ] && parse_mode="MarkdownV2"
+
     curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
         -F "chat_id=$chat_id" \
         -F "document=@$file_path" \
-        -F "caption=$caption"
-    show_separator "my command here=======/"
-    echo $bot_token >/tmp/hihi.txt
-    echo $chat_id >>/tmp/hihi.txt
-    echo "curl -s -X POST \"https://api.telegram.org/bot$bot_token/sendDocument\" \
-        -F \"chat_id=$chat_id\" \
-        -F \"document=@$file_path\" \
-        -F \"caption=$caption\""
-
+        -F "caption=$caption" \
+        -F "parse_mode=$parse_mode"
 }
 
 send_message_telegram() {
     bot_token=$1
     chat_id=$2
     message=$3
+    parse_mode=$5
+    [ -z $parse_mode ] && parse_mode="MarkdownV2"
+
     curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
-        -d "text=$message"
+        -d "text=$message" \
+        -d "parse_mode=$parse_mode"
 }
 
 send_file_telegram_default() {

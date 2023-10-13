@@ -25,10 +25,10 @@ function set_list_addons {
 }
 
 function update_config_file {
+    # remove old log level option
     # we use log to analytic error, so log_level should be 'error'
-    # remove old log level command
     sed -i "s/^\s*log_level\s*.*//g" $CONFIG_FILE
-    echo -e "\nlog_level = warn" >>$CONFIG_FILE
+    echo -e "\nlog_level = error" >>$CONFIG_FILE
 
     # Odoo's suggestion:  Unit testing in workers mode could fail; use --workers 0.
     # replace old command argument
@@ -43,11 +43,11 @@ function start_containers {
 
 function wait_until_odoo_shutdown {
     # because we put --stop-after-init option to odoo command
-    # so after Odoo finish install and run test cases
+    # so after Odoo has finished installing and runing test cases
     # It will shutdown automatically
-    # we just need to wait until odoo container stopped (status=exited)
-    # and we can analyze the log file
-    maximum_waiting_time=3600 # maximum wait time is 60', in the case there is unexpected problem
+    # we just need to wait until odoo container is stopped (status=exited)
+    # and we can start analyze the log file
+    maximum_waiting_time=3600 # maximum wait time is 60', in case if there is an unexpected problem
     odoo_container_id=$(get_odoo_container_id)
     if [ -z $odoo_container_id ]; then
         echo "Can't find the Odoo container, stop pipeline immediately!"
