@@ -90,12 +90,15 @@ send_file_telegram() {
     parse_mode=$5
     [ -z $parse_mode ] && parse_mode="MarkdownV2"
 
-    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
+    response=$(curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
         -F "chat_id=$chat_id" \
         -F "document=@$file_path" \
         -F "caption=$caption" \
         -F "parse_mode=$parse_mode" \
-        -F "disable_notification=true"
+        -F "disable_notification=true")
+    if [[ $reponse =~ "{\"ok\":false," ]]; then
+        echo $response
+    fi
 }
 
 send_message_telegram() {
