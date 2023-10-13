@@ -101,6 +101,7 @@ send_file_telegram() {
         -F "caption=$caption" \
         -F "parse_mode=$parse_mode" \
         -F "disable_notification=true")
+    show_separator $response
     if [[ $reponse =~ "{\"ok\":false," ]]; then
         echo $response
     fi
