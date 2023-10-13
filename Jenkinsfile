@@ -146,7 +146,7 @@ def set_github_commit_status(String state, String message) {
   withCredentials([
     string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
   ]) {
-    result = sh(script:"./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}' > /dev/null", returnStdout).trim()
+    result = sh(script:"./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}' > /dev/null", returnStdout:true).trim()
 
   }
 }
@@ -156,7 +156,7 @@ def send_telegram_file(String file_path, String message) {
     string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
     string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
   ]) {
-    result = sh(script: "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout).trim()
+    result = sh(script: "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout:true).trim()
     def telegram_error_pattern = /(?m).*(,"ok":false,).*/
     if (result ==~ telegram_error_pattern) {
       echo" can't send telegram message"
