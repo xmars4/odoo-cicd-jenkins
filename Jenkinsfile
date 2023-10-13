@@ -159,7 +159,9 @@ def send_telegram_file(String file_path, String message) {
     string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
   ]) {
     result = sh(script: "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout:true).trim()
-    echo "so wth is here $result"
+    echo "so wth is here "
+    echo "$result"
+    echo "omg==========="
     if (result) {
       echo "$result"
     }
