@@ -29,15 +29,9 @@ execute_remote_script() {
 }
 
 copy_and_execute_deploy_script_on_server() {
-    echo 'a=============================\\\\\\\\\\\\\\\\\'
-    execute_remote_command "ls -lah /tmp"
     scp -i "${server_privatekey}" \
         "${WORKSPACE}/pipeline-scripts/server_deploy.sh" \
         "${server_username}"@"${server_host}":"${server_deploy_script}"
-    echo "scp -i \"${server_privatekey}\" \
-        \"${WORKSPACE}/pipeline-scripts/server_deploy.sh\" \
-        \"${server_username}\"@\"${server_host}\":\"${server_deploy_script}\""
-    echo "how was the copying $?"
 
     execute_remote_script $server_deploy_script \
         $server_docker_compose_path \
