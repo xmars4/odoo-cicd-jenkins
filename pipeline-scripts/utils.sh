@@ -83,7 +83,7 @@ set_github_commit_status_default() {
     github_access_token=${global_github_access_token}
     state=$1
     message=$2
-    set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
+    set_github_commit_status "$repo_name" "$commit_sha" "$github_access_toke" "$state" "$message"
 }
 
 # ------------------ Telegram functions -------------------------
