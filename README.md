@@ -106,6 +106,7 @@
 
     -   Path: Dashboard > New Item -> Pipeline
     -   Fill pipeline name. _warning_ [don't put space to pipeline name](https://www.jenkins.io/doc/book/pipeline/getting-started/#:~:text=In%20the%20Enter%20an%20item,handle%20spaces%20in%20directory%20paths.)
+    -   Check **_Do not allow concurrent builds_**
     -   **_Pipeline / Definition_**: **Pipeline script from SCM**
     -   **_SCM_**: **Git**
     -   **_Repositories / Repository URL_**: paste your repo's **SSH** url that contains Jenkinsfile here
