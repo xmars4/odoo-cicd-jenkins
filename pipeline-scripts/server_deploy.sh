@@ -114,8 +114,9 @@ set_list_addons() {
 
 update_config_file() {
     # replace old command argument
-    sed -i "s/^\s*command\s*.*//g" $server_config_file
-    echo -e "\ncommand = -u "${EXTRA_ADDONS}"\n" >>"${server_config_file}"
+    sed -i "s/^\s*command\s*=.*//g" $server_config_file
+    echo -e "\ncommand = -u "${EXTRA_ADDONS}"" >>"${server_config_file}"
+    sed -i '/^$/d' $server_config_file # remove empty lines
 }
 
 update_odoo_services() {
