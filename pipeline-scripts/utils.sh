@@ -62,7 +62,7 @@ set_github_commit_status() {
 
     request_content="{\"state\":\"${state}\",\"target_url\":\"${build_url}\",\"description\":\"${message}\",\"context\":\"${context}\"}"
 
-    curl -L \
+    curl -L -s \
         -X POST \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${github_access_token}" \
