@@ -100,6 +100,12 @@ send_message_telegram() {
     curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
         -d "text=$message"
+    show_separator "my command here======="
+    echo """
+    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
+        -d "chat_id=$chat_id" \
+        -d "text=$message"
+    """
 }
 
 send_file_telegram_default() {
