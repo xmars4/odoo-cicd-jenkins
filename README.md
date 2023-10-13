@@ -4,20 +4,22 @@
 
     1.1. [Install Docker & Docker compose](https://docs.docker.com/engine/install/)
 
-    1.2. Execute bash script to create Jenkins data folder
+    1.2. [Update docker to run without sudo permission](https://docs.docker.com/engine/install/linux-postinstall/)
+
+    1.3. Execute bash script to create Jenkins data folder
 
     ```shell
         sudo ./jenkins-docker-compose/host-setup.sh
     ```
 
-    1.3. Run Jenkins
+    1.4. Run Jenkins
 
     ```shell
         cd jenkins-docker-compose
         docker compose up -d --build
     ```
 
-2.  Allow Jenkins connect to Github using SSH keys
+2.  Allowing Jenkins to authenticate with Github using SSH keys
 
     2.1. Add SSH keys to Jenkins instance
 
@@ -34,9 +36,10 @@
     -   **_ID_**: **github-ssh-cred**
     -   **_Kind_**: SSH Username with private key
     -   **_Username_**: your github username
-    -   **_Private key / Enter directly_**: paste your private SSH key at step **2.1** here
+    -   **_Private key / Enter directly_**: paste your private SSH key content at step **2.1** here
+    -   **_Description_**: _Jenkins uses this key to authenticate with Github_
 
-    2.3. [Add SSH public key (.pub) at step **2.1.** to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
+    2.3. [Add SSH public key (.pub) at step **2.1.** to your Github account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
 
 3.  Config Github plugin - allow trigger job in Jenkins by Github webhook
 
@@ -66,32 +69,36 @@
 
 4.  Config remote server info
 
-    4.1. Add server ssh credential in Jenkins
+    4.1. Add remote server ssh credential in Jenkins
 
-    -   Jenkins will use this credential to connect to the server and execute commands, scripts.
+    -
     -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
-    -   **Kind**: SSH Username with private key
-    -   **ID**: **remote-server-cred**
-    -   **Username**: the server's username
-    -   **Private Key / Enter directly / Key / Add**: the private key use to access the server
+    -   **_Kind_**: SSH Username with private key
+    -   **_ID_**: **remote-server-cred**
+    -   **_Username_**: the server's username
+    -   **_Private Key / Enter directly / Key / Add_**: the private key use to access the server
+    -   **_Description_**: _Jenkins will use this credential to connect to the remote server and execute commands, scripts._
 
     4.2. Allow remote server connect to Github using SSH keys
 
-    4.2.1. Access (SSH) to server
+    4.2.1. Add SSH keys to remote server
 
-    -   [Generate SSH keys or find existing keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
+    -   Access to remote server
 
-    -   [Add SSH keys to ssh-agent](https://www.jenkins.io/doc/book/installing/)
+    -   [Generating SSH keys or find the keys that already exists](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
 
-    4.2.2. [Add SSH public key (.pub) at step **5.2.1** to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
+    -   [Adding SSH keys to ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#adding-your-ssh-key-to-the-ssh-agent)
 
-    4.3. Add github private key credentail in Jenkins
+    4.2.2. [Add SSH public key (.pub) at step **4.2.1** to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
 
-    -   Server will use this private key to connect to Github and pull latest code
+    4.3. Add privatekey credential
+
+    -   Access Jenkins Web UI
     -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
-    -   **Kind**: Secret file
-    -   **File**: Upload the ssh private key generated at step **5.2.1**
-    -   **ID**: **remote-server-github-privatekey-cred**
+    -   **_Kind_**: **Secret file**
+    -   **_File_**: Upload the SSH private key generated at step **4.2.1**
+    -   **_ID_**: **remote-server-github-privatekey-cred**
+    -   **_Description_**: _Server use this private key to connect to Github and pull latest code_
 
 5.  Create and config Github pipeline
 
@@ -99,10 +106,10 @@
 
     -   Path: Dashboard > New Item -> Pipeline
     -   Fill pipeline name. _warning_ [don't put space to pipeline name](https://www.jenkins.io/doc/book/pipeline/getting-started/#:~:text=In%20the%20Enter%20an%20item,handle%20spaces%20in%20directory%20paths.)
-    -   Select option **GitHub hook trigger for GITScm polling**
-    -   Pipeline / Definition, select **Pipeline script from SCM**
-    -   SCM: **Git**
-    -   Repositories / Repository URL: paste your **SSH** repo url that contains Jenkinsfile and configured webhook here. e.g: git@github.com:xmars4/odoo-cicd-jenkins.git
+    -   Check **_Do not allow concurrent builds_**
+    -   **_Pipeline / Definition_**: **Pipeline script from SCM**
+    -   **_SCM_**: **Git**
+    -   **_Repositories / Repository URL_**: paste your repo's **SSH** url that contains Jenkinsfile here
     -   Credentials: select the credential you created at step **2.4**
     -   Branches to build / Branch Specifier: select an apropriate branch that contains Jenkinsfile
     -   Script Path: path to _Jenkinsfile_ in repo
@@ -237,7 +244,7 @@
     ](https://www.youtube.com/watch?v=ZabUz6sl-8I)
 
 -   [Binding credentails to variable](https://www.jenkins.io/doc/pipeline/steps/credentials-binding/)
--   permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock -> check Jenkins Dockerfile , line 17,18
+-   permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock -> check Jenkins Dockerfile, line 17,18
     to create a new group mapped with docker group on host
 -   Config Generic webhook trigger in Jenkins file
 

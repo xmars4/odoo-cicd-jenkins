@@ -9,18 +9,16 @@ show_separator "Start analyzing log file"
 function analyze_log {
     # in case Odoo don't have any ERROR -> log file will be not generated
     # so no need to analyze log anymore
-    docker exec $ODOO_CONTAINER_ID sh -c "[ -f ${LOG_FILE} ]"
-    if [ $? != 0 ]; then
+    [ -f ${LOG_FILE_OUTSIDE} ]
+    if [ $? -ne 0 ]; then
         return 0
     fi
 
-    docker exec $ODOO_CONTAINER_ID sh -c "grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE"
-    if [ $? -eq 0 ]; then
-        # we copied the log file to Jenkins instance so we can send it to Telegram
-        docker cp $ODOO_CONTAINER_ID:$LOG_FILE $LOG_FILE_OUTSIDE
+    grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE_OUTSIDE >/dev/null 2>&1
+    error_exist=$?
+    if [ $error_exist -eq 0 ]; then
         exit 1
     fi
-    return 0
 }
 
 analyze_log

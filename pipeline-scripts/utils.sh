@@ -1,8 +1,8 @@
 #!/bin/bash
 
 global_github_access_token=${github_access_token}
-global_telegram_bot_token=${telegram-bot-token}
-global_telegram_channel_id=${telegram-channel-id}
+global_telegram_bot_token=${telegram_bot_token}
+global_telegram_channel_id=${telegram_channel_id}
 
 # declare all useful functions here
 function show_separator {
@@ -12,7 +12,7 @@ function show_separator {
 }
 
 function get_odoo_container_id {
-    docker compose ps -q |
+    docker compose ps -q -a |
         xargs docker inspect --format '{{.Id}} {{.Config.Image}}' |
         awk -v img="${ODOO_IMAGE_TAG}" '$2 == img {print $1}'
 }
@@ -62,13 +62,18 @@ set_github_commit_status() {
 
     request_content="{\"state\":\"${state}\",\"target_url\":\"${build_url}\",\"description\":\"${message}\",\"context\":\"${context}\"}"
 
-    curl -L \
+    response=$(curl -L -s \
         -X POST \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${github_access_token}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/${repo_name}/statuses/${commit_sha} \
-        -d "$request_content"
+        -d "$request_content")
+    if ! [[ $response =~ '"created_at":' ]]; then
+        # can't set commit status
+        echo $response
+    fi
+
 }
 
 set_github_commit_status_default() {
@@ -87,19 +92,35 @@ send_file_telegram() {
     chat_id=$2
     file_path=$3
     caption=$4
-    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
+    parse_mode=$5
+    [ -z $parse_mode ] && parse_mode="MarkdownV2"
+
+    response=$(curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
         -F "chat_id=$chat_id" \
         -F "document=@$file_path" \
-        -F "caption=$caption"
+        -F "caption=$caption" \
+        -F "parse_mode=$parse_mode" \
+        -F "disable_notification=true")
+    if [[ $reponse =~ "{\"ok\":false," ]]; then
+        echo $response
+    fi
 }
 
 send_message_telegram() {
     bot_token=$1
     chat_id=$2
     message=$3
-    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
+    parse_mode=$5
+    [ -z $parse_mode ] && parse_mode="MarkdownV2"
+
+    response=$(curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
-        -d "text=$message"
+        -d "text=$message" \
+        -d "parse_mode=$parse_mode" \
+        -d "disable_notification=true")
+    if [[ $reponse =~ "{\"ok\":false," ]]; then
+        echo $response
+    fi
 }
 
 send_file_telegram_default() {

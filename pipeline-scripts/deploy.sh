@@ -28,7 +28,7 @@ execute_remote_script() {
     ssh "${server_username}"@"${server_host}" -i "${server_privatekey}" "${script_name} $@"
 }
 
-copy_deploy_script_to_server() {
+copy_and_execute_deploy_script_on_server() {
     scp -i "${server_privatekey}" \
         "${WORKSPACE}/pipeline-scripts/server_deploy.sh" \
         "${server_username}"@"${server_host}":"${server_deploy_script}"
@@ -50,7 +50,7 @@ main() {
     check_required_variables
     presetup_ssh_remote
     copy_github_privatekey_to_server
-    copy_deploy_script_to_server
+    copy_and_execute_deploy_script_on_server
 }
 
 main

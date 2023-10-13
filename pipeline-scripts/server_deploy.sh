@@ -126,9 +126,9 @@ update_odoo_services() {
 main() {
     check_git_repo_folder
     pull_latest_code
-    # set_list_addons
-    # update_config_file
-    # update_odoo_services
+    set_list_addons
+    update_config_file
+    update_odoo_services
 }
 
 main
