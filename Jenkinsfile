@@ -108,7 +108,7 @@ def unit_test() {
   def result = sh(script: './pipeline-scripts/unit-test.sh', returnStatus: true)
   if (result != 0) {
     set_github_commit_status("failure", "The build failed, please re-check the code!");
-    send_telegram_file(LOG_FILE_OUTSIDE, "The [pull request ${pr_id}](${pr_url}) checking has failed, please check the log file!")
+    send_telegram_file(LOG_FILE_OUTSIDE, "The [pull request ${pr_id}](${pr_url}) checking has failed, please check the log file\!")
     clean_test_resource()
     sh "exit $result"
   }
