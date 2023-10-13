@@ -4,13 +4,15 @@
 
     1.1. [Install Docker & Docker compose](https://docs.docker.com/engine/install/)
 
-    1.2. Execute bash script to create Jenkins data folder
+    1.2. [Update docker to run without sudo permission](https://docs.docker.com/engine/install/linux-postinstall/)
+
+    1.3. Execute bash script to create Jenkins data folder
 
     ```shell
         sudo ./jenkins-docker-compose/host-setup.sh
     ```
 
-    1.3. Run Jenkins
+    1.4. Run Jenkins
 
     ```shell
         cd jenkins-docker-compose
@@ -278,4 +280,4 @@
     ```
 
 -   By default, before pipeline start, Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile<br/> so we can't ignore check out default Instead, we will perform second checkout with specific branch (from pull request)
-    -.
+    -..
