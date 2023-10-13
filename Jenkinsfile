@@ -121,7 +121,7 @@ def unit_test() {
 }
 
 def deploy_to_server() {
-    if (pr_state == 'merged') {
+    if (pr_state == 'closed' && pr_merged == true) {
         withCredentials([
             sshUserPrivateKey(credentialsId: 'remote-server-cred',
                 keyFileVariable: 'server_privatekey',
