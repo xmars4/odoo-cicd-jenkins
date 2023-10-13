@@ -130,7 +130,7 @@
         | pr_url             | $.pull_request.html_url          | JSONPath        |               |              |
         | pr_draft           | $.pull_request.draft             | JSONPath        |               |              |
 
-    -   Given **_Optional filter_** is configured with **_text_**: $action#$pr_draft|$action#pr_merged
+    -   Given **_Optional filter_** is configured with **_text_**: $action#$pr_draft|$action#$pr_merged
     -   Given **_Optional filter_** is configured with **_expression_**: (reopened|opened|synchronize|ready_for_review)#(false)|(closed)#(true)
     -   Fill the Cause with text: Triggered from PR: $pr_url
     -   Fill the **_Token_** with a random string
@@ -267,7 +267,7 @@
                         ],
                         causeString: 'Triggered from PR: $pr_url',
                         token: webhookToken,
-                        regexpFilterText: 'action#pr_draft|$action#pr_merged',
+                        regexpFilterText: 'action#pr_draft|$action#$pr_merged',
                         regexpFilterExpression: '(reopened|opened|synchronize|ready_for_review)#(false)|(closed)#(true)',
                         printContributedVariables: false,
                         printPostContent: false,
