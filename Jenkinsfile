@@ -18,13 +18,13 @@ node {
     unit_test()
   }
 
-//   stage('Deploy to server') {
-//     deploy_to_server()
-//   }
-//
-//   stage('Clean Test Resources') {
-//     clean_test_resource()
-//   }
+  // stage('Deploy to server') {
+  //   deploy_to_server()
+  // }
+
+  stage('Clean Test Resources') {
+    clean_test_resource()
+  }
 
 }
 
@@ -33,8 +33,8 @@ def setup_environment_variables() {
   env.ODOO_WORKSPACE = "${env.WORKSPACE}/odoo-docker-compose"
   env.ODOO_ADDONS_PATH = "${ODOO_WORKSPACE}/extra-addons"
   env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
-  env.LOG_FILE = "/var/log/odoo/odoo.log" // file log is inside the odoo container
-  env.LOG_FILE_OUTSIDE = "${ODOO_WORKSPACE}/logs/odoo.log" // file log is outside the odoo container (copied from odoo container)
+  env.LOG_FILE = "/var/log/odoo/odoo.log" // the log file is inside the odoo container
+  env.LOG_FILE_OUTSIDE = "${ODOO_WORKSPACE}/logs/odoo.log" // mounted odoo's log file in Jenkins instance
 }
 
 def git_checkout() {
@@ -91,7 +91,7 @@ def verify_tools() {
 def build() {
   def result = sh(script: './pipeline-scripts/build.sh', returnStatus: true)
   if (result != 0) {
-//     clean_test_resource()
+    clean_test_resource()
     sh "exit $result"
   }
 }
@@ -106,12 +106,10 @@ def sonarqube_check_code_quality() {
 def unit_test() {
 
   def result = sh(script: './pipeline-scripts/unit-test.sh', returnStatus: true)
-  echo "what the hell is result $result"
   if (result != 0) {
-    sh "cat $LOG_FILE_OUTSIDE"
     set_github_commit_status("failure", "The build failed, please re-check the code!");
-    send_telegram_file(LOG_FILE_OUTSIDE, "The [pull request ${pr_id}](${pr_url}) checking has failed, please check the log file!")
-//     clean_test_resource()
+    send_telegram_file(LOG_FILE_OUTSIDE, "The [pull request ${pr_id}](${pr_url}) checking has failed, please check the log file\!")
+    clean_test_resource()
     sh "exit $result"
   }
   set_github_commit_status("success", "The build succeed!");
@@ -156,6 +154,7 @@ def send_telegram_file(String file_path, String message) {
     sh "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'"
   }
 }
+
 def send_telegram_message() {
   withCredentials([
     string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
