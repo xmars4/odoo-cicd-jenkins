@@ -14,7 +14,7 @@ function analyze_log {
         return 0
     fi
 
-    grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE_OUTSIDE
+    grep -m 1 -P '^[0-9-\s:,]+ERROR' $LOG_FILE_OUTSIDE >/dev/null 2>&1
     error_exist=$?
     if [ $error_exist -eq 0 ]; then
         exit 1
