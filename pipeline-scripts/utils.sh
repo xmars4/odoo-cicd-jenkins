@@ -92,12 +92,11 @@ send_file_telegram() {
         -F "document=@$file_path" \
         -F "caption=$caption"
     show_separator "my command here======="
-    curl """
-    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
-        -F "chat_id=$chat_id" \
-        -F "document=@$file_path" \
-        -F "caption=$caption"
-    """
+    echo "curl -s -X POST \"https://api.telegram.org/bot$bot_token/sendDocument\"" \
+        \" -F chat_id=$chat_id\" \
+        \" -F document=@$file_path\" \
+        "\" -F caption=$caption\""
+
 }
 
 send_message_telegram() {
@@ -107,12 +106,6 @@ send_message_telegram() {
     curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
         -d "text=$message"
-    show_separator "my command here======="
-    echo """
-    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
-        -d "chat_id=$chat_id" \
-        -d "text=$message"
-    """
 }
 
 send_file_telegram_default() {
