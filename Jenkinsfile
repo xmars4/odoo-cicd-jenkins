@@ -158,7 +158,7 @@ def send_telegram_file(String file_path, String message) {
   ]) {
     result = sh(script: "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout:true).trim()
     if (result) {
-      echo $result
+      echo "$result"
     }
   }
 }
