@@ -147,7 +147,9 @@ def set_github_commit_status(String state, String message) {
     string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
   ]) {
     result = sh(script:"./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}' > /dev/null", returnStdout:true).trim()
-
+    if (result){
+      echo "$result"
+    }
   }
 }
 
