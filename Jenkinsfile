@@ -150,15 +150,15 @@ def set_github_commit_status(String state, String message) {
 
 def send_telegram_file(String file_path, String message) {
   withCredentials([
-    string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
-    string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
+    string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
+    string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
   ]) {
     sh "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'"
   }
 }
 def send_telegram_message() {
   withCredentials([
-    string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
-    string(credentialsId: 'telegram-channel-id', variable: 'TELEGRAM_CHANNEL_ID')
+    string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
+    string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
   ]) {}
 }
