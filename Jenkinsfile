@@ -121,9 +121,7 @@ def unit_test() {
 }
 
 def deploy_to_server() {
-    echo "$pr_state --- $pr_merged"
     if (pr_state == 'closed' && pr_merged == 'true') {
-        echo "can u come here bro"
         withCredentials([
             sshUserPrivateKey(credentialsId: 'remote-server-cred',
                 keyFileVariable: 'server_privatekey',
