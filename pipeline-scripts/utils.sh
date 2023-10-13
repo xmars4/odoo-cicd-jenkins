@@ -62,13 +62,18 @@ set_github_commit_status() {
 
     request_content="{\"state\":\"${state}\",\"target_url\":\"${build_url}\",\"description\":\"${message}\",\"context\":\"${context}\"}"
 
-    curl -L -s \
+    response=$(curl -L -s \
         -X POST \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${github_access_token}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/${repo_name}/statuses/${commit_sha} \
-        -d "$request_content"
+        -d "$request_content")
+    if ! [[ $response =~ '"created_at":' ]]; then
+        # can't set commit status
+        echo $response
+    fi
+
 }
 
 set_github_commit_status_default() {
