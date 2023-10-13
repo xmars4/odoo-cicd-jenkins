@@ -155,7 +155,7 @@ def send_telegram_file(String file_path, String message) {
     string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
     string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
   ]) {
-    sh "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}' > /dev/null"
+    sh "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'"
   }
 }
 
