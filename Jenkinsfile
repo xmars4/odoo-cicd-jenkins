@@ -110,7 +110,7 @@ def unit_test() {
     def git_commit_message = "The build failed, please re-check the code!"
     set_github_commit_status("failure", git_commit_message);
 
-    def telegram_message = "The [PR \\#${pr_id}](${pr_url}) check has failed\\.<br/> Please take a look at the attached log file 🔬"
+    def telegram_message = "The [PR \\#${pr_id}](${pr_url}) check has failed\\.\\<br/\\> Please take a look at the attached log file 🔬"
     send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 
     clean_test_resource()
