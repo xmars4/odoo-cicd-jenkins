@@ -130,6 +130,16 @@ def deploy_to_server() {
             file(credentialsId: 'remote-server-github-privatekey-cred',
                 variable: 'server_github_privatekey_file')
         ]) {
+            // FIXME: move remote command to ssh-step-plugins
+            // https://plugins.jenkins.io/ssh-steps/
+            def remote = [:]
+            remote.name = "node-1"
+            remote.host = "103.229.42.127"
+            remote.allowAnyHosts = true
+            remote.user = server_username
+            remote.identityFile = server_privatekey
+            sshCommand remote: remote, command: "ls -lah /opt/"
+
             // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
             // ref: https://issues.jenkins.io/browse/JENKINS-65533
             // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
