@@ -7,6 +7,7 @@
     1.2. [Update docker to run without sudo permission](https://docs.docker.com/engine/install/linux-postinstall/)
 
     1.3. Clone this repo, branch **_cicd_**
+    <br/>This repo contains a Jenkinsfile and other relevant files
 
     1.4. Executing bash script to create Jenkins data folder
 
@@ -25,7 +26,7 @@
 
     2.1. Add SSH keys to Jenkins instance
 
-    -   Access to Jenkins instance
+    -   Access to Jenkins (docker) instance
 
     -   [Generating SSH keys or find the keys that already exists](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
 
