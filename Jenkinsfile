@@ -83,7 +83,7 @@ def git_checkout_pull_request_branch() {
 }
 
 def verify_tools() {
-    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/verify.sh > /dev/null", returnStatus: true)
+    def result = sh(script: "${env.PIPELINE_SCRIPTS_PATH}/verify.sh > /dev/null", returnStatus: true)
     if (result != 0) {
         // missing required tools, stop pipeline immediately
         sh "exit $result"
@@ -91,7 +91,7 @@ def verify_tools() {
 }
 
 def build() {
-    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh", returnStatus: true)
+    def result = sh(script: "${env.PIPELINE_SCRIPTS_PATH}/build.sh", returnStatus: true)
     if (result != 0) {
         clean_test_resource()
         sh "exit $result"
@@ -101,13 +101,13 @@ def build() {
 def sonarqube_check_code_quality() {
     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
         env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        sh "$PIPELINE_SCRIPTS_PATH/sonarqube.sh > /dev/null 2>&1"
+        sh "${env.PIPELINE_SCRIPTS_PATH}/sonarqube.sh > /dev/null 2>&1"
     }
 }
 
 def unit_test() {
 
-    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/unit-test.sh", returnStatus: true)
+    def result = sh(script: "${env.PIPELINE_SCRIPTS_PATH}/unit-test.sh", returnStatus: true)
     if (result != 0) {
         def git_commit_message = "The build failed, please re-check the code!"
         set_github_commit_status("failure", git_commit_message);
@@ -145,7 +145,7 @@ def deploy_to_server() {
             try {
 sshCommand remote:remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
-                sshScript remote: remote, script: "$PIPELINE_SCRIPTS_PATH/deploy.sh '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
+                sshScript remote: remote, script: "${env.PIPELINE_SCRIPTS_PATH}/deploy.sh '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
                 def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
     send_telegram_message(success_message)
             }
@@ -172,7 +172,7 @@ def set_github_commit_status(String state, String message) {
     withCredentials([
         string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
+        result = sh(script: "${env.PIPELINE_SCRIPTS_PATH}/utils.sh set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
@@ -184,7 +184,7 @@ def send_telegram_file(String file_path, String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
+        result = sh(script: "${env.PIPELINE_SCRIPTS_PATH}/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
@@ -196,7 +196,7 @@ def send_telegram_message(String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default '${message}'", returnStdout: true).trim()
+        result = sh(script: "${env.PIPELINE_SCRIPTS_PATH}/utils.sh send_message_telegram_default '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
