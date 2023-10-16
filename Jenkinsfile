@@ -4,11 +4,6 @@ node {
         setup_environment_variables()
         verify_tools()
         clean_test_resource() // in case previous job can't clean
-                        def failed_message = """
-The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
-Please take a look into the server\\.
-"""
-                send_telegram_message(failed_message)
     }
 
     stage('Build') {
@@ -159,7 +154,7 @@ def deploy_to_server() {
             } catch (Exception e) {
                 def failed_message = """
 The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
-Please take a look into the server\\.
+Please take a look into the server🔬\\.
 """
                 send_telegram_message(failed_message)
             }
