@@ -115,7 +115,7 @@ send_message_telegram() {
 
     response=$(curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
-        -d "text=\"$message\"" \
+        -d "text=$message" \
         -d "parse_mode=$parse_mode" \
         -d "disable_notification=true")
     if [[ $response =~ "{\"ok\":false" ]]; then
