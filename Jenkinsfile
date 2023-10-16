@@ -139,6 +139,7 @@ def deploy_to_server() {
             remote.allowAnyHosts = true
             remote.user = server_username
             remote.identityFile = server_privatekey
+            remote.fileTransfer = "scp"
             
             def git_private_key_folder_in_server = "~/.ssh/cicd"
             def git_private_key_file_in_server="$git_private_key_folder_in_server/odoo-cicd-git-privkey"
