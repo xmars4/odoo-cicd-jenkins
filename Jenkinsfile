@@ -83,7 +83,7 @@ def git_checkout_pull_request_branch() {
 }
 
 def verify_tools() {
-    def result = sh(script: "${env.PIPELINE_SCRIPTS_PATH}/verify.sh > /dev/null", returnStatus: true)
+    def result = sh(script: "${PIPELINE_SCRIPTS_PATH}/verify.sh > /dev/null", returnStatus: true)
     if (result != 0) {
         // missing required tools, stop pipeline immediately
         sh "exit $result"
@@ -122,6 +122,7 @@ def unit_test() {
 }
 
 def deploy_to_server() {
+    if (pr_state == 'closed' && pr_merged == 'true') {
         withCredentials([
             sshUserPrivateKey(credentialsId: 'remote-server-cred',
                 keyFileVariable: 'server_privatekey',
@@ -160,7 +161,7 @@ sshCommand remote:remote, command: "[ ! -d $git_private_key_folder_in_server ] &
             //     send_telegram_message(message)
             // }
         }
-    
+    }
 }
 
 def clean_test_resource() {
