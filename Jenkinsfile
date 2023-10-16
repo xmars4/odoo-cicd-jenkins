@@ -122,7 +122,7 @@ def unit_test() {
 }
 
 def deploy_to_server() {
-    if (pr_state == 'closed' && pr_merged == 'true') {
+    // if (pr_state == 'closed' && pr_merged == 'true') {
         withCredentials([
             sshUserPrivateKey(credentialsId: 'remote-server-cred',
                 keyFileVariable: 'server_privatekey',
@@ -142,17 +142,17 @@ def deploy_to_server() {
             
             def git_private_key_folder_in_server = "~/.ssh/cicd"
             def git_private_key_file_in_server="$git_private_key_folder_in_server/odoo-cicd-git-privkey"
-            try {
-sshCommand remote:remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
+            // try {
+                sshCommand remote:remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
                 sshScript remote: remote, script: "$PIPELINE_SCRIPTS_PATH/deploy.sh '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
                 def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
-    send_telegram_message(success_message)
-            }
-            catch (Exception e){
-                def failed_message = "The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!\\nPlease take a look into the server."
+                send_telegram_message(success_message)
+            // }
+            // catch (Exception e){
+                def failed_message = "The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed.Please take a look into the server."
                 send_telegram_message(failed_message)
-            }
+            // }
             
 
             // def result = sh(script: './pipeline-scripts/deploy.sh', returnStatus: true)
@@ -160,7 +160,7 @@ sshCommand remote:remote, command: "[ ! -d $git_private_key_folder_in_server ] &
             //     def message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
             //     send_telegram_message(message)
             // }
-        }
+        // }
     }
 }
 
