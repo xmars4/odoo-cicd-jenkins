@@ -149,15 +149,11 @@ def deploy_to_server() {
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server_deploy.sh", into: server_deploy_script
                 sshCommand remote: remote, command: "$server_deploy_script '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
-                // def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
-                def success_message = "The &lt;a href=\"${pr_url}\"&gt;PR #${pr_id}&lt;/a&gt; was merged and deployed to server 💫🤩💫"
-                echo "$success_message"
+                def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
                 send_telegram_message(success_message)
-                // def failed_message = "The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\! Please take a look into the server\\."
-                // send_telegram_message(failed_message)
             }
             catch (Exception e){
-                def failed_message = "The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!\\nPlease take a look into the server\\."
+                def failed_message = "The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\! Please take a look into the server\\."
                 send_telegram_message(failed_message)
             }
             
