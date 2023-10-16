@@ -35,6 +35,7 @@ def setup_environment_variables() {
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // the log file is inside the odoo container
     env.LOG_FILE_OUTSIDE = "${ODOO_WORKSPACE}/logs/odoo.log" // mounted odoo's log file in Jenkins instance
+    env.PIPELINE_SCRIPTS_PATH = "${env.WORKSPACE}/pipeline-scripts"
 }
 
 def git_checkout() {
@@ -82,7 +83,7 @@ def git_checkout_pull_request_branch() {
 }
 
 def verify_tools() {
-    def result = sh(script: './pipeline-scripts/verify.sh > /dev/null', returnStatus: true)
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/verify.sh > /dev/null", returnStatus: true)
     if (result != 0) {
         // missing required tools, stop pipeline immediately
         sh "exit $result"
@@ -90,7 +91,7 @@ def verify_tools() {
 }
 
 def build() {
-    def result = sh(script: './pipeline-scripts/build.sh', returnStatus: true)
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh", returnStatus: true)
     if (result != 0) {
         clean_test_resource()
         sh "exit $result"
@@ -100,18 +101,18 @@ def build() {
 def sonarqube_check_code_quality() {
     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
         env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        sh './pipeline-scripts/sonarqube.sh > /dev/null 2>&1'
+        sh "$PIPELINE_SCRIPTS_PATH/sonarqube.sh > /dev/null 2>&1"
     }
 }
 
 def unit_test() {
 
-    def result = sh(script: './pipeline-scripts/unit-test.sh', returnStatus: true)
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/unit-test.sh", returnStatus: true)
     if (result != 0) {
         def git_commit_message = "The build failed, please re-check the code!"
         set_github_commit_status("failure", git_commit_message);
 
-        def telegram_message = "The [PR \\#${pr_id}](${pr_url}) check has failed\\.\\<br/\\> Please take a look at the attached log file 🔬"
+        def telegram_message = "The [PR \\#${pr_id}](${pr_url}) check has failed\\.\\n Please take a look at the attached log file 🔬"
         send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 
         clean_test_resource()
@@ -138,17 +139,27 @@ def deploy_to_server() {
             remote.allowAnyHosts = true
             remote.user = server_username
             remote.identityFile = server_privatekey
-            sshCommand remote: remote, command: "ls -lah /opt/"
-
-            // can't use SSH Pipeline Steps yet because it has a bug related to ssh private key authentication
-            // ref: https://issues.jenkins.io/browse/JENKINS-65533
-            // ref: https://github.com/jenkinsci/ssh-steps-plugin/pull/91
-            // so we'll execute ssh manually
-            def result = sh(script: './pipeline-scripts/deploy.sh', returnStatus: true)
-            if (result == 0) {
-                def message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
-                send_telegram_message(message)
+            
+            def git_private_key_folder_in_server = "~/.ssh/cicd"
+            def git_private_key_file_in_server="$git_private_key_folder_in_server/odoo-cicd-git-privkey"
+            try {
+sshCommand remote:remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
+                sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
+                sshScript remote: remote, script: "$PIPELINE_SCRIPTS_PATH/deploy.sh '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
+                def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
+    send_telegram_message(success_message)
             }
+            catch (Exception e){
+                def failed_message = "The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!\\nPlease take a look into the server."
+                send_telegram_message(failed_message)
+            }
+            
+
+            // def result = sh(script: './pipeline-scripts/deploy.sh', returnStatus: true)
+            // if (result == 0) {
+            //     def message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
+            //     send_telegram_message(message)
+            // }
         }
     }
 }
@@ -161,7 +172,7 @@ def set_github_commit_status(String state, String message) {
     withCredentials([
         string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
     ]) {
-        result = sh(script: "./pipeline-scripts/utils.sh set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
@@ -173,7 +184,7 @@ def send_telegram_file(String file_path, String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "./pipeline-scripts/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
@@ -185,7 +196,7 @@ def send_telegram_message(String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "./pipeline-scripts/utils.sh send_message_telegram_default '${message}'", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
