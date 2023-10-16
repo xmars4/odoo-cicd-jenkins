@@ -7,6 +7,7 @@ git_private_key_file=$4       # private key on server use to authenticate on Git
 original_repo_remote_name="origin"
 custom_repo_remote_name="origin-ssh"
 custom_repo_host="ssh.github.com"
+server_config_file_backup="${server_config_file}.bak"
 EXTRA_ADDONS=
 
 check_git_repo_folder() {
@@ -105,10 +106,15 @@ set_list_addons() {
 }
 
 update_config_file() {
+    cp $server_config_file $server_config_file_backup
     # replace old command argument
     sed -i "s/^\s*command\s*=.*//g" $server_config_file
     echo -e "\ncommand = -u "${EXTRA_ADDONS}"" >>"${server_config_file}"
-    sed -i '/^$/d' $server_config_file # remove empty lines
+}
+
+reset_config_file() {
+    rm -rf $server_config_file
+    mv $server_config_file_backup $server_config_file
 }
 
 update_odoo_services() {
@@ -122,6 +128,7 @@ main() {
     set_list_addons
     update_config_file
     update_odoo_services
+    reset_config_file
 }
 
 main

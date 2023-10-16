@@ -153,7 +153,7 @@ def deploy_to_server() {
                 send_telegram_message(success_message)
             // }
             // catch (Exception e){
-                def failed_message = "The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed.Please take a look into the server."
+                def failed_message = "The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed.\\nPlease take a look into the server\\. !!!"
                 send_telegram_message(failed_message)
             // }
             
@@ -199,9 +199,16 @@ def send_telegram_message(String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default '${message}'", returnStdout: true).trim()
-        if (result) {
-            echo "$result"
+        try{
+        sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default '${message}'")
+
         }
+        catch(Exception e){
+            echo "$e"
+        }
+        // result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default '${message}'", returnStdout: true).trim()
+        // if (result) {
+        //     echo "$result"
+        // }
     }
 }
