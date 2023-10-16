@@ -148,7 +148,7 @@ def deploy_to_server() {
                 sshCommand remote:remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server_deploy.sh", into: server_deploy_script
-                sshScript remote: remote, script: "$server_deploy_script '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
+                sshCommand remote: remote, command: "$server_deploy_script '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
                 def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
                 send_telegram_message(success_message)
             // }
