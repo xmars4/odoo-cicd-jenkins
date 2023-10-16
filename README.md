@@ -6,15 +6,15 @@
 
     1.2. [Update docker to run without sudo permission](https://docs.docker.com/engine/install/linux-postinstall/)
 
-    1.3. Clone this repo
+    1.3. Clone this repo, branch **_cicd_**
 
-    1.4. Execute bash script to create Jenkins data folder
+    1.4. Executing bash script to create Jenkins data folder
 
     ```shell
         sudo ./jenkins-docker-compose/host-setup.sh
     ```
 
-    1.5. Run Jenkins
+    1.5. Installing Jenkins
 
     ```shell
         cd jenkins-docker-compose
