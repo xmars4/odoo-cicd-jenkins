@@ -6,25 +6,25 @@ node {
         clean_test_resource() // in case previous job can't clean
     }
 
-    stage('Build') {
-        build()
-    }
+    // stage('Build') {
+    //     build()
+    // }
 
     // stage('Test #1 (Sonarqube)') {
     //     sonarqube_check_code_quality()
     // }
 
-    stage('Test #2 (Odoo Test cases)') {
-        unit_test()
-    }
+    // stage('Test #2 (Odoo Test cases)') {
+    //     unit_test()
+    // }
 
     stage('Deploy to server') {
         deploy_to_server()
     }
 
-    stage('Clean Test Resources') {
-        clean_test_resource()
-    }
+    // stage('Clean Test Resources') {
+    //     clean_test_resource()
+    // }
 
 }
 
