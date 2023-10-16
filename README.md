@@ -6,13 +6,15 @@
 
     1.2. [Update docker to run without sudo permission](https://docs.docker.com/engine/install/linux-postinstall/)
 
-    1.3. Execute bash script to create Jenkins data folder
+    1.3. Clone this repo
+
+    1.4. Execute bash script to create Jenkins data folder
 
     ```shell
         sudo ./jenkins-docker-compose/host-setup.sh
     ```
 
-    1.4. Run Jenkins
+    1.5. Run Jenkins
 
     ```shell
         cd jenkins-docker-compose
@@ -235,7 +237,6 @@
     ```
 
 -   [Why use bind mount volume instead of volume for Jenkins' container](https://stackoverflow.com/questions/62678663/jenkins-in-docker-clarification-about-bind-mounts-in-pipelines/62679925#62679925)
--   [Run Docker without sudo](https://docs.docker.com/engine/install/linux-postinstall/)
 
 -   [SonarQube](https://docs.sonarsource.com/sonarqube/latest/) code quality inspection -> use to scan Odoo addons
 
