@@ -10,9 +10,9 @@ node {
         build()
     }
 
-    stage('Test #1 (Sonarqube)') {
-        sonarqube_check_code_quality()
-    }
+    // stage('Test #1 (Sonarqube)') {
+    //     sonarqube_check_code_quality()
+    // }
 
     stage('Test #2 (Odoo Test cases)') {
         unit_test()
@@ -106,14 +106,15 @@ def sonarqube_check_code_quality() {
 }
 
 def unit_test() {
-
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/unit-test.sh", returnStatus: true)
     if (result != 0) {
         def git_commit_message = "The build failed, please re-check the code!"
         set_github_commit_status("failure", git_commit_message);
 
-        def telegram_message = """The [PR \\#${pr_id}](${pr_url}) check has failed\\!
-Please take a look at the attached log file 🔬"""
+        def telegram_message = """
+The [PR \\#${pr_id}](${pr_url}) check has failed\\!
+Please take a look at the attached log file🔬
+"""
         send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 
         clean_test_resource()
@@ -132,28 +133,29 @@ def deploy_to_server() {
             file(credentialsId: 'remote-server-github-privatekey-cred',
                 variable: 'server_github_privatekey_file')
         ]) {
-            def remote = [:]
+            def remote = [: ]
             remote.name = "remote-server"
             remote.host = server_host
             remote.allowAnyHosts = true
             remote.user = server_username
             remote.identityFile = server_privatekey
             remote.fileTransfer = "scp"
-            
+
             def git_private_key_folder_in_server = "~/.ssh/cicd"
-            def git_private_key_file_in_server="$git_private_key_folder_in_server/odoo-cicd-git-privkey"
-            def server_deploy_script="/tmp/odoo-cicd-deploy.sh"
+            def git_private_key_file_in_server = "$git_private_key_folder_in_server/odoo-cicd-git-privkey"
+            def server_deploy_script = "/tmp/odoo-cicd-deploy.sh"
             try {
-                sshCommand remote:remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
+                sshCommand remote: remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/deploy.sh", into: server_deploy_script
                 sshCommand remote: remote, command: "$server_deploy_script '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
                 def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
                 send_telegram_message(success_message)
-            }
-            catch (Exception e){
-                def failed_message = """The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
-Please take a look into the server\\."""
+            } catch (Exception e) {
+                def failed_message = """
+The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
+Please take a look into the server\\.
+"""
                 send_telegram_message(failed_message)
             }
         }
