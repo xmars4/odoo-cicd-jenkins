@@ -199,16 +199,9 @@ def send_telegram_message(String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        try{
-        sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default '${message}'")
-
+        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default '${message}'", returnStdout: true).trim()
+        if (result) {
+            echo "$result"
         }
-        catch(Exception e){
-            echo "$e"
-        }
-        // result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default '${message}'", returnStdout: true).trim()
-        // if (result) {
-        //     echo "$result"
-        // }
     }
 }
