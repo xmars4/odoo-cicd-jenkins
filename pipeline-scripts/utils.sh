@@ -111,7 +111,7 @@ send_message_telegram() {
     chat_id=$2
     message=$3
     parse_mode=$4
-    [ -z $parse_mode ] && parse_mode="MarkdownV2"
+    [ -z $parse_mode ] && parse_mode="HTML"
 
     response=$(curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
