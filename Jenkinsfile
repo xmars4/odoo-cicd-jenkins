@@ -83,7 +83,7 @@ def git_checkout_pull_request_branch() {
 }
 
 def verify_tools() {
-    def result = sh(script: "${env.PIPELINE_SCRIPTS_PATH}/verify.sh > /dev/null", returnStatus: true)
+    def result = sh(script: "${PIPELINE_SCRIPTS_PATH}/verify.sh > /dev/null", returnStatus: true)
     if (result != 0) {
         // missing required tools, stop pipeline immediately
         sh "exit $result"
