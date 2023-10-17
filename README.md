@@ -224,7 +224,7 @@
 
     -   Path: Dashboard / Your pipeline / Build Now
 
-:zap::zap:**Congrats**:v::v: : now your pipeline will automatic start building when the repo received a push event
+:zap::zap:**Congrats**:v::v: : now your pipeline will automatic start building when the repo received a pull request commit
 
 # Reference
 
@@ -302,3 +302,4 @@
     ```
 
 -   By default, before pipeline start, Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile<br/> so we can't ignore check out default Instead, we will perform second checkout with specific branch (from pull request)
+-   .
