@@ -33,6 +33,7 @@ function update_config_file {
 }
 
 function start_containers {
+    cd $ODOO_DOCKER_COMPOSE_PATH
     docker compose up -d --wait --no-color --build
     docker compose ps
 }
