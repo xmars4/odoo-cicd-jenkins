@@ -10,9 +10,9 @@
 
     **_This Github account need write permission to this repository_**
 
-    1.4. Clone this repo and check branch **_cicd_**
+    1.4. Clone this repo and check out branch **_cicd_**
 
-    Jenkins will only fetch Jenkinsfile from this branch
+    Jenkins will only use Jenkinsfile from this branch to trigger job
 
     1.5. Executing bash script to create Jenkins data folder
 
@@ -40,12 +40,12 @@
     2.2. Create a **SSH Username with private key** credential in Jenkins
 
     -   Access Jenkins Web UI
-    -   **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
-    -   **_ID_**: **github-ssh-cred**
-    -   **_Kind_**: SSH Username with private key
-    -   **_Username_**: your github username
-    -   **_Private key / Enter directly_**: paste your private SSH key content at step **2.1** here
+    -   **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> + Add Credentials
+    -   **_Kind_**: _SSH Username with private key_
+    -   **_ID_**: _github-ssh-cred_
     -   **_Description_**: _Jenkins uses this key to authenticate with Github_
+    -   **_Username_**: your github username
+    -   **_Private key / Enter directly/ Add_**: paste your private SSH key content at step **2.1** here
 
     2.3. [Add SSH public key (.pub) at step **2.1.** to the Github account at step **1.3**](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
 
@@ -54,7 +54,7 @@
     3.1. [Generate Github fine-grained personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 
     -   Access to the Github account at step **1.3**
-    -   **_Repository access / Only select repositories_**: select repo that the Jenkins instance will connect to
+    -   **_Repository access / Only select repositories_**: select this repo
     -   **_Permissions_**:
         -   **_Webhooks_**: Access: Read and write
         -   **_Commit statuses_**: Access: Read and write
@@ -62,11 +62,13 @@
     3.2. Create a **Secret Text** credential in Jenkins
 
     -   Access Jenkins Web UI
-    -   **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
+    -   **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> + Add Credentials
+    -   **_Kind_**: _Secret text_
     -   **_Secret_**: generated token at step **3.1**
-    -   **_ID_**: **github-access-token-cred**
+    -   **_ID_**: _github-access-token-cred_
+    -   **_Description_**: _Jenkins will use this token credentail for managing webhook, manipulate commit statuses_
 
-    3.3. Config Github Server
+        3.3. Config Github Server
 
     -   Access Jenkins Web UI
     -   **_Path_**: Dashboard > Manage Jenkins > System : Github / Github Servers
@@ -80,18 +82,19 @@
 
     4.1. Add remote server ssh credential in Jenkins
 
-    -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
-    -   **_Kind_**: SSH Username with private key
-    -   **_ID_**: **remote-server-cred**
-    -   **_Username_**: the server's username
-    -   **_Private Key / Enter directly / Key / Add_**: the private key use to access the server
+    -   Access Jenkins Web UI
+    -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> + Add Credentials
+    -   **_Kind_**: _SSH Username with private key_
+    -   **_ID_**: _remote-server-cred_
     -   **_Description_**: _Jenkins will use this credential to connect to the remote server and execute commands, scripts._
+    -   **_Username_**: the server's username
+    -   **_Private Key / Enter directly / Add_**: the private key use to access the server
 
     4.2. Allow remote server connect to Github using SSH keys
 
     4.2.1. Add SSH keys to remote server
 
-    -   Access to remote server
+    -   Access to remote server - the server that Jenkins will deploy code to
 
     -   [Generating SSH keys or find the keys that already exists](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
 
@@ -103,10 +106,10 @@
 
     -   Access Jenkins Web UI
     -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
-    -   **_Kind_**: **Secret file**
-    -   **_File_**: Upload the SSH private key generated at step **4.2.1**
-    -   **_ID_**: **remote-server-github-privatekey-cred**
+    -   **_Kind_**: _Secret file_
+    -   **_ID_**: _remote-server-github-privatekey-cred_
     -   **_Description_**: _Server use this private key to connect to Github and pull latest code_
+    -   **_File_**: Upload the SSH private key generated at step **4.2.1**
 
 5.  Create and config Github pipeline on Jenkins
 
