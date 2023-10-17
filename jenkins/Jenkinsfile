@@ -10,9 +10,9 @@ node {
         build()
     }
 
-    // stage('Test #1 (Sonarqube)') {
-    //     sonarqube_check_code_quality()
-    // }
+    stage('Test #1 (Sonarqube)') {
+        sonarqube_check_code_quality()
+    }
 
     stage('Test #2 (Odoo Test cases)') {
         unit_test()
@@ -25,7 +25,6 @@ node {
     stage('Clean Test Resources') {
         clean_test_resource()
     }
-
 }
 
 def setup_environment_variables() {
@@ -50,8 +49,8 @@ def git_checkout() {
 }
 
 def git_checkout_main_branch() {
-    // the branch that pull request is merge 'TO'
-    echo "Checkout main branch!"
+    // the branch that pull request will be merged 'INTO' - base branch
+    echo "Checkout base branch!"
     checkout scmGit(branches: [
             [name: "origin/${pr_to_ref}"]
         ],
@@ -67,7 +66,7 @@ def git_checkout_main_branch() {
 }
 
 def git_checkout_pull_request_branch() {
-    // the branch that pull request is merge 'FROM'
+    // the branch that pull request will be merged 'FROM' - head branch
     echo "Checkout pull request branch!"
     checkout scmGit(branches: [
             [name: "origin/pr/${pr_id}"]
