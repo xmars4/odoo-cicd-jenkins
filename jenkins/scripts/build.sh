@@ -34,6 +34,14 @@ function update_config_file {
 
 function start_containers {
     cd $ODOO_DOCKER_COMPOSE_PATH
+    # fix me: update requirement library to dockerfile/requirements.txt
+
+    default_container_requirements="$ODOO_WORKSPACE/dockerfile/requirements.txt"
+    custom_addons_requirements="$ODOO_ADDONS_PATH/requirements.txt"
+    if [ -e "$custom_addons_requirements" ] && [ -e "$default_container_requirements" ]; then
+        echo "" >>$default_container_requirements
+        cat "$custom_addons_requirements" >>$default_container_requirements
+    fi
     docker compose up -d --wait --no-color --build
     docker compose ps
 }
