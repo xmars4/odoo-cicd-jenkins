@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${WORKSPACE}/pipeline-scripts/utils.sh"
+source "${PIPELINE_UTILS_SCRIPT_PATH}"
 show_separator "Cleaning"
 
 cd $ODOO_WORKSPACE

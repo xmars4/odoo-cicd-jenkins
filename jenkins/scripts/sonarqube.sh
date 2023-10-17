@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${WORKSPACE}/pipeline-scripts/utils.sh"
+source "${PIPELINE_UTILS_SCRIPT_PATH}"
 show_separator "hey u ${sonarqubeScannerHome}"
 show_separator "addons here ${ODOO_WORKSPACE}"
 

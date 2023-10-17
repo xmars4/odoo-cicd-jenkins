@@ -1,12 +1,7 @@
 #!/bin/bash
 
-source "${WORKSPACE}/pipeline-scripts/utils.sh"
+source "${PIPELINE_UTILS_SCRIPT_PATH}"
 EXTRA_ADDONS=
-
-function build_odoo_image {
-    cd "${ODOO_WORKSPACE}/dockerfile"
-    docker build -q -t "${ODOO_IMAGE_TAG}" .
-}
 
 function get_list_addons {
     if [[ $# -gt 0 ]]; then
@@ -36,7 +31,7 @@ function update_config_file {
 }
 
 function start_containers {
-    docker compose up -d --wait --no-color
+    docker compose up -d --wait --no-color --build
     docker compose ps
 }
 
@@ -88,7 +83,6 @@ function wait_until_odoo_available {
 
 function main {
     show_separator "Install Odoo and run test cases for all modules in extra-addons folder"
-    build_odoo_image
     set_list_addons
     update_config_file
     start_containers

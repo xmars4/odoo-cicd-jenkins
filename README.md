@@ -8,17 +8,18 @@
 
     1.3. Clone this repo, branch **_cicd_**
     <br/>This repo contains a Jenkinsfile and other relevant files
+    <br/>Jenkins will fetch Jenkinsfile from this branch and use this file to trigger the build job
 
     1.4. Executing bash script to create Jenkins data folder
 
     ```shell
-        sudo ./jenkins-docker-compose/host-setup.sh
+        sudo ./jenkins/scripts/host-setup.sh
     ```
 
     1.5. Installing Jenkins
 
     ```shell
-        cd jenkins-docker-compose
+        cd jenkins
         docker compose up -d --build
     ```
 
@@ -212,7 +213,7 @@
 
 # Reference
 
--   ![Flow](img/CI-CD-flow.png)
+-   ![Flow](docs/img/CI-CD-flow.png)
 
 -   Jenkins plugins:
 
@@ -283,4 +284,3 @@
     ```
 
 -   By default, before pipeline start, Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile<br/> so we can't ignore check out default Instead, we will perform second checkout with specific branch (from pull request)
--   ......

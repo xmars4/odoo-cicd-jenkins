@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${WORKSPACE}/pipeline-scripts/utils.sh"
+source "${PIPELINE_UTILS_SCRIPT_PATH}"
 cd $ODOO_WORKSPACE
 
 ODOO_CONTAINER_ID=$(get_odoo_container_id)
