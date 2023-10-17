@@ -105,11 +105,11 @@
     4.3. Add privatekey credential
 
     -   Access Jenkins Web UI
-    -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
+    -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> + Add Credentials
     -   **_Kind_**: _Secret file_
+    -   **_File_**: Upload the SSH private key generated at step **4.2.1**
     -   **_ID_**: _remote-server-github-privatekey-cred_
     -   **_Description_**: _Server use this private key to connect to Github and pull latest code_
-    -   **_File_**: Upload the SSH private key generated at step **4.2.1**
 
 5.  Create and config Github pipeline on Jenkins
 
@@ -121,10 +121,10 @@
     -   Check **_Do not allow concurrent builds_**
     -   **_Pipeline / Definition_**: **Pipeline script from SCM**
     -   **_SCM_**: **Git**
-    -   **_Repositories / Repository URL_**: paste your repo's **SSH** url that contains Jenkinsfile here
+    -   **_Repositories / Repository URL_**: paste this repo's **SSH** url
     -   Credentials: select the credential you created at step **2.4**
-    -   Branches to build / Branch Specifier: select an apropriate branch that contains Jenkinsfile, default **_cicd_**
-    -   Script Path: path to _Jenkinsfile_ in repo, default **_jenkins/Jenkinsfile_**
+    -   Branches to build / Branch Specifier: select an apropriate branch that contains Jenkinsfile, default **_\*/cicd_**
+    -   Script Path: path to Jenkinsfile in repo, default **_jenkins/Jenkinsfile_**
     -   Select **_Lightweight checkout_**
 
         5.2. Config Generic Webhook Trigger
@@ -144,10 +144,10 @@
         | pr_url             | $.pull_request.html_url          | JSONPath        |               |              |
         | pr_draft           | $.pull_request.draft             | JSONPath        |               |              |
 
-    -   Given **_Optional filter_** is configured with **_text_**: $action#$pr_draft##$action#$pr_merged
-    -   Given **_Optional filter_** is configured with **_expression_**: (reopened|opened|synchronize|ready_for_review)#(false)##|##(closed)#(true)
-    -   Fill the Cause with text: Triggered from PR: $pr_url
     -   Fill the **_Token_** with a random string
+    -   Fill the **_Cause_** with text: Triggered from PR: $pr_url
+    -   Given **_Optional filter_** is configured with **_Text_**: $action#$pr_draft##$action#$pr_merged
+    -   Given **_Optional filter_** is configured with **_Expression_**: (reopened|opened|synchronize|ready_for_review)#(false)##|##(closed)#(true)
 
     5.3. Add remote server information
 
