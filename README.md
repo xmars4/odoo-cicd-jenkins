@@ -1,4 +1,4 @@
-# Setup
+# Setup Jenkins CI/CD for Odoo
 
 1.  Install Jenkins using docker
 
@@ -6,17 +6,21 @@
 
     1.2. [Update docker to run without sudo permission](https://docs.docker.com/engine/install/linux-postinstall/)
 
-    1.3. Clone this repo, branch **_cicd_**
-    <br/>This repo contains a Jenkinsfile and other relevant files
-    <br/>Jenkins will fetch Jenkinsfile from this branch and use this file to trigger the build job
+    1.3. Logging in to your Github account (or your's company Github account)
 
-    1.4. Executing bash script to create Jenkins data folder
+    **_This Github account need write permission to this repository_**
+
+    1.4. Clone this repo and check branch **_cicd_**
+
+    Jenkins will only fetch Jenkinsfile from this branch
+
+    1.5. Executing bash script to create Jenkins data folder
 
     ```shell
         sudo ./jenkins/scripts/host-setup.sh
     ```
 
-    1.5. Installing Jenkins
+    1.6. Installing Jenkins
 
     ```shell
         cd jenkins
@@ -43,12 +47,13 @@
     -   **_Private key / Enter directly_**: paste your private SSH key content at step **2.1** here
     -   **_Description_**: _Jenkins uses this key to authenticate with Github_
 
-    2.3. [Add SSH public key (.pub) at step **2.1.** to your Github account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
+    2.3. [Add SSH public key (.pub) at step **2.1.** to the Github account at step **1.3**](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
 
 3.  Config Github plugin - allow trigger job in Jenkins by Github webhook
 
     3.1. [Generate Github fine-grained personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 
+    -   Access to the Github account at step **1.3**
     -   **_Repository access / Only select repositories_**: select repo that the Jenkins instance will connect to
     -   **_Permissions_**:
         -   **_Webhooks_**: Access: Read and write
@@ -75,7 +80,6 @@
 
     4.1. Add remote server ssh credential in Jenkins
 
-    -
     -   Path: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted)
     -   **_Kind_**: SSH Username with private key
     -   **_ID_**: **remote-server-cred**
@@ -93,7 +97,7 @@
 
     -   [Adding SSH keys to ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#adding-your-ssh-key-to-the-ssh-agent)
 
-    4.2.2. [Add SSH public key (.pub) at step **4.2.1** to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
+    4.2.2. [Add SSH public key (.pub) at step **4.2.1** to the Github account at step **1.3**](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account#adding-a-new-ssh-key-to-your-account)
 
     4.3. Add privatekey credential
 
@@ -104,10 +108,11 @@
     -   **_ID_**: **remote-server-github-privatekey-cred**
     -   **_Description_**: _Server use this private key to connect to Github and pull latest code_
 
-5.  Create and config Github pipeline
+5.  Create and config Github pipeline on Jenkins
 
     5.1. Create new pipeline
 
+    -   Access Jenkins Web UI
     -   Path: Dashboard > New Item -> Pipeline
     -   Fill pipeline name. _warning_ [don't put space to pipeline name](https://www.jenkins.io/doc/book/pipeline/getting-started/#:~:text=In%20the%20Enter%20an%20item,handle%20spaces%20in%20directory%20paths.)
     -   Check **_Do not allow concurrent builds_**
@@ -115,11 +120,13 @@
     -   **_SCM_**: **Git**
     -   **_Repositories / Repository URL_**: paste your repo's **SSH** url that contains Jenkinsfile here
     -   Credentials: select the credential you created at step **2.4**
-    -   Branches to build / Branch Specifier: select an apropriate branch that contains Jenkinsfile
-    -   Script Path: path to _Jenkinsfile_ in repo
+    -   Branches to build / Branch Specifier: select an apropriate branch that contains Jenkinsfile, default **_cicd_**
+    -   Script Path: path to _Jenkinsfile_ in repo, default **_jenkins/Jenkinsfile_**
+    -   Select **_Lightweight checkout_**
 
-    5.2. Config Generic Webhook Trigger
+        5.2. Config Generic Webhook Trigger
 
+    -   Continue updating the pipeline at step **5.1**
     -   Check **_Build Triggers/Generic Webhook Trigger_**
     -   Given the following **_Post content parameters_** are configured:
 
@@ -142,7 +149,7 @@
     5.3. Add remote server information
 
     -   Jenkins will use these variable for CD process (deploy to remote server)
-    -   Continuing update the pipeline in step **4.1**
+    -   Continue updating the pipeline at step **5.1**
     -   Select **Prepare an environment for the run**
     -   Select **Keep Jenkins Environment Variables**
     -   Select **Keep Jenkins Build Variables**
@@ -166,11 +173,11 @@
 
 6.  [Create Github webhook](https://docs.github.com/en/webhooks/using-webhooks)
 
-    6.1. If you use a local server to receive webhook, [reference this guide](https://docs.github.com/en/webhooks/using-webhooks/creating-webhooks#exposing-localhost-to-the-internet) to expose localhost to internet
+    6.1. If you use a local server to receive webhook, [reference this guide](https://gist.github.com/xmars4/c38eb27b97b23b05ae6a0173941e1d85) to expose Jenkins locally to internet
 
     6.2. Add Jenkins's hook url to repo's webhook
 
-    -   Open Github repo page
+    -   Open this Github repo page
     -   Path: Settings / Webhooks / Add webhook
     -   **_Payload URL_**: <the_public_jenkins_url>/generic-webhook-trigger/invoke?token=<the_Token_at_step_5.2>
     -   **_Content type_**: application/json
@@ -181,7 +188,7 @@
 
     7.1. Install SonarQube
 
-    -   Install SonarQube and allow Jenkins to connect to it (already done in docker compose file)
+    -   Install SonarQube and allow Jenkins to connect to it (already done in docker compose file at step **_1.6_**)
     -   Access SonarQube instance and [generate a user token](https://docs.sonarsource.com/sonarqube/latest/user-guide/user-account/generating-and-using-tokens/#generating-a-token)
 
     7.2. Add SonarQube installer to Jenkins
@@ -247,8 +254,11 @@
     ](https://www.youtube.com/watch?v=ZabUz6sl-8I)
 
 -   [Binding credentails to variable](https://www.jenkins.io/doc/pipeline/steps/credentials-binding/)
--   permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock -> check Jenkins Dockerfile, line 17,18
-    to create a new group mapped with docker group on host
+-   permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock
+
+    -> Solution:
+    check Jenkins Dockerfile, line 17,18, 19 to create a new group mapped with docker group on host
+
 -   Config Generic webhook trigger in Jenkins file
 
     ```

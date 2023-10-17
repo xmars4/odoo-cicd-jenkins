@@ -1,0 +1,12 @@
+authtoken: 2Wsh8AD7M4BG7qLsjMxGsYtckty_SVnVDoY7vWkfUZHu3c9o
+region: us
+version: 2
+tunnels:
+    jenkins:
+        addr: 8080 # your local service port
+        schemes:
+            - https
+        host_header: "camel-awaited-sunbird.ngrok-free.app"
+        inspect: false
+        proto: http
+        domain: camel-awaited-sunbird.ngrok-free.app
