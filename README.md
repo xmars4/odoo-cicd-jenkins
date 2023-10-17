@@ -156,7 +156,7 @@
     -   Select **Prepare an environment for the run**
     -   Select **Keep Jenkins Environment Variables**
     -   Select **Keep Jenkins Build Variables**
-    -   Properties Content: add below variables with appropriate value
+    -   **_Properties Content_**: add below variables with appropriate value
 
         ```
         server_host=<server ip address here>
@@ -192,10 +192,11 @@
     7.1. Install SonarQube
 
     -   Install SonarQube and allow Jenkins to connect to it (already done in docker compose file at step **_1.6_**)
-    -   Access SonarQube instance and [generate a user token](https://docs.sonarsource.com/sonarqube/latest/user-guide/user-account/generating-and-using-tokens/#generating-a-token)
+    -   Access SonarQube UI and [generate a user token](https://docs.sonarsource.com/sonarqube/latest/user-guide/user-account/generating-and-using-tokens/#generating-a-token)
 
     7.2. Add SonarQube installer to Jenkins
 
+    -   Access Jenkins Web UI
     -   Path: Dasboard / Manage Jenkins / Tools / SonarQube Scanner
     -   Click _Add SonarQube Scanner_
         -   Input Name: **sonarqube-scanner**
@@ -203,8 +204,12 @@
 
     7.3. Add SonarQube credentail to Jenkins
 
-    -   Add a secret text credentail to your Jenkins instance
-        -   **_ID_**: **sonar-token** **_Secret_**: the token was obtained from step 6.1
+    -   Access Jenkins Web UI
+    -   **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> + Add Credentials
+    -   **_Kind_**: _Secret text_
+    -   **_Secret_**: the token was obtained from step 7.1
+    -   **_ID_**: _sonar-token_
+    -   **_Description_**: _Jenkins will use this token to connect to SonarQube_
 
 8.  Send message to Telegram from Jenkins
 
