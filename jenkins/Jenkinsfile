@@ -155,6 +155,7 @@ def deploy_to_server() {
                 def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
                 send_telegram_message(success_message)
             } catch (Exception e) {
+                echo "$e"
                 def failed_message = """
 The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
 Please take a look into the server🔬\\.
