@@ -10,9 +10,9 @@ node {
         build()
     }
 
-    // stage('Test #1 (Sonarqube)') {
-    //     sonarqube_check_code_quality()
-    // }
+    stage('Test #1 (Sonarqube)') {
+        sonarqube_check_code_quality()
+    }
 
     stage('Test #2 (Odoo Test cases)') {
         unit_test()
