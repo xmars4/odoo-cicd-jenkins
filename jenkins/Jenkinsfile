@@ -103,7 +103,7 @@ def build() {
 def sonarqube_check_code_quality() {
     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
         env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        sh "$PIPELINE_SCRIPTS_PATH/sonarqube.sh > /dev/null 2>&1"
+        sh "$PIPELINE_SCRIPTS_PATH/sonarqube.sh"
     }
 }
 

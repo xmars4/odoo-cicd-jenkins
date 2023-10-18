@@ -12,8 +12,6 @@ function get_list_addons {
 
 function set_list_addons {
     EXTRA_ADDONS=$(get_list_addons "$ODOO_ADDONS_PATH")
-    ls -lah $ODOO_ADDONS_PATH
-    echo "$ODOO_ADDONS_PATH"
     if [ -z $EXTRA_ADDONS ]; then
         show_separator "Can't find any module in extra-addons folder"
         exit 1
@@ -34,8 +32,6 @@ function update_config_file {
 
 function start_containers {
     cd $ODOO_DOCKER_COMPOSE_PATH
-    # fix me: update requirement library to dockerfile/requirements.txt
-
     default_container_requirements="$ODOO_WORKSPACE/dockerfile/requirements.txt"
     custom_addons_requirements="$ODOO_ADDONS_PATH/requirements.txt"
     if [ -e "$custom_addons_requirements" ] && [ -e "$default_container_requirements" ]; then
