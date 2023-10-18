@@ -206,10 +206,11 @@
 
     -   Access Jenkins Web UI
     -   **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> + Add Credentials
-    -   **_Kind_**: _Secret text_
+    -   **_Kind_**: _Username with password_
+    -   **_Username_**: the SonarQube url which Jenkins can connect
     -   **_Secret_**: the token was obtained from step 7.1
-    -   **_ID_**: _sonar-token_
-    -   **_Description_**: _Jenkins will use this token to connect to SonarQube_
+    -   **_ID_**: _sonar-cred_
+    -   **_Description_**: _Jenkins will use this url and token to connect to SonarQube_
 
 8.  Send message to Telegram from Jenkins
 
@@ -302,5 +303,4 @@
     ```
 
 -   By default, before pipeline start, Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile<br/> so we can't ignore check out default Instead, we will perform second checkout with specific branch (from pull request)
--   .......
-    .
+-   ........

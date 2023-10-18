@@ -19,18 +19,23 @@ function set_list_addons {
 }
 
 function update_config_file {
-    # remove old log level option
-    # we use log to analytic error, so log_level should be 'error'
-    sed -i "s/^\s*log_level\s*.*//g" $CONFIG_FILE
-    echo -e "\nlog_level = error" >>$CONFIG_FILE
-
     # Odoo's suggestion:  Unit testing in workers mode could fail; use --workers 0.
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
-    echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
+    echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level error -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
 }
 
 function start_containers {
+    cd $ODOO_DOCKER_COMPOSE_PATH
+    default_container_requirements="$ODOO_WORKSPACE/dockerfile/requirements.txt"
+    custom_addons_requirements="$ODOO_ADDONS_PATH/requirements.txt"
+    if [ -e "$custom_addons_requirements" ] && [ -e "$default_container_requirements" ]; then
+        echo "" >>$default_container_requirements
+        cat "$custom_addons_requirements" >>$default_container_requirements
+    fi
+    cat $default_container_requirements
+    cat $custom_addons_requirements
+    show_separator 'delete me later'
     docker compose up -d --wait --no-color --build
     docker compose ps
 }
