@@ -90,11 +90,23 @@ pull_latest_code() {
     fi
 }
 
-get_list_addons() {
+function get_list_addons {
     if [[ $# -gt 0 ]]; then
         cd "$1"
     fi
-    find . -maxdepth 1 -mindepth 1 -not -path '*/\.*' -type d -printf "%f," | sed 's/.$//'
+
+    addons=
+    res=$(find . -maxdepth 2 -mindepth 2 -type f -name "__manifest__.py" -exec dirname {} \;)
+    for dr in $res; do
+        addon_name=$(basename $dr)
+        if [[ -z $addons ]]; then
+            addons="$addon_name"
+        else
+            addons="$addons,$addon_name"
+        fi
+    done
+
+    echo $addons
 }
 
 set_list_addons() {

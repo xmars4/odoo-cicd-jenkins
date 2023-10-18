@@ -3,6 +3,7 @@ _build/
 
 # dotfiles
 .*
+
 !.gitignore
 !.github
 !.mailmap
@@ -52,3 +53,5 @@ package.json
 .idea
 .vscode
 *.log
+
+!.cicd

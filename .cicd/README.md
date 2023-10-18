@@ -12,7 +12,8 @@
 
     1.4. Clone this repo and check out branch **_cicd_**
 
-    Jenkins will only use Jenkinsfile from this branch to trigger job
+    -   Jenkins will only use Jenkinsfile from this branch to trigger job
+    -   Check function **_setup_environment_variables_** inside [Jenkinsfile](.cicd/jenkins/Jenkinsfile), update the variables value if necessary
 
     1.5. Executing bash script to create Jenkins data folder
 

@@ -28,11 +28,12 @@ node {
 }
 
 def setup_environment_variables() {
-    env.PIPELINE_SCRIPTS_PATH = "${env.WORKSPACE}/jenkins/scripts"
+    env.CICD_PATH = "${env.WORKSPACE}/.cicd"
+    env.PIPELINE_SCRIPTS_PATH = "${CICD_PATH}/jenkins/scripts"
     env.PIPELINE_UTILS_SCRIPT_PATH="${PIPELINE_SCRIPTS_PATH}/utils.sh"
     env.ODOO_IMAGE_TAG = "xmars/odoo16-cicd" // this valued mapped with odoo image name in odoo/docker-compose.yml file
-    env.ODOO_WORKSPACE = "${env.WORKSPACE}/odoo"
-    env.ODOO_ADDONS_PATH = "${ODOO_WORKSPACE}/extra-addons"
+    env.ODOO_WORKSPACE = "${CICD_PATH}/odoo"
+    env.ODOO_ADDONS_PATH = "${env.WORKSPACE}" // we put extra addons to top directory so other developers don't need to care about CICD config
     env.ODOO_DOCKER_COMPOSE_PATH = "${ODOO_WORKSPACE}"
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // the log file is inside the odoo container
