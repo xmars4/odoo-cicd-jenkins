@@ -12,6 +12,7 @@ node {
 
     stage('Test #1 (Sonarqube)') {
         sonarqube_check_code_quality()
+        sleep 50
     }
 
     stage('Test #2 (Odoo Test cases)') {
