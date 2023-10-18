@@ -25,7 +25,6 @@ node {
     stage('Clean Test Resources') {
         clean_test_resource()
     }
-
 }
 
 def setup_environment_variables() {
@@ -101,8 +100,8 @@ def build() {
 }
 
 def sonarqube_check_code_quality() {
-    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-        env.sonarqubeScannerHome = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+    withCredentials([usernamePassword(credentialsId: 'sonar-cred', usernameVariable: 'SONAR_URL', passwordVariable: 'SONAR_TOKEN')]) {
+        env.SONARQUBE_SCANNER_HOME = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         sh "$PIPELINE_SCRIPTS_PATH/sonarqube.sh"
     }
 }
