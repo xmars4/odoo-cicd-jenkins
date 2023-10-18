@@ -165,7 +165,7 @@ Please take a look into the server🔬\\.
 }
 
 def clean_test_resource() {
-    // sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
+    sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
 }
 
 def set_github_commit_status(String state, String message) {

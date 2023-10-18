@@ -33,6 +33,9 @@ function start_containers {
         echo "" >>$default_container_requirements
         cat "$custom_addons_requirements" >>$default_container_requirements
     fi
+    cat $default_container_requirements
+    cat $custom_addons_requirements
+    show_separator 'delete me later'
     docker compose up -d --wait --no-color --build
     docker compose ps
 }
