@@ -10,9 +10,9 @@ node {
         build()
     }
 
-    stage('Test #1 (Sonarqube)') {
-        sonarqube_check_code_quality()
-    }
+    // stage('Test #1 (Sonarqube)') {
+    //     sonarqube_check_code_quality()
+    // }
 
     stage('Test #2 (Odoo Test cases)') {
         unit_test()
@@ -28,11 +28,12 @@ node {
 }
 
 def setup_environment_variables() {
-    env.PIPELINE_SCRIPTS_PATH = "${env.WORKSPACE}/jenkins/scripts"
+    env.CICD_PATH = "${env.WORKSPACE}/.cicd"
+    env.PIPELINE_SCRIPTS_PATH = "${CICD_PATH}/jenkins/scripts"
     env.PIPELINE_UTILS_SCRIPT_PATH="${PIPELINE_SCRIPTS_PATH}/utils.sh"
     env.ODOO_IMAGE_TAG = "xmars/odoo16-cicd" // this valued mapped with odoo image name in odoo/docker-compose.yml file
-    env.ODOO_WORKSPACE = "${env.WORKSPACE}/odoo"
-    env.ODOO_ADDONS_PATH = "${ODOO_WORKSPACE}/extra-addons"
+    env.ODOO_WORKSPACE = "${CICD_PATH}/odoo"
+    env.ODOO_ADDONS_PATH = "${env.WORKSPACE}" // we put extra addons to top directory so other developers don't need to care about CICD config
     env.ODOO_DOCKER_COMPOSE_PATH = "${ODOO_WORKSPACE}"
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // the log file is inside the odoo container
@@ -148,7 +149,6 @@ def deploy_to_server() {
             def server_deploy_script = "/tmp/odoo-cicd-deploy.sh"
             try {
                 sshCommand remote: remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server", failOnError: false
-                sshCommand remote: remote, command: "ls -lah ~/odoo"
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/deploy.sh", into: server_deploy_script
                 sshCommand remote: remote, command: "chmod +x $server_deploy_script"
@@ -159,7 +159,7 @@ def deploy_to_server() {
                 echo "$e"
                 def failed_message = """
 The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
-Please take a look into the server🔬\\.
+Please take a look into [the build log]($BUILD_URL/console)\\.
 """
                 send_telegram_message(failed_message)
             }

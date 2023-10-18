@@ -12,7 +12,8 @@
 
     1.4. Clone this repo and check out branch **_cicd_**
 
-    Jenkins will only use Jenkinsfile from this branch to trigger job
+    -   Jenkins will only use Jenkinsfile from this branch to trigger job
+    -   Check function **_setup_environment_variables_** inside [Jenkinsfile](.cicd/jenkins/Jenkinsfile), update the variables value if necessary
 
     1.5. Executing bash script to create Jenkins data folder
 
@@ -124,7 +125,7 @@
     -   **_Repositories / Repository URL_**: paste this repo's **SSH** url
     -   Credentials: select the credential you created at step **2.4**
     -   Branches to build / Branch Specifier: select an apropriate branch that contains Jenkinsfile, default **_\*/cicd_**
-    -   Script Path: path to Jenkinsfile in repo, default **_jenkins/Jenkinsfile_**
+    -   Script Path: path to Jenkinsfile in repo, default **_.cicd/jenkins/Jenkinsfile_**
     -   Select **_Lightweight checkout_**
 
         5.2. Config Generic Webhook Trigger
@@ -303,4 +304,4 @@
     ```
 
 -   By default, before pipeline start, Jenkins will checkout repo with branch specified in 'Branches to build' to get the Jenkinsfile<br/> so we can't ignore check out default Instead, we will perform second checkout with specific branch (from pull request)
--   ........
+-   .........
