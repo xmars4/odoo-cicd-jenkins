@@ -52,13 +52,12 @@
 
 3.  Config Github plugin - allow trigger job in Jenkins by Github webhook
 
-    3.1. [Generate Github fine-grained personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+    3.1. [Generate Github personal access token (classic)](https://docs.github.com/en/enterprise-server@3.6/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 
     -   Access to the Github account at step **1.3**
-    -   **_Repository access / Only select repositories_**: select this repo
-    -   **_Permissions_**:
-        -   **_Webhooks_**: Access: Read and write
-        -   **_Commit statuses_**: Access: Read and write
+    -   **_Select scopes_**:
+        -   **_repo_**
+        -   **_admin:repo_hook_**
 
     3.2. Create a **Secret Text** credential in Jenkins
 
