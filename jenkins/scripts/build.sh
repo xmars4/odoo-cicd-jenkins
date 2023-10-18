@@ -33,8 +33,8 @@ function start_containers {
         echo "" >>$default_container_requirements
         cat "$custom_addons_requirements" >>$default_container_requirements
     fi
-
-    docker compose up -d --wait --no-color --build
+    docker compose build --pull
+    docker compose up -d --wait --no-color
     docker compose ps
 }
 
