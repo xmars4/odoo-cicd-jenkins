@@ -62,30 +62,6 @@ function wait_until_odoo_shutdown {
     done
 }
 
-function wait_until_odoo_available {
-    ESITATE_TIME_EACH_ADDON=30
-    ODOO_CONTAINER_ID=$(get_odoo_container_id)
-    if [ -z $ODOO_CONTAINER_ID ]; then
-        echo "Can't find the Odoo container, stop pipeline immediately!"
-        exit 1
-    fi
-    show_separator "Hang on, Modules are being installed ..."
-    # Assuming each addon needs 30s to install and run test cases
-    # -> we can calculate total sec we have to wait until Odoo is up
-    # and the log file will be complete
-    IFS=',' read -ra separate_addons_list <<<$EXTRA_ADDONS
-    total_addons=${#separate_addons_list[@]}
-    # each block wait 5s
-    maximum_count=$(((total_addons * ESITATE_TIME_EACH_ADDON) / 5))
-    count=1
-    while (($count <= $maximum_count)); do
-        http_status=$(docker exec "$ODOO_CONTAINER_ID" sh -c 'echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "'"${ODOO_URL}"'" 2>&1 | awk '\''NR==1{print $2}'\'' || true; }')
-        if [[ $http_status = '200' ]]; then break; fi
-        ((count++))
-        sleep 5
-    done
-}
-
 function main {
     show_separator "Install Odoo and run test cases for all modules in extra-addons folder"
     set_list_addons
