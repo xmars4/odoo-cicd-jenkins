@@ -146,7 +146,7 @@
 
     -   Fill the **_Token_** with a random string
     -   Fill the **_Cause_** with text: Triggered from PR: $pr_url
-    -   Given **_Optional filter_** is configured with **_Text_**: $action#$pr_draft##$action#$pr_merged
+    -   Given **_Optional filter_** is configured with **_Text_**: \$action#\$pr_draft##\$action#\$pr_merged
     -   Given **_Optional filter_** is configured with **_Expression_**: (reopened|opened|synchronize|ready_for_review)#(false)##|##(closed)#(true)
 
     5.3. Add remote server information
