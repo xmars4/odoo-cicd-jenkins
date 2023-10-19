@@ -122,7 +122,7 @@ def sonarqube_check_code_quality() {
 
 def pylint_test() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/pylint-test.sh", returnStatus: true);
-    send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
+    send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})\\!")
     // if (result != 0){
     //     send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
     // }
@@ -195,7 +195,7 @@ def set_github_commit_status(String state, String message) {
     withCredentials([
         string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
@@ -207,7 +207,7 @@ def send_telegram_file(String file_path, String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
@@ -219,7 +219,7 @@ def send_telegram_message(String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default \"${message}\"", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\"", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }

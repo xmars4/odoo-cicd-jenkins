@@ -136,12 +136,12 @@ send_message_telegram_default() {
 # ------------------ Telegram functions -------------------------
 
 if [ $# -gt 0 ]; then
-    function_name=$1
-    shift
+    is_exec_command=$1
+    function_name=$2
+    shift 2
     if declare -f "$function_name" >/dev/null; then
-        "$function_name" "$@"
-    else
-        echo "Function '$function_name' does not exist."
-        exit 1
+        if [ $is_exec_command == "exec" ]; then
+            "$function_name" "$@"
+        fi
     fi
 fi
