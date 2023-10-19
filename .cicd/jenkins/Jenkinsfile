@@ -122,9 +122,10 @@ def sonarqube_check_code_quality() {
 
 def pylint_test() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/pylint-test.sh", returnStatus: true);
-    if (result != 0){
-        send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
-    }
+    send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
+    // if (result != 0){
+    //     send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
+    // }
 }
 
 def unit_test() {
