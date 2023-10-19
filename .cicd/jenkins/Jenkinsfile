@@ -6,15 +6,18 @@ node {
         clean_test_resource() // in case previous job can't clean
     }
 
-    stage('Build') {
-        build()
-    }
-
     // stage('Test #1 (Sonarqube)') {
     //     sonarqube_check_code_quality()
     // }
 
-    stage('Test #2 (Odoo Test cases)') {
+    stage('Test #2 (Odoo Pylint)') {
+        build_pylint()
+        pylint_test()
+        clean_test_resource() // clean them for the next build and test
+    }
+
+    stage('Test #3 (Odoo Test cases)') {
+        build()
         unit_test()
     }
 
@@ -100,11 +103,27 @@ def build() {
     }
 }
 
+def build_pylint() {
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh true", returnStatus: true)
+    // TODO: should we stop pipeline or continue next stages
+    // if (result != 0) {
+    //     clean_test_resource()
+    //     sh "exit $result"
+    // }
+}
+
 def sonarqube_check_code_quality() {
     withCredentials([usernamePassword(credentialsId: 'sonar-cred', usernameVariable: 'SONAR_URL', passwordVariable: 'SONAR_TOKEN')]) {
         env.SONARQUBE_SCANNER_HOME = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         def result_url=sh(script:"$PIPELINE_SCRIPTS_PATH/sonarqube.sh", returnStdout: true).trim()
         send_telegram_message("The code quality result of [PR \\#${pr_id}](${pr_url}) is [here]($result_url)")
+    }
+}
+
+def pylint_test() {
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/pylint-test.sh", returnStatus: true);
+    if (result != 0){
+        send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
     }
 }
 

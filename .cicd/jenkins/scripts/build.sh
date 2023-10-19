@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source "${PIPELINE_UTILS_SCRIPT_PATH}"
-EXTRA_ADDONS=
+is_pylint_build=$1
 
 function get_list_addons {
     if [[ $# -gt 0 ]]; then
@@ -23,6 +23,9 @@ function get_list_addons {
 }
 
 function set_list_addons {
+    if [ -z $is_pylint_build ]; then
+        return 0
+    fi
     EXTRA_ADDONS=$(get_list_addons "$ODOO_ADDONS_PATH")
     if [ -z $EXTRA_ADDONS ]; then
         show_separator "Can't find any module in extra-addons folder"
@@ -34,7 +37,11 @@ function update_config_file {
     # Odoo's suggestion:  Unit testing in workers mode could fail; use --workers 0.
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
-    echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level error -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
+    if [ -n $is_pylint_build ]; then
+        echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level warn --load=base,web -i test_lint,test_pylint --test-enable --test-tags=/test_lint,/test_pylint,/test_lint,/test_pylint,-/test_lint:TestPyLint.test_pylint\n" >>$CONFIG_FILE
+    else
+        echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level error -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
+    fi
 }
 
 function start_containers {
@@ -72,8 +79,16 @@ function wait_until_odoo_shutdown {
     done
 }
 
+show_build_message() {
+    if [ -z $is_pylint_build ]; then
+        show_separator "Install Odoo and run test cases for all modules in extra-addons folder"
+    else
+        show_separator "Install Odoo and run pylint tests for all modules in extra-addons folder"
+    fi
+}
+
 function main {
-    show_separator "Install Odoo and run test cases for all modules in extra-addons folder"
+    show_build_message
     set_list_addons
     update_config_file
     start_containers
