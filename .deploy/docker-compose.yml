@@ -33,7 +33,7 @@ services:
             - "18069:8069"
             - "18072:8072"
         volumes:
-            - ../:/mnt/extra-addons # customize addons
+            - ../:/mnt/custom-addons # customize addons
             - ./et-addons:/mnt/et-addons # odoo enterprise addons
             - ./etc:/etc/odoo
             - ./logs:/var/log/odoo

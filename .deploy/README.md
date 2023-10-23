@@ -12,37 +12,35 @@ Install docker and docker compose
 
 ## Running Odoo
 
-1. Clone this project to your computer
+1. Clone this project
 
     ```shell
-    ODOO_DOCKER_PATH=$HOME/odoo-docker
-    git clone https://github.com/Sotatek-TruongPham2/scs-fms/ $ODOO_DOCKER_PATH
+    ODOO_DOCKER_PATH=$HOME/odoo-16
+    git clone https://github.com/xmars4/odoo-cicd-jenkins $ODOO_DOCKER_PATH
     ```
 
-2. Copy custom addons to folder **extra-addons**
+2. Copy enterprise addons to folder **et-addons**
 
-3. Copy enterprise addons to folder **et-addons**
+3. Edit confile file [etc/odoo.conf](etc/odoo.conf) if you want to add or update some configurations
 
-4. Edit confile file [etc/odoo.conf](etc/odoo.conf) if you want to add or update some configurations
-
-5. Running Odoo
+4. Running Odoo
 
     ```shell
-    cd $ODOO_DOCKER_PATH
+    cd $ODOO_DOCKER_PATH/.deploy
     docker compose build --pull
     docker compose up -d
     ```
 
-6. DONE, your Odoo instance will running on [http://localhost:18069](http://localhost:18069)
+5. DONE, your Odoo instance will running on [http://localhost:18069](http://localhost:18069)
 
-7. _(Optionally)_ Setup log rotate (on host machine)
+6. _(Optionally)_ Setup log rotate (on host machine)
 
     ```shell
-    cd $ODOO_DOCKER_PATH/scripts
+    cd $ODOO_DOCKER_PATH/.deploy/scripts
     sudo /bin/bash setup-logrotate.sh
     ```
 
-8. _(Optionally)_ If you want add extra command when run odoo
+7. _(Optionally)_ If you want add extra command when run odoo
 
 - With this option, you can run abitrary odoo commands
 - for instance:
@@ -71,7 +69,7 @@ Install docker and docker compose
 2. Run build command
 
     ```shell
-    cd $ODOO_DOCKER_PATH/dockerfile
+    cd $ODOO_DOCKER_PATH/.deploy/dockerfile
     docker build -f Dockerfile --pull -t xmars/odoo:16 .
     ```
 

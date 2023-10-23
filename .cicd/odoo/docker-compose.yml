@@ -25,7 +25,7 @@ services:
             - USER=odoo
             - PASSWORD=odoo
         volumes:
-            - ../../:/mnt/extra-addons # customize addons
+            - ../../:/mnt/custom-addons # customize addons
             - ./et-addons:/mnt/et-addons # odoo enterprise addons.
             - ./etc:/etc/odoo
             - ./logs:/var/log/odoo

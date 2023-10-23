@@ -26,9 +26,9 @@ function set_list_addons {
     if [ -z $is_pylint_build ]; then
         return 0
     fi
-    EXTRA_ADDONS=$(get_list_addons "$ODOO_ADDONS_PATH")
-    if [ -z $EXTRA_ADDONS ]; then
-        show_separator "Can't find any module in extra-addons folder"
+    CUSTOM_ADDONS=$(get_list_addons "$ODOO_CUSTOM_ADDONS_PATH")
+    if [ -z $CUSTOM_ADDONS ]; then
+        show_separator "Can't find any Odoo custom modules, please recheck your config!"
         exit 1
     fi
 }
@@ -38,7 +38,7 @@ function update_config_file {
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
     if [ -z $is_pylint_build ]; then
-        echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level error -i "${EXTRA_ADDONS}" --test-enable --test-tags "${EXTRA_ADDONS}"\n" >>$CONFIG_FILE
+        echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level error -i "${CUSTOM_ADDONS}" --test-enable --test-tags "${CUSTOM_ADDONS}"\n" >>$CONFIG_FILE
     else
         echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level info --load base,web -i test_lint,test_pylint --test-enable --test-tags /test_lint,/test_pylint,/test_lint,/test_pylint,-/test_lint:TestPyLint.test_pylint\n" >>$CONFIG_FILE
 
@@ -48,7 +48,7 @@ function update_config_file {
 function start_containers {
     cd $ODOO_DOCKER_COMPOSE_PATH
     default_container_requirements="$ODOO_WORKSPACE/dockerfile/requirements.txt"
-    custom_addons_requirements="$ODOO_ADDONS_PATH/requirements.txt"
+    custom_addons_requirements="$ODOO_CUSTOM_ADDONS_PATH/requirements.txt"
     if [ -e "$custom_addons_requirements" ] && [ -e "$default_container_requirements" ]; then
         echo "" >>$default_container_requirements
         cat "$custom_addons_requirements" >>$default_container_requirements
@@ -82,9 +82,9 @@ function wait_until_odoo_shutdown {
 
 show_build_message() {
     if [ -z $is_pylint_build ]; then
-        show_separator "Install Odoo and run test cases for all modules in extra-addons folder"
+        show_separator "Install and run test cases for custom addons!"
     else
-        show_separator "Install Odoo and run pylint tests for all modules in extra-addons folder"
+        show_separator "Install and run pylint test cases for custom addons!"
     fi
 }
 

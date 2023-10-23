@@ -2,25 +2,12 @@
 
 ## Prerequisite
 
-Put Odoo custom addons to root folder of this repo
-
-```shell
-# e.g:
-$ ls -la
-addon1
-addon2
-.cicd
-.deploy
-.git
-.gitignore
-README.md
-requirements.txt
-```
+Put Odoo custom addons to root folder of this repo, same level as folder **.cicd** and **.deploy**
 
 ## CI/CD
 
 [README.md](.cicd/README.md)
 
-## Deployment / Installation
+## Installation/ Deployment
 
 [README.md](.deploy/README.md)

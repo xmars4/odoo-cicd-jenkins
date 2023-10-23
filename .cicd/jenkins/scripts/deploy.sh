@@ -1,6 +1,6 @@
 #!/bin/bash
 server_docker_compose_path=$1 # the path to folder container Odoo docker-compose.yml file
-server_extra_addons_path=$2   # the absolute path to source code, also the git repository
+server_custom_addons_path=$2  # the absolute path to source code, also the git repository
 server_config_file=$3         # the path to Odoo config file
 git_private_key_file=$4       # private key on server use to authenticate on Github
 
@@ -9,10 +9,10 @@ original_repo_remote_name="origin"
 custom_repo_remote_name="origin-ssh"
 custom_repo_host="ssh.github.com"
 server_config_file_backup="${server_config_file}.bak"
-EXTRA_ADDONS=
+CUSTOM_ADDONS=
 
 check_git_repo_folder() {
-    cd $server_extra_addons_path
+    cd $server_custom_addons_path
     git status >/dev/null 2>&1
     if [[ $? -gt 0 ]]; then
         echo "Can't execute git commands because \"$PWD\" folder is not a git repository!"
@@ -73,7 +73,7 @@ pull_latest_code() {
     current_branch=$(git branch --show-current)
     remote_url=$(get_original_remote_url)
     if [ -z $remote_url ]; then
-        echo "Can't found any valid remote name of git repository in folder ${server_extra_addons_path}"
+        echo "Can't found any valid remote name of git repository in folder ${server_custom_addons_path}"
         exit 1
     fi
 
@@ -110,9 +110,9 @@ function get_list_addons {
 }
 
 set_list_addons() {
-    EXTRA_ADDONS=$(get_list_addons "$server_extra_addons_path")
-    if [ -z $EXTRA_ADDONS ]; then
-        show_separator "Can't find any module in extra-addons folder"
+    CUSTOM_ADDONS=$(get_list_addons "$server_custom_addons_path")
+    if [ -z $CUSTOM_ADDONS ]; then
+        show_separator "Can't find any Odoo custom addons !"
         exit 1
     fi
 }
@@ -121,7 +121,7 @@ update_config_file() {
     cp $server_config_file $server_config_file_backup
     # replace old command argument
     sed -i "s/^\s*command\s*=.*//g" $server_config_file
-    echo -e "\ncommand = -u ${EXTRA_ADDONS}" >>"${server_config_file}"
+    echo -e "\ncommand = -u ${CUSTOM_ADDONS}" >>"${server_config_file}"
 }
 
 reset_config_file() {

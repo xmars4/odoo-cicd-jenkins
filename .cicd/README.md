@@ -164,7 +164,7 @@
         server_host=<server ip address here>
         server_docker_compose_path=<path to folder contain odoo docker-compose.yml file>
         server_config_file=<path to odoo config file>
-        server_extra_addons_path=<path to custom addons folder, also a git repo>
+        server_custom_addons_path=<path to custom addons folder, also a git repo>
         ```
 
         for example:
@@ -173,7 +173,7 @@
         server_host=12.34.56.78
         server_docker_compose_path=/opt/odoo/
         server_config_file=/opt/odoo/odoo.conf
-        server_extra_addons_path=/opt/odoo/extra_addons
+        server_custom_addons_path=/opt/odoo/custom_addons
         ```
 
 6. [Create Github webhook](https://docs.github.com/en/webhooks/using-webhooks)
