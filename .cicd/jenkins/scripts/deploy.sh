@@ -3,6 +3,7 @@ server_docker_compose_path=$1 # the path to folder container Odoo docker-compose
 server_custom_addons_path=$2  # the absolute path to source code, also the git repository
 server_config_file=$3         # the path to Odoo config file
 git_private_key_file=$4       # private key on server use to authenticate on Github
+server_odoo_url=$5            # odoo service url, to check service is up or not
 
 ssh_folder="$HOME/.ssh"
 original_repo_remote_name="origin"
@@ -112,7 +113,7 @@ function get_list_addons {
 set_list_addons() {
     CUSTOM_ADDONS=$(get_list_addons "$server_custom_addons_path")
     if [ -z $CUSTOM_ADDONS ]; then
-        show_separator "Can't find any Odoo custom addons !"
+        echo "Can't find any Odoo custom addons !"
         exit 1
     fi
 }
@@ -125,7 +126,6 @@ update_config_file() {
 }
 
 reset_config_file() {
-    sleep 30 # have to sleep before reset config file, in case odoo container have not finished reading the config file
     mv $server_config_file_backup $server_config_file
 }
 
@@ -134,14 +134,35 @@ update_odoo_services() {
     docker compose restart
 }
 
+function wait_until_odoo_available {
+    echo "Hang on, Modules are being updated ..."
+    # Assuming each addon needs 30s to install and run test cases
+    # -> we can calculate maximum total sec we have to wait until Odoo is up and running
+    ESITATE_TIME_EACH_ADDON=30
+    IFS=',' read -ra separate_addons_list <<<$CUSTOM_ADDONS
+    total_addons=${#separate_addons_list[@]}
+    # each block wait 5s
+    maximum_count=$(((total_addons * ESITATE_TIME_EACH_ADDON) / 5))
+    count=1
+    while (($count <= $maximum_count)); do
+        http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${server_odoo_url}" 2>&1 | awk 'NR==1{print $2}' || true; })
+        if [[ $http_status = '200' ]]; then
+            exit 0 # Odoo service is fully up and running
+        fi
+        ((count++))
+        sleep 5
+    done
+    exit 1 # Odoo service is not running
+}
+
 main() {
     check_git_repo_folder
     pull_latest_code
     set_list_addons
     update_config_file
     update_odoo_services
+    wait_until_odoo_available
     reset_config_file
-
 }
 
 main
