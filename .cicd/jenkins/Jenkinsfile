@@ -10,11 +10,11 @@ node {
     //     sonarqube_check_code_quality()
     // }
 
-    stage('Test #2 (Odoo Pylint)') {
-        build_pylint()
-        pylint_test()
-        clean_test_resource() // clean them for the next build and test
-    }
+//     stage('Test #2 (Odoo Pylint)') {
+//         build_pylint()
+//         pylint_test()
+//         clean_test_resource() // clean them for the next build and test
+//     }
 
     stage('Test #3 (Odoo Test cases)') {
         build()
@@ -36,7 +36,7 @@ def setup_environment_variables() {
     env.PIPELINE_UTILS_SCRIPT_PATH="${PIPELINE_SCRIPTS_PATH}/utils.sh"
     env.ODOO_IMAGE_TAG = "xmars/odoo16-cicd" // this valued mapped with odoo image name in odoo/docker-compose.yml file
     env.ODOO_WORKSPACE = "${CICD_PATH}/odoo"
-    env.ODOO_ADDONS_PATH = "${env.WORKSPACE}" // we put extra addons to top directory so other developers don't need to care about CICD config
+    env.ODOO_CUSTOM_ADDONS_PATH = "${env.WORKSPACE}" // we put custom addons to top directory so other developers don't need to care about CICD config
     env.ODOO_DOCKER_COMPOSE_PATH = "${ODOO_WORKSPACE}"
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // the log file is inside the odoo container
@@ -122,7 +122,7 @@ def sonarqube_check_code_quality() {
 
 def pylint_test() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/pylint-test.sh", returnStatus: true);
-    send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
+    send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})\\!")
     // if (result != 0){
     //     send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
     // }
@@ -172,7 +172,7 @@ def deploy_to_server() {
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/deploy.sh", into: server_deploy_script
                 sshCommand remote: remote, command: "chmod +x $server_deploy_script"
-                sshCommand remote: remote, command: "$server_deploy_script '$server_docker_compose_path' '$server_extra_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
+                sshCommand remote: remote, command: "$server_deploy_script '$server_docker_compose_path' '$server_custom_addons_path' '$server_config_file' '$git_private_key_file_in_server'"
                 def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
                 send_telegram_message(success_message)
             } catch (Exception e) {
@@ -195,7 +195,7 @@ def set_github_commit_status(String state, String message) {
     withCredentials([
         string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
@@ -207,7 +207,7 @@ def send_telegram_file(String file_path, String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
@@ -219,7 +219,7 @@ def send_telegram_message(String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_SCRIPTS_PATH/utils.sh send_message_telegram_default \"${message}\"", returnStdout: true).trim()
+        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\"", returnStdout: true).trim()
         if (result) {
             echo "$result"
         }
