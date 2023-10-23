@@ -4,6 +4,7 @@ server_extra_addons_path=$2   # the absolute path to source code, also the git r
 server_config_file=$3         # the path to Odoo config file
 git_private_key_file=$4       # private key on server use to authenticate on Github
 
+ssh_folder="$HOME/.ssh"
 original_repo_remote_name="origin"
 custom_repo_remote_name="origin-ssh"
 custom_repo_host="ssh.github.com"
@@ -40,7 +41,6 @@ add_custom_repo_remote() {
 
 write_custom_git_host_to_ssh_config() {
     original_repo_host=$1
-
     config_value="
 \n# Custom git host for CI/CD process
 Host $custom_repo_host
@@ -121,11 +121,11 @@ update_config_file() {
     cp $server_config_file $server_config_file_backup
     # replace old command argument
     sed -i "s/^\s*command\s*=.*//g" $server_config_file
-    echo -e "\ncommand = -u "${EXTRA_ADDONS}"" >>"${server_config_file}"
+    echo -e "\ncommand = -u ${EXTRA_ADDONS}" >>"${server_config_file}"
 }
 
 reset_config_file() {
-    rm -rf $server_config_file
+    sleep 30 # have to sleep before reset config file, in case odoo container have not finished reading the config file
     mv $server_config_file_backup $server_config_file
 }
 
@@ -141,6 +141,7 @@ main() {
     update_config_file
     update_odoo_services
     reset_config_file
+
 }
 
 main
