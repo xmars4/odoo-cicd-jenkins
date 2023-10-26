@@ -6,27 +6,25 @@ node {
         clean_test_resource() // in case previous job can't clean
     }
 
-    // stage('Test #1 (Sonarqube)') {
-    //     sonarqube_check_code_quality()
-    // }
+    stage('Test #1 (Sonarqube)') {
+        sonarqube_check_code_quality()
+    }
 
-//     stage('Test #2 (Odoo Pylint)') {
-//         build_pylint()
-//         pylint_test()
-//         clean_test_resource() // clean them for the next build and test
-//     }
-
+    stage('Test #2 (Odoo Pylint)') {
+        build_pylint()
+        pylint_test()
+        clean_test_resource() // clean them for the next build and test
+    }
+    
     stage('Test #3 (Odoo Test cases)') {
         build()
         unit_test()
+        integration_test()
+        clean_test_resource()
     }
 
     stage('Deploy to server') {
         deploy_to_server()
-    }
-
-    stage('Clean Test Resources') {
-        clean_test_resource()
     }
 }
 
@@ -96,7 +94,7 @@ def verify_tools() {
 }
 
 def build() {
-    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh", returnStatus: true)
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh false", returnStatus: true)
     if (result != 0) {
         clean_test_resource()
         sh "exit $result"
@@ -105,11 +103,6 @@ def build() {
 
 def build_pylint() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh true", returnStatus: true)
-    // TODO: should we stop pipeline or continue next stages
-    // if (result != 0) {
-    //     clean_test_resource()
-    //     sh "exit $result"
-    // }
 }
 
 def sonarqube_check_code_quality() {
@@ -146,24 +139,43 @@ Please take a look at the attached log file🔬
     set_github_commit_status("success", "The build succeed!");
 }
 
+request_was_merged(){
+    return pr_state == 'closed' && pr_merged == 'true'
+}
+
+def integration_test() {
+    if (request_was_merged()) {
+        // make a backup on server 
+        def remote = prepare_remote_server_instance()
+        def server_backup_script_folder = "/tmp/odoo/scripts"
+        def server_backup_script_file = "$server_backup_script_folder/backup.sh"
+        der server_current_backup_info = 
+        try {
+            sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder"
+            sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
+            sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
+            sshCommand remote: remote, from: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag' '$server_backup_folder'"
+        } catch (Exception e){
+            echo "$e"
+            // todo: send :can't backup erro message to Telegram
+            clean_test_resource()
+            exit 1
+        }
+        
+        // copy backup file to Jenkins
+            // restore backup to new odoo instance
+            // run all tests case on restored db
+            // if error -> send message to telegram
+        }
+    }
+}
+
 def deploy_to_server() {
     if (pr_state == 'closed' && pr_merged == 'true') {
+        def remote = prepare_remote_server_instance()
         withCredentials([
-            sshUserPrivateKey(credentialsId: 'remote-server-cred',
-                keyFileVariable: 'server_privatekey',
-                passphraseVariable: '',
-                usernameVariable: 'server_username'),
-            file(credentialsId: 'remote-server-github-privatekey-cred',
-                variable: 'server_github_privatekey_file')
+            file(credentialsId: 'remote-server-github-privatekey-cred',variable: 'server_github_privatekey_file')
         ]) {
-            def remote = [: ]
-            remote.name = "remote-server"
-            remote.host = server_host
-            remote.allowAnyHosts = true
-            remote.user = server_username
-            remote.identityFile = server_privatekey
-            remote.fileTransfer = "scp"
-
             def git_private_key_folder_in_server = "~/.ssh/cicd"
             def git_private_key_file_in_server = "$git_private_key_folder_in_server/odoo-cicd-git-privkey"
             def server_deploy_script = "/tmp/odoo-cicd-deploy.sh"
@@ -184,6 +196,26 @@ Please take a look into [the build log]($BUILD_URL/console)\\.
                 send_telegram_message(failed_message)
             }
         }
+    }
+}
+
+def prepare_remote_server_instance() {
+    withCredentials([
+        sshUserPrivateKey(credentialsId: 'remote-server-cred',
+            keyFileVariable: 'server_privatekey',
+            passphraseVariable: '',
+            usernameVariable: 'server_username'),
+        file(credentialsId: 'remote-server-github-privatekey-cred',
+            variable: 'server_github_privatekey_file')
+    ]) {
+        def remote = [:]
+        remote.name = "remote-server"
+        remote.host = server_host
+        remote.allowAnyHosts = true
+        remote.user = server_username
+        remote.identityFile = server_privatekey
+        remote.fileTransfer = "scp"
+        return remote
     }
 }
 
