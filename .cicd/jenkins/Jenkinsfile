@@ -32,7 +32,7 @@ node {
 def setup_environment_variables() {
     env.CICD_PATH = "${env.WORKSPACE}/.cicd"
     env.PIPELINE_SCRIPTS_PATH = "${CICD_PATH}/jenkins/scripts"
-    env.PIPELINE_UTILS_SCRIPT_PATH="${PIPELINE_SCRIPTS_PATH}/utils.sh"
+    env.PIPELINE_UTILS_SCRIPT_PATH = "${PIPELINE_SCRIPTS_PATH}/utils.sh"
     env.ODOO_IMAGE_TAG = "xmars/odoo16-cicd" // this valued mapped with odoo image name in odoo/docker-compose.yml file
     env.ODOO_WORKSPACE = "${CICD_PATH}/odoo"
     env.ODOO_CUSTOM_ADDONS_PATH = "${env.WORKSPACE}" // we put custom addons to top directory so other developers don't need to care about CICD config
@@ -47,19 +47,18 @@ def setup_environment_variables() {
     env.ODOO_TMP_BACKUP_FOLDER = "${env.WORKSPACE}/.tmp/server-backup"
 }
 
-def is_pr_merged(){
+def is_pr_merged() {
     // fixme: remove return true
     return true
     return pr_state == 'closed' && pr_merged == 'true'
 }
 
 def git_checkout() {
-    if (is_pr_merged()){
+    if (is_pr_merged()) {
         // fixme:  remove  git_checkout_pull_request_branch() and uncomment git_checkout_main_branch()
         git_checkout_pull_request_branch()
         // git_checkout_main_branch()
-    }
-    else {
+    } else {
         git_checkout_pull_request_branch()
     }
 }
@@ -121,7 +120,7 @@ def build_pylint() {
 def sonarqube_check_code_quality() {
     withCredentials([usernamePassword(credentialsId: 'sonar-cred', usernameVariable: 'SONAR_URL', passwordVariable: 'SONAR_TOKEN')]) {
         env.SONARQUBE_SCANNER_HOME = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        def result_url=sh(script:"$PIPELINE_SCRIPTS_PATH/sonarqube.sh", returnStdout: true).trim()
+        def result_url = sh(script: "$PIPELINE_SCRIPTS_PATH/sonarqube.sh", returnStdout: true).trim()
         send_telegram_message("The code quality result of [PR \\#${pr_id}](${pr_url}) is [here]($result_url)")
     }
 }
@@ -153,65 +152,68 @@ Please take a look at the attached log file🔬
 }
 
 def integration_test() {
-        withCredentials([
-        sshUserPrivateKey(credentialsId: 'tmp-server-private-ssh',
-            keyFileVariable: 'server_privatekey',
-            passphraseVariable: '',
-            usernameVariable: 'server_username'),
-        file(credentialsId: 'remote-server-github-privatekey-cred',
-            variable: 'server_github_privatekey_file')
-    ]) {
-        def remote = [:]
-        remote.name = "remote-server"
-        remote.host = server_host
-        remote.allowAnyHosts = true
-        remote.user = server_username
-        remote.identityFile = server_privatekey
-        remote.fileTransfer = "scp"
-        def server_backup_script_folder = "/tmp/odoo/scripts"
-        def server_backup_script_file = "$server_backup_script_folder/backup.sh"
-        sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder"
-        sshCommand remote: remote, command: "ls -lah /"
-    }
-}
-
-def integration_test1() {
     if (is_pr_merged()) {
-        // make a backup on server 
-        def remote = prepare_remote_server_instance()
-        def server_backup_script_folder = "/tmp/odoo/scripts"
-        def server_backup_script_file = "$server_backup_script_folder/backup.sh"
-        try {
-            sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder"
-            sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
-            sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
-            def remote_backup_file_path = sshCommand remote: remote, from: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag' '$server_backup_folder'"
+        withCredentials([
+            sshUserPrivateKey(credentialsId: 'remote-server-cred',
+                keyFileVariable: 'server_privatekey',
+                passphraseVariable: '',
+                usernameVariable: 'server_username'),
+            file(credentialsId: 'remote-server-github-privatekey-cred',
+                variable: 'server_github_privatekey_file')
+        ]) {
+            def remote = [: ]
+            remote.name = "remote-server"
+            remote.host = server_host
+            remote.allowAnyHosts = true
+            remote.user = server_username
+            remote.identityFile = server_privatekey
+            remote.fileTransfer = "scp"
 
-            echo "$remote_backup_file_path"
-        } catch (Exception e){
-            echo "$e"
-            // todo: send :can't backup error message to Telegram
-            clean_test_resource()
-            sh "exit 1"
-        }
-        
-        def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $remote_backup_file_path", returnStatus: true)
-        echo "integration tst result here : $result"
+            def server_backup_script_folder = "/tmp/odoo/scripts"
+            def server_backup_script_file = "$server_backup_script_folder/backup.sh"
+            try {
+                sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder"
+                sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
+                sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
+                def remote_backup_file_path = sshCommand remote: remote, from: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag' '$server_backup_folder'"
 
-        
-        // copy backup file to Jenkins
+                echo "$remote_backup_file_path"
+            } catch (Exception e) {
+                echo "$e"
+                // todo: send :can't backup error message to Telegram
+                clean_test_resource()
+                sh "exit 1"
+            }
+
+            def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $remote_backup_file_path", returnStatus: true)
+            echo "integration tst result here : $result"
+
+            // copy backup file to Jenkins
             // restore backup to new odoo instance
             // run all tests case on restored db
             // if error -> send message to telegram
+        }
     }
 }
 
 def deploy_to_server() {
     if (is_pr_merged()) {
-        def remote = prepare_remote_server_instance()
         withCredentials([
-            file(credentialsId: 'remote-server-github-privatekey-cred',variable: 'server_github_privatekey_file')
+            sshUserPrivateKey(credentialsId: 'remote-server-cred',
+                keyFileVariable: 'server_privatekey',
+                passphraseVariable: '',
+                usernameVariable: 'server_username'),
+            file(credentialsId: 'remote-server-github-privatekey-cred',
+                variable: 'server_github_privatekey_file')
         ]) {
+            def remote = [: ]
+            remote.name = "remote-server"
+            remote.host = server_host
+            remote.allowAnyHosts = true
+            remote.user = server_username
+            remote.identityFile = server_privatekey
+            remote.fileTransfer = "scp"
+
             def git_private_key_folder_in_server = "~/.ssh/cicd"
             def git_private_key_file_in_server = "$git_private_key_folder_in_server/odoo-cicd-git-privkey"
             def server_deploy_script = "/tmp/odoo-cicd-deploy.sh"
@@ -231,28 +233,8 @@ Please take a look into [the build log]($BUILD_URL/console)\\.
 """
                 send_telegram_message(failed_message)
             }
-        }
-    }
-}
 
-def prepare_remote_server_instance() {
-    // fixme:move tmp-server-private-ssh -> remote-server-cred
-    withCredentials([
-        sshUserPrivateKey(credentialsId: 'tmp-server-private-ssh',
-            keyFileVariable: 'server_privatekey',
-            passphraseVariable: '',
-            usernameVariable: 'server_username'),
-        file(credentialsId: 'remote-server-github-privatekey-cred',
-            variable: 'server_github_privatekey_file')
-    ]) {
-        def remote = [:]
-        remote.name = "remote-server"
-        remote.host = server_host
-        remote.allowAnyHosts = true
-        remote.user = server_username
-        remote.identityFile = server_privatekey
-        remote.fileTransfer = "scp"
-        return remote
+        }
     }
 }
 
