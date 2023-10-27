@@ -6,7 +6,6 @@ global_telegram_channel_id=${telegram_channel_id}
 
 docker_compose() {
     cd $ODOO_DOCKER_COMPOSE_PATH
-    echo "here your tag: $ODOO_DOCKER_COMPOSE_PROJECT_NAME"
     docker compose -p "$ODOO_DOCKER_COMPOSE_PROJECT_NAME" "$@"
 }
 
