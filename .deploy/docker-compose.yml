@@ -42,6 +42,7 @@ services:
             - frontend
             - backend
         restart: always
+    # fixme: uncomment nginx section
     # nginx:
     #     image: nginx
     #     depends_on:

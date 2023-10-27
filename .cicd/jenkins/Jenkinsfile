@@ -40,7 +40,6 @@ def setup_environment_variables() {
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // the log file is inside the odoo container
     env.LOG_FILE_OUTSIDE = "${ODOO_WORKSPACE}/logs/odoo.log" // mounted odoo's log file in Jenkins instance
-    env.ODOO_DOCKER_COMPOSE_PROJECT_NAME = "${env.BUILD_TAG}-${env.BUILD_ID}"
 }
 
 def git_checkout() {
