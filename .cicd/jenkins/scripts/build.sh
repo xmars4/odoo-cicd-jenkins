@@ -23,6 +23,11 @@ function set_list_addons {
         return 0
     fi
     CUSTOM_ADDONS=$(get_list_addons "$ODOO_CUSTOM_ADDONS_PATH")
+    echo "here my addons"
+    echo $CUSTOM_ADDONS
+    echo $ODOO_CUSTOM_ADDONS_PATH
+    echo $is_pylint_build
+    echo "====="
     if [ -z $CUSTOM_ADDONS ]; then
         show_separator "Can't find any Odoo custom modules, please recheck your config!"
         exit 1
