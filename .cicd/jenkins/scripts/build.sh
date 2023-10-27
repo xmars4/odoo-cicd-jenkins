@@ -23,6 +23,7 @@ function set_list_addons {
         return 0
     fi
     CUSTOM_ADDONS=$(get_list_addons "$ODOO_CUSTOM_ADDONS_PATH")
+    # fixme: remove echo
     echo "here my addons"
     echo $CUSTOM_ADDONS
     echo $ODOO_CUSTOM_ADDONS_PATH
