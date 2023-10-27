@@ -309,4 +309,4 @@
 
 - By default, before pipeline start, Jenkins will check out repo with branch specified in 'Branches to build' to get the Jenkinsfile,\
 so we can't ignore check out default Instead, we will perform second checkout with specific branch (from pull request)
-.
+..
