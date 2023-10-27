@@ -237,9 +237,10 @@ def set_github_commit_status(String state, String message) {
 }
 
 def send_telegram_file(String file_path, String message) {
+    // fixme: move temp-telegram-channel -> telegram-channel-id
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id')
     ]) {
         result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
         if (result) {
