@@ -162,6 +162,7 @@ def integration_test() {
             clean_test_resource()
             exit 1
         }
+        echo "here backup file: $remote_backup_file_path"
         
         // copy backup file to Jenkins
             // restore backup to new odoo instance
