@@ -14,7 +14,6 @@ populate_variables() {
     declare -g docker_compose_path="$1"        # path to folder contains docker-compose.yml file - on host machine
     declare -g db_name="$2"                    # supplied by jenkins pipeline - config manually in pipeline
     declare -g odoo_image_tag="$3"             # odoo image tag - declared in docker compose file
-    declare -g backup_folder="$4"              # path inside the Odoo container
     declare -g config_file=/etc/odoo/odoo.conf # path inside the Odoo container
 
     declare -g db_host=$(get_config_value "db_host")
@@ -93,7 +92,7 @@ create_backup() {
     #   - dump.sql : Oodo database dump
     #   - filestore.tar.gz: Odoo filestore
     latest_backup_tar_file=$(get_latest_backup_tar_file)
-    latest_backup_zip_file_path="$backup_folder/$latest_backup_tar_file"
+    latest_backup_tar_file_path="$backup_folder/$latest_backup_tar_file"
     create_new_backup="false"
     if [ -n "$latest_backup_tar_file" ]; then
         creation_date=$(echo $latest_backup_tar_file | sed "s/^${db_name}_//; s/\.tar.gz//")
@@ -107,11 +106,11 @@ create_backup() {
         sub_backup_folder=$(create_sub_backup_folder)
         create_sql_backup $sub_backup_folder
         create_filestore_backup $sub_backup_folder
-        new_backup_zip_file_path=$(create_tar_file_backup $sub_backup_folder)
+        new_backup_tar_file_path=$(create_tar_file_backup $sub_backup_folder)
         delete_old_tar_files
-        echo $new_backup_zip_file_path
+        echo $new_backup_tar_file_path
     else
-        echo $latest_backup_zip_file_path
+        echo $latest_backup_tar_file_path
     fi
 }
 
