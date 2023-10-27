@@ -168,9 +168,9 @@ def integration_test() {
             // restore backup to new odoo instance
             // run all tests case on restored db
             // if error -> send message to telegram
-        }
     }
 }
+
 
 def deploy_to_server() {
     if (pr_state == 'closed' && pr_merged == 'true') {
