@@ -159,7 +159,7 @@ def integration_test() {
             echo "$remote_backup_file_path"
         } catch (Exception e){
             echo "$e"
-            // todo: send :can't backup erro message to Telegram
+            // todo: send :can't backup error message to Telegram
             clean_test_resource()
             exit 1
         }
