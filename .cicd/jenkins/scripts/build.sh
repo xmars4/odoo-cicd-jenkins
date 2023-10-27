@@ -47,6 +47,8 @@ function start_containers {
         echo "" >>$default_container_requirements
         cat "$custom_addons_requirements" >>$default_container_requirements
     fi
+    echo "===**+++"
+    echo $ODOO_DOCKER_COMPOSE_PROJECT_NAME
     docker_compose build --pull --quiet
     docker_compose up -d --wait --no-color
     docker_compose ps
