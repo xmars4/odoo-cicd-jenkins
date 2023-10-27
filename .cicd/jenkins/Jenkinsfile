@@ -168,7 +168,7 @@ def integration_test() {
             echo "$e"
             // todo: send :can't backup error message to Telegram
             clean_test_resource()
-            exit 1
+            sh "exit 1"
         }
         
         def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $remote_backup_file_path", returnStatus: true)
