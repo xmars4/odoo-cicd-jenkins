@@ -140,7 +140,7 @@ Please take a look at the attached log file🔬
     set_github_commit_status("success", "The build succeed!");
 }
 
-request_was_merged(){
+def request_was_merged(){
     return pr_state == 'closed' && pr_merged == 'true'
 }
 
