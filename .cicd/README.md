@@ -167,6 +167,7 @@
         server_docker_compose_path=<path to folder contain odoo docker-compose.yml file>
         server_config_file=<path to odoo config file>
         server_custom_addons_path=<path to custom addons folder, also a git repo>
+        server_odoo_db_name=<db name to backup and use in integration test >
         ```
 
         for example:
@@ -177,6 +178,7 @@
         server_odoo_url=http://12.34.56.78:8069
         server_config_file=/opt/odoo/.deploy/etc/odoo.conf
         server_custom_addons_path=/opt/odoo/
+        server_odoo_db_name=odoo-staging
         ```
 
 6. [Create Github webhook](https://docs.github.com/en/webhooks/using-webhooks)
