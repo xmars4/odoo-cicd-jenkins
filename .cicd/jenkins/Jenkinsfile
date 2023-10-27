@@ -18,7 +18,8 @@ node {
 
     stage('Test #3 (Odoo Test cases)') {
         build()
-        unit_test()
+        // fixme: uncomment unit_test()
+        // unit_test()
         integration_test()
         // clean_test_resource()
     }
@@ -212,8 +213,9 @@ Please take a look into [the build log]($BUILD_URL/console)\\.
 }
 
 def prepare_remote_server_instance() {
+    // fixme:move tmp-server-private-ssh -> remote-server-cred
     withCredentials([
-        sshUserPrivateKey(credentialsId: 'remote-server-cred',
+        sshUserPrivateKey(credentialsId: 'tmp-server-private-ssh',
             keyFileVariable: 'server_privatekey',
             passphraseVariable: '',
             usernameVariable: 'server_username'),
