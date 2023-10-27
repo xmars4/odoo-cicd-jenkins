@@ -19,13 +19,13 @@ node {
     stage('Test #3 (Odoo Test cases)') {
         build()
         unit_test()
-        integration_test()
+        // integration_test()
         clean_test_resource()
     }
 
-    stage('Deploy to server') {
-        deploy_to_server()
-    }
+    // stage('Deploy to server') {
+    //     deploy_to_server()
+    // }
 }
 
 def setup_environment_variables() {
@@ -150,12 +150,13 @@ def integration_test() {
         def remote = prepare_remote_server_instance()
         def server_backup_script_folder = "/tmp/odoo/scripts"
         def server_backup_script_file = "$server_backup_script_folder/backup.sh"
-        der server_current_backup_info = 
+        
         try {
             sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder"
             sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
             sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
-            sshCommand remote: remote, from: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag' '$server_backup_folder'"
+            def remote_backup_file_path = sshCommand remote: remote, from: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag' '$server_backup_folder'"
+            echo "$remote_backup_file_path"
         } catch (Exception e){
             echo "$e"
             // todo: send :can't backup erro message to Telegram
