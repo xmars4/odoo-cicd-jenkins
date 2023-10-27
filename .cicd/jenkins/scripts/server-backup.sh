@@ -121,7 +121,10 @@ get_latest_backup_tar_file() {
 }
 
 create_sub_backup_folder() {
+    # fixme: remove echo
+    echo $backup_folder
     folder_name=$(execute_command_inside_odoo_container "echo $backup_folder/${db_name}_$(date -u +$DATE_FORMAT)")
+    echo $folder_name
     execute_command_inside_odoo_container "mkdir -p \"$folder_name\""
     echo $folder_name
 }
