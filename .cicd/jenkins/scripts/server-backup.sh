@@ -14,8 +14,8 @@ populate_variables() {
     declare -g docker_compose_path="$1"        # path to folder contains docker-compose.yml file - on host machine
     declare -g db_name="$2"                    # supplied by jenkins pipeline - config manually in pipeline
     declare -g odoo_image_tag="$3"             # odoo image tag - declared in docker compose file
-    declare -g backup_folder="$4"              # inside Odoo container
-    declare -g config_file=/etc/odoo/odoo.conf # inside Odoo container
+    declare -g backup_folder="$4"              # path inside the Odoo container
+    declare -g config_file=/etc/odoo/odoo.conf # path inside the Odoo container
 
     declare -g db_host=$(get_config_value "db_host")
     declare -g db_host=${db_host:-'db'}
@@ -26,7 +26,6 @@ populate_variables() {
     declare -g data_dir=$(get_config_value "data_dir")
     declare -g data_dir=${data_dir:-'/var/lib/odoo'}
     declare -g DATE_FORMAT="%Y-%m-%d_%H-%M-%S"
-    declare -g current_backup_file_name="$backup_folder/backup_info" # latest backup filename will be stored in this file
 }
 
 check_required_files() {

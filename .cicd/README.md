@@ -145,6 +145,7 @@
         | pr_to_repo_ssh_url | $.pull_request.base.repo.ssh_url | JSONPath        |               |              |
         | pr_url             | $.pull_request.html_url          | JSONPath        |               |              |
         | pr_draft           | $.pull_request.draft             | JSONPath        |               |              |
+        | pr_sha             | $.pull_request.head.sha          | JSONPath        |               |              |
 
     - Fill the **_Token_** with a random string
     - Fill the **_Cause_** with text: Triggered from PR: $pr_url
