@@ -4,15 +4,20 @@ global_github_access_token=${github_access_token}
 global_telegram_bot_token=${telegram_bot_token}
 global_telegram_channel_id=${telegram_channel_id}
 
+docker_compose() {
+    cd $ODOO_DOCKER_COMPOSE_PATH
+    docker compose -q $ODOO_DOCKER_COMPOSE_PROJECT_NAME "$@"
+}
+
 # declare all useful functions here
-function show_separator {
+show_separator() {
     x="==============================================="
     separator=($x $x "$1" $x $x)
     printf "%s\n" "${separator[@]}"
 }
 
-function get_odoo_container_id {
-    docker compose ps -q -a |
+get_odoo_container_id() {
+    docker_compose ps -q -a |
         xargs docker inspect --format '{{.Id}} {{.Config.Image}}' |
         awk -v img="${ODOO_IMAGE_TAG}" '$2 == img {print $1}'
 }
