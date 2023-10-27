@@ -171,7 +171,7 @@ def integration_test() {
         def server_backup_script_folder = "/tmp/odoo/scripts"
         def server_backup_script_file = "$server_backup_script_folder/backup.sh"
         sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder"
-        sshCommand remote: remote, command "ls -lah /"
+        sshCommand remote: remote, command: "ls -lah /"
     }
 }
 
