@@ -44,7 +44,7 @@ def setup_environment_variables() {
 
 def is_pr_merged(){
     // fixme: remove return true
-    return true
+    // return true
     return pr_state == 'closed' && pr_merged == 'true'
 }
 
