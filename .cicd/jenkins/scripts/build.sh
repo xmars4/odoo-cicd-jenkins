@@ -34,9 +34,9 @@ function update_config_file {
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
     if [[ $is_pylint_build == "true" ]]; then
-        echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level info --load base,web -i test_lint,test_pylint --test-enable --test-tags /test_lint,/test_pylint,/test_lint,/test_pylint,-/test_lint:TestPyLint.test_pylint\n" >>$CONFIG_FILE
+        echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --logfile "$LOG_FILE" --log-level info --load base,web -i test_lint,test_pylint --test-enable --test-tags /test_lint,/test_pylint,/test_lint,/test_pylint,-/test_lint:TestPyLint.test_pylint\n" >>$CONFIG_FILE
     else
-        echo -e "\ncommand = --stop-after-init --workers 0 --database test --logfile "$LOG_FILE" --log-level info -i "${CUSTOM_ADDONS}" --test-enable --test-tags "${CUSTOM_ADDONS}"\n" >>$CONFIG_FILE
+        echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --logfile "$LOG_FILE" --log-level info -i "${CUSTOM_ADDONS}" --test-enable --test-tags "${CUSTOM_ADDONS}"\n" >>$CONFIG_FILE
     fi
 }
 

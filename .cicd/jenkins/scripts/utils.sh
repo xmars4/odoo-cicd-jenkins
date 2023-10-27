@@ -9,6 +9,15 @@ docker_compose() {
     docker compose -p "$ODOO_DOCKER_COMPOSE_PROJECT_NAME" "$@"
 }
 
+get_config_value() {
+    param=$1
+    grep -q -E "^\s*\b${param}\b\s*=" "$CONFIG_FILE"
+    if [[ $? == 0 ]]; then
+        value=$(grep -E "^\s*\b${param}\b\s*=" "$CONFIG_FILE" | cut -d " " -f3 | sed 's/["\n\r]//g')
+    fi
+    echo "$value"
+}
+
 # declare all useful functions here
 show_separator() {
     x="==============================================="
@@ -17,9 +26,15 @@ show_separator() {
 }
 
 get_odoo_container_id() {
+    cd "$ODOO_DOCKER_COMPOSE_PATH"
     docker_compose ps -q -a |
         xargs docker inspect --format '{{.Id}} {{.Config.Image}}' |
         awk -v img="${ODOO_IMAGE_TAG}" '$2 == img {print $1}'
+}
+
+docker_odoo_exec() {
+    odoo_container_id=$(get_odoo_container_id)
+    docker exec $odoo_container_id sh -c "$@"
 }
 
 check_variable_missing_value() {
