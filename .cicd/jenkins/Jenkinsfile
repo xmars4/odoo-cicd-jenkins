@@ -19,13 +19,13 @@ node {
     stage('Test #3 (Odoo Test cases)') {
         build()
         unit_test()
-        // integration_test()
         clean_test_resource()
+        integration_test()
     }
 
-    // stage('Deploy to server') {
-    //     deploy_to_server()
-    // }
+    stage('Deploy to server') {
+        deploy_to_server()
+    }
 }
 
 def setup_environment_variables() {
@@ -44,12 +44,13 @@ def setup_environment_variables() {
 }
 
 def git_checkout() {
-    if (pr_state != 'closed') {
+    if (is_pr_merged()){
         // TODO: do we need a different test process when code was merged to main repo 
         // like running test cases on existing database instead of empty database
-        git_checkout_pull_request_branch()
-    } else {
         git_checkout_main_branch()
+    }
+    else {
+        git_checkout_pull_request_branch()
     }
 }
 
@@ -172,9 +173,13 @@ def integration_test() {
     }
 }
 
+def is_pr_merged(){
+    return pr_state == 'closed' && pr_merged == 'true'
+}
+
 
 def deploy_to_server() {
-    if (pr_state == 'closed' && pr_merged == 'true') {
+    if (is_pr_merged()) {
         def remote = prepare_remote_server_instance()
         withCredentials([
             file(credentialsId: 'remote-server-github-privatekey-cred',variable: 'server_github_privatekey_file')
