@@ -17,8 +17,8 @@ node {
     // }
 
     stage('Test #3 (Odoo Test cases)') {
-        build()
-        // fixme: uncomment unit_test()
+        // fixme: uncomment: build(),  unit_test()
+        // build()
         // unit_test()
         integration_test()
         // clean_test_resource()
@@ -153,6 +153,27 @@ Please take a look at the attached log file🔬
 }
 
 def integration_test() {
+        withCredentials([
+        sshUserPrivateKey(credentialsId: 'tmp-server-private-ssh',
+            keyFileVariable: 'server_privatekey',
+            passphraseVariable: '',
+            usernameVariable: 'server_username'),
+        file(credentialsId: 'remote-server-github-privatekey-cred',
+            variable: 'server_github_privatekey_file')
+    ]) {
+        def remote = [:]
+        remote.name = "remote-server"
+        remote.host = server_host
+        remote.allowAnyHosts = true
+        remote.user = server_username
+        remote.identityFile = server_privatekey
+        remote.fileTransfer = "scp"
+        sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder"
+        sshCommand remote: remote, command "ls -lah /"
+    }
+}
+
+def integration_test1() {
     if (is_pr_merged()) {
         // make a backup on server 
         def remote = prepare_remote_server_instance()
