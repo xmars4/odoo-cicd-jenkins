@@ -73,6 +73,8 @@ should_we_generate_new_backup() {
     current_timestamp=$(execute_command_inside_odoo_container "date -u +%s")
     different=$((current_timestamp - latest_backup_file_creation_timestamp))
 
+    # fixme: remove echo
+    execute_command_inside_odoo_container "echo $different >>/tmp/time.diff.txt"
     # we should get a new backup file every 1 hour
     if [[ $different -gt '3600' ]]; then
         echo "true"

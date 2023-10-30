@@ -182,8 +182,6 @@ def integration_test() {
                 sh "rm -rf ${ODOO_TMP_BACKUP_FOLDER}/* && mkdir -p $ODOO_TMP_BACKUP_FOLDER || true"
                 def jenkin_backup_file_name = sh(script: "basename $remote_backup_file_path", returnStdout: true).trim()
                 jenkin_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
-                echo "here your file $jenkin_backup_file_path"
-                // sshGet remote: remote, from: remote_backup_file_path, into: jenkin_backup_file_path, override: true
                 sshGet remote: remote, from: remote_backup_file_path, into: env.ODOO_TMP_BACKUP_FOLDER, override: true
             } catch (Exception e) {
                 echo "$e"
@@ -198,10 +196,6 @@ Please take a look into [the build log](${BUILD_URL}console) 🔬
                 clean_test_resource()
                 sh "exit 1"
             }
-            echo "oh it is easy to understand, i am getting under your skin"
-            sh "ls -lah $ODOO_TMP_BACKUP_FOLDER"
-            // echo "show yeah======================"
-            // sh "tar tzf $jenkin_backup_file_path"
             def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $jenkin_backup_file_path", returnStatus: true)
             echo "integration tst result here : $result"
 
