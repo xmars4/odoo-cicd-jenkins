@@ -32,12 +32,20 @@ get_config_value() {
 function update_config_file_before_restoration {
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
     sed -i "s/^\s*db_name\s*.*//g" $CONFIG_FILE
+    #fixme
+    echo "show config here "
+    cat $CONFIG_FILE
+    docker_odoo_exec "cat $config_file"
 }
 
 function update_config_file_after_restoration {
     custom_addons=$(get_list_addons "$ODOO_CUSTOM_ADDONS_PATH")
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
     echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --logfile "$LOG_FILE" --log-level info -i "${custom_addons}" --test-enable --test-tags "${custom_addons}"\n" >>$CONFIG_FILE
+    #fixme
+    echo "show config eeeeeeeee "
+    cat $CONFIG_FILE
+    docker_odoo_exec "cat $config_file"
 }
 
 copy_backup() {
