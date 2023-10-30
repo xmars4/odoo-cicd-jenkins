@@ -190,7 +190,7 @@ def integration_test() {
             def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $remote_backup_file_path", returnStatus: true)
             echo "integration tst result here : $result"
 
-            // copy backup file to Jenkins
+            // copy backup file to Jenkins.
             // restore backup to new odoo instance
             // run all tests case on restored db
             // if error -> send message to telegram
