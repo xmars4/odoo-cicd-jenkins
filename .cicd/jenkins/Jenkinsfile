@@ -168,7 +168,7 @@ def integration_test() {
             remote.allowAnyHosts = true
             remote.user = server_username
             remote.identityFile = server_privatekey
-            remote.fileTransfer = "scp"
+            remote.fileTransfer = "sftp"
 
             def server_backup_script_folder = "/tmp/odoo/scripts"
             def server_backup_script_file = "$server_backup_script_folder/backup.sh"
@@ -182,7 +182,7 @@ def integration_test() {
                 def jenkin_backup_file_name = sh(script: "basename $remote_backup_file_path", returnStdout: true).trim()
                 jenkin_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
                 echo "here your file $jenkin_backup_file_path"
-                def ignore_stdout= sshGet remote: remote, from: remote_backup_file_path, into: jenkin_backup_file_path
+                def ignore_stdout= sshGet remote: remote, from: remote_backup_file_path, into: jenkin_backup_file_path, override: true
             } catch (Exception e) {
                 echo "$e"
             }
