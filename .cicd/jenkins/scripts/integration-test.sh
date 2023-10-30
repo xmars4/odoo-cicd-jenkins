@@ -101,7 +101,7 @@ restore_backup() {
 
 run_test_cases() {
     #todo
-    echo 12
+    echo 123
 }
 
 analyze_log_file() {
