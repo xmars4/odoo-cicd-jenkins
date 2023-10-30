@@ -12,6 +12,21 @@ custom_repo_host="ssh.github.com"
 server_config_file_backup="${server_config_file}.bak"
 CUSTOM_ADDONS=
 
+function get_list_addons {
+    addons=
+    res=$(find "$1" -type f -name "__manifest__.py" -exec dirname {} \;)
+    for dr in $res; do
+        addon_name=$(basename $dr)
+        if [[ -z $addons ]]; then
+            addons="$addon_name"
+        else
+            addons="$addons,$addon_name"
+        fi
+    done
+
+    echo $addons
+}
+
 check_git_repo_folder() {
     cd $server_custom_addons_path
     git status >/dev/null 2>&1
@@ -89,25 +104,6 @@ pull_latest_code() {
         setup_git_ssh_remote
         git pull $custom_repo_remote_name $current_branch
     fi
-}
-
-function get_list_addons {
-    if [[ $# -gt 0 ]]; then
-        cd "$1"
-    fi
-
-    addons=
-    res=$(find . -maxdepth 2 -mindepth 2 -type f -name "__manifest__.py" -exec dirname {} \;)
-    for dr in $res; do
-        addon_name=$(basename $dr)
-        if [[ -z $addons ]]; then
-            addons="$addon_name"
-        else
-            addons="$addons,$addon_name"
-        fi
-    done
-
-    echo $addons
 }
 
 set_list_addons() {

@@ -3,21 +3,6 @@
 source "${PIPELINE_UTILS_SCRIPT_PATH}"
 is_pylint_build=$1
 
-function get_list_addons {
-    addons=
-    res=$(find "$1" -type f -name "__manifest__.py" -exec dirname {} \;)
-    for dr in $res; do
-        addon_name=$(basename $dr)
-        if [[ -z $addons ]]; then
-            addons="$addon_name"
-        else
-            addons="$addons,$addon_name"
-        fi
-    done
-
-    echo $addons
-}
-
 function set_list_addons {
     if [[ $is_pylint_build == "true" ]]; then
         return 0
