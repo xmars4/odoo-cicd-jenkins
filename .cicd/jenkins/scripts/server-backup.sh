@@ -7,7 +7,8 @@
 main() {
     populate_variables "$@"
     check_required_files
-    create_backup
+    backup_file_path=$(create_backup_inside_container)
+    copy_backup_to_host $backup_file_path
 }
 
 populate_variables() {
@@ -86,7 +87,7 @@ convert_datetime_string_to_timestamp() {
     echo $(date -d "$valid_date_string" "+%s")
 }
 
-create_backup() {
+create_backup_inside_container() {
     # Create sql and filestore backup inside the Odoo container
     # backup folder contains .tar.gz files
     # a .tar.gz file contains:
@@ -113,6 +114,14 @@ create_backup() {
     else
         echo $latest_backup_tar_file_path
     fi
+}
+
+copy_backup_to_host() {
+    backup_file_path=$1
+    odoo_container_id=$(get_odoo_container_id $odoo_image_tag)
+    [ ! -d "$backup_folder" ] && mkdir -p "$backup_folder"
+    docker cp $odoo_container_id:$backup_file_path $backup_folder
+    echo $backup_file_path
 }
 
 get_latest_backup_tar_file() {
