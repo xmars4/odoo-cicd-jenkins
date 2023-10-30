@@ -171,23 +171,35 @@ def integration_test() {
 
             def server_backup_script_folder = "/tmp/odoo/scripts"
             def server_backup_script_file = "$server_backup_script_folder/backup.sh"
-            def remote_backup_file_path = ""
+            def jenkin_backup_file_path = ""
             try {
                 sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder || true"
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
                 sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
                 remote_backup_file_path = sshCommand remote: remote, command: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag'"
-
+                def jenkin_backup_file_name = sh(script: "$(basename $remote_backup_file_path) | sed 's/.tar.gz//'", returnStdout: true).trim()
+                def jenkin_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
+                sshGet remote: remote, from: remote_backup_file_path, into: jenkin_backup_file_path
                 echo "$remote_backup_file_path"
             } catch (Exception e) {
                 echo "$e"
-                // todo: send :can't backup error message to Telegram
+            }
+
+            if (!remote_backup_file_path){
+                def failed_message = """
+Cannot take a backup from remote server to continue testing process\\.
+Please take a look into [the build log](${BUILD_URL}console) 🔬                
+"""
+                send_message_telegram_default(failed_message)
                 clean_test_resource()
                 sh "exit 1"
             }
+            
 
             // fixme: uncomment line integration test
-            def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $remote_backup_file_path", returnStatus: true)
+            echo "show yeah======================"
+            sh "tar tzf $jenkin_backup_file_path"
+            def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $jenkin_backup_file_path", returnStatus: true)
             echo "integration tst result here : $result"
 
             // copy backup file to Jenkins.
