@@ -7,7 +7,7 @@ populate_variables() {
     declare -g db_name="postgres"
     declare -g odoo_image_tag="$ODOO_IMAGE_TAG"
     declare -g odoo_container_store_backup_folder="/tmp/odoo/restore"
-    declare -g extracted_backup_folder=$(echo $remote_backup_file_path | sed "s/.tar.gz//")
+    declare -g extracted_backup_folder_name=$(basename $received_backup_file_path | sed "s/.tar.gz//")
 
     declare -g db_host=$(get_config_value "db_host")
     declare -g db_host=${db_host:-'db'}
@@ -59,12 +59,12 @@ create_empty_db() {
 }
 
 restore_db() {
-    sql_dump_path="${odoo_container_store_backup_folder}/${extracted_backup_folder}/dump.sql"
+    sql_dump_path="${odoo_container_store_backup_folder}/${extracted_backup_folder_name}/dump.sql"
     docker_odoo_exec "psql -h \"$db_host\" -U $db_user $ODOO_TEST_DATABASE_NAME < $sql_dump_path"
 }
 
 restore_filestore() {
-    backup_filestore_path="${odoo_container_store_backup_folder}/${extracted_backup_folder}/filestore.tar.gz"
+    backup_filestore_path="${odoo_container_store_backup_folder}/${extracted_backup_folder_name}/filestore.tar.gz"
     filestore_path="$data_dir/filestore"
     docker_odoo_exec "[ ! -d $filestore_path ] && mkdir $filestore_path && cp $backup_filestore_path $filestore_path && cd $file_store_path &&"tar -xzf filestore.tar.gz
 }
