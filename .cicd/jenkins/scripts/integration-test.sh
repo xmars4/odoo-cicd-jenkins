@@ -32,7 +32,7 @@ get_config_value() {
 function update_config_file_before_restoration {
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
     sed -i "s/^\s*db_name\s*.*//g" $CONFIG_FILE
-    #fixme
+    #fixme 2
     echo "show config here "
     cat $CONFIG_FILE
     # docker_odoo_exec "cat $config_file"
