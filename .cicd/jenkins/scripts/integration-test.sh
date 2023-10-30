@@ -39,6 +39,7 @@ copy_backup() {
     docker_compose ps -a
     echo "========================="
     received_backup_file_name=$(basename $received_backup_file_path)
+    docker_odoo_exec "mkdir -p $odoo_container_store_backup_folder"
     docker cp "$received_backup_file_path" $odoo_container_id:$odoo_container_store_backup_folder
     docker_odoo_exec "cd $odoo_container_store_backup_folder && tar -xzf $received_backup_file_name"
 }
