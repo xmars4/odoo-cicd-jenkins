@@ -187,8 +187,8 @@ def integration_test() {
             }
 
             // fixme: uncomment line integration test
-            // def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $remote_backup_file_path", returnStatus: true)
-            // echo "integration tst result here : $result"
+            def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $remote_backup_file_path", returnStatus: true)
+            echo "integration tst result here : $result"
 
             // copy backup file to Jenkins
             // restore backup to new odoo instance
