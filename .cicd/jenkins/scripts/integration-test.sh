@@ -32,12 +32,6 @@ function update_config_file_after_restoration {
 
 copy_backup() {
     odoo_container_id=$(get_odoo_container_id)
-    ls -lah
-    pwd
-    echo $odoo_container_id
-    echo $remote_backup_file_path
-    docker_compose ps -a
-    echo "========================="
     received_backup_file_name=$(basename $received_backup_file_path)
     docker_odoo_exec "mkdir -p $odoo_container_store_backup_folder"
     docker cp "$received_backup_file_path" $odoo_container_id:$odoo_container_store_backup_folder
@@ -78,11 +72,11 @@ restore_filestore() {
 restore_backup() {
     start_instance
     copy_backup
-    # config_psql_without_password
-    # create_empty_db
-    # restore_db
-    # restore_filestore
-    # restart_instance
+    config_psql_without_password
+    create_empty_db
+    restore_db
+    restore_filestore
+    restart_instance
 }
 
 run_test_cases() {

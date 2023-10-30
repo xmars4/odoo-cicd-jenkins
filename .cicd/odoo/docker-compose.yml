@@ -32,6 +32,10 @@ services:
             - ./logs:/var/log/odoo
         networks:
             - backend
+        # fixme:remove ports
+        ports:
+            - "18069:8069"
+            - "18072:8072"
 
 networks:
     backend:
