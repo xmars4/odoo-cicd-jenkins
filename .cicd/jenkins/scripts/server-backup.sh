@@ -120,6 +120,7 @@ copy_backup_to_host() {
     backup_file_path=$1
     odoo_container_id=$(get_odoo_container_id $odoo_image_tag)
     [ ! -d "$backup_folder" ] && mkdir -p "$backup_folder"
+    rm -rf "${backup_folder}/*"
     docker cp $odoo_container_id:$backup_file_path $backup_folder
     echo $backup_file_path
 }
