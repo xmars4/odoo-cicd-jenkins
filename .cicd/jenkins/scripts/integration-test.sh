@@ -22,9 +22,9 @@ populate_variables() {
 
 get_config_value() {
     param=$1
-    docker_odoo_exec "grep -q -E \"^\s*\b${param}\b\s*=\" \"$config_file\""
+    grep -q -E "^\s*\b${param}\b\s*=" "$CONFIG_FILE"
     if [[ $? == 0 ]]; then
-        value=$(docker_odoo_exec "grep -E \"^\s*\b${param}\b\s*=\" \"$config_file\" | cut -d \" \" -f3 | sed 's/[\"\n\r]//g'")
+        value=$(grep -E "^\s*\b${param}\b\s*=" "$CONFIG_FILE" | cut -d " " -f3 | sed 's/["\n\r]//g')
     fi
     echo "$value"
 }
@@ -35,7 +35,7 @@ function update_config_file_before_restoration {
     #fixme
     echo "show config here "
     cat $CONFIG_FILE
-    docker_odoo_exec "cat $config_file"
+    # docker_odoo_exec "cat $config_file"
 }
 
 function update_config_file_after_restoration {
@@ -45,7 +45,7 @@ function update_config_file_after_restoration {
     #fixme
     echo "show config eeeeeeeee "
     cat $CONFIG_FILE
-    docker_odoo_exec "cat $config_file"
+    # docker_odoo_exec "cat $config_file"
 }
 
 copy_backup() {
