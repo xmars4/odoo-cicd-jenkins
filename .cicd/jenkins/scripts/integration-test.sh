@@ -76,7 +76,7 @@ restore_backup() {
     create_empty_db
     restore_db
     restore_filestore
-    # restart_instance
+    restart_instance
 }
 
 run_test_cases() {
