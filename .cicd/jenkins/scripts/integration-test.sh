@@ -36,7 +36,7 @@ copy_backup() {
     pwd
     echo $odoo_container_id
     echo $remote_backup_file_path
-    cd $ODOO_DOCKER_COMPOSE_PATH && docker compose ps -a && docker compose config
+    docker_compose ps -a
     echo "========================="
     received_backup_file_name=$(basename $received_backup_file_path)
     docker cp "$received_backup_file_path" $odoo_container_id:$odoo_container_store_backup_folder
@@ -49,13 +49,13 @@ config_psql_without_password() {
 }
 
 start_instance() {
-    update_config_file_before_restore
+    update_config_file_before_restoration
     docker_compose down -v # remove old test instance
     docker_compose up -d
 }
 
 restart_instance() {
-    update_config_file_after_restore
+    update_config_file_after_restoration
     docker_compose restart
 }
 
