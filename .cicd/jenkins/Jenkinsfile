@@ -173,7 +173,7 @@ def integration_test() {
             def server_backup_script_file = "$server_backup_script_folder/backup.sh"
             def remote_backup_file_path = ""
             try {
-                sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder", failOnError: false
+                sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder || true"
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
                 sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
                 remote_backup_file_path = sshCommand remote: remote, command: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag'"
@@ -220,7 +220,7 @@ def deploy_to_server() {
             def git_private_key_file_in_server = "$git_private_key_folder_in_server/odoo-cicd-git-privkey"
             def server_deploy_script = "/tmp/odoo-cicd-deploy.sh"
             try {
-                sshCommand remote: remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server", failOnError: false
+                sshCommand remote: remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/deploy.sh", into: server_deploy_script
                 sshCommand remote: remote, command: "chmod +x $server_deploy_script"
