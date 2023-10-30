@@ -118,7 +118,7 @@ create_backup() {
 get_latest_backup_tar_file() {
     execute_command_inside_odoo_container "[ ! -d \"$backup_folder\" ] && mkdir -p \"$backup_folder\""
     latest_backup_tar_file=$(execute_command_inside_odoo_container "ls -tr \"$backup_folder\" | tail -n 1 | grep -E \"^${db_name}_[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}\.tar.gz$\"")
-    echo "${backup_folder}/${latest_backup_tar_file}"
+    echo ${latest_backup_tar_file}
 }
 
 create_sub_backup_folder() {
