@@ -178,7 +178,7 @@ def integration_test() {
                 sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
                 remote_backup_file_path = sshCommand remote: remote, command: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag'"
                 def jenkin_backup_file_name = sh(script: "basename $remote_backup_file_path | sed 's/.tar.gz//'", returnStdout: true).trim()
-                def jenkin_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
+                jenkin_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
                 sshGet remote: remote, from: remote_backup_file_path, into: jenkin_backup_file_path
                 echo "$remote_backup_file_path"
             } catch (Exception e) {
