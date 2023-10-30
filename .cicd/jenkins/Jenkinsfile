@@ -179,7 +179,7 @@ def integration_test() {
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
                 sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
                 remote_backup_file_path = sshCommand remote: remote, command: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag'"
-                sh "[ ! -d $ODOO_TMP_BACKUP_FOLDER ] && mkdir -p $ODOO_TMP_BACKUP_FOLDER || true"
+                sh "rm -rf ${ODOO_TMP_BACKUP_FOLDER}/* && mkdir -p $ODOO_TMP_BACKUP_FOLDER || true"
                 def jenkin_backup_file_name = sh(script: "basename $remote_backup_file_path", returnStdout: true).trim()
                 jenkin_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
                 echo "here your file $jenkin_backup_file_path"
