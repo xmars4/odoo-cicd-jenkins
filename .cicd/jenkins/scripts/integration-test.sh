@@ -26,9 +26,10 @@ copy_backup() {
     pwd
     echo $odoo_container_id
     echo $remote_backup_file_path
-    docker compose ps -a
-    received_backup_file_name=$(basename $remote_backup_file_path)
-    docker cp "$remote_backup_file_path" $odoo_container_id:$ODOO_TMP_BACKUP_FOLDER
+    cd $ODOO_DOCKER_COMPOSE_PATH && docker compose ps -a
+    echo "========================="
+    received_backup_file_name=$(basename $received_backup_file_path)
+    docker cp "$received_backup_file_path" $odoo_container_id:$ODOO_TMP_BACKUP_FOLDER
     docker_odoo_exec "cd $ODOO_TMP_BACKUP_FOLDER && tar -xzf $received_backup_file_name"
 }
 
