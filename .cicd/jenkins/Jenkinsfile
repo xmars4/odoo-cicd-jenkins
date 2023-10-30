@@ -171,22 +171,21 @@ def integration_test() {
 
             def server_backup_script_folder = "/tmp/odoo/scripts"
             def server_backup_script_file = "$server_backup_script_folder/backup.sh"
-            def jenkin_backup_file_path = ""
+            def received_backup_file_path = ""
             try {
                 sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder || true"
-                // sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
                 sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
                 remote_backup_file_path = sshCommand remote: remote, command: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag'"
                 sh "rm -rf ${ODOO_TMP_BACKUP_FOLDER}/* && mkdir -p $ODOO_TMP_BACKUP_FOLDER || true"
                 def jenkin_backup_file_name = sh(script: "basename $remote_backup_file_path", returnStdout: true).trim()
-                jenkin_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
+                received_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
                 sshGet remote: remote, from: remote_backup_file_path, into: env.ODOO_TMP_BACKUP_FOLDER, override: true
             } catch (Exception e) {
                 echo "$e"
             }
 
-            if (!jenkin_backup_file_path){
+            if (!received_backup_file_path){
                 def failed_message = """
 Cannot take a backup from remote server to continue testing process\\.
 Please take a look into [the build log](${BUILD_URL}console) 🔬                
@@ -195,7 +194,7 @@ Please take a look into [the build log](${BUILD_URL}console) 🔬
                 clean_test_resource()
                 sh "exit 1"
             }
-            def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $jenkin_backup_file_path", returnStatus: true)
+            def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $received_backup_file_path", returnStatus: true)
             echo "integration tst result here : $result"
 
             // todo

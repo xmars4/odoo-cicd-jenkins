@@ -1,6 +1,6 @@
 #!/bin/bash
 source "${PIPELINE_UTILS_SCRIPT_PATH}"
-remote_backup_file_path=$1
+received_backup_file_path=$1
 
 populate_variables() {
     declare -g docker_compose_path="$ODOO_DOCKER_COMPOSE_PATH"
@@ -22,10 +22,14 @@ populate_variables() {
 
 copy_backup() {
     odoo_container_id=$(get_odoo_container_id)
-    remote_backup_file_name=$(basename $remote_backup_file_path)
-    docker_odoo_exec "[ ! -d $ODOO_TMP_BACKUP_FOLDER ] && mkdir -p $ODOO_TMP_BACKUP_FOLDER"
+    ls -lah
+    pwd
+    echo $odoo_container_id
+    echo $remote_backup_file_path
+    docker compose ps -a
+    received_backup_file_name=$(basename $remote_backup_file_path)
     docker cp "$remote_backup_file_path" $odoo_container_id:$ODOO_TMP_BACKUP_FOLDER
-    docker_odoo_exec "cd $ODOO_TMP_BACKUP_FOLDER && tar -xzf $remote_backup_file_name"
+    docker_odoo_exec "cd $ODOO_TMP_BACKUP_FOLDER && tar -xzf $received_backup_file_name"
 }
 
 config_psql_without_password() {
