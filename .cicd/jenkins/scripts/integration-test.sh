@@ -1,8 +1,8 @@
 #!/bin/bash
 source "${PIPELINE_UTILS_SCRIPT_PATH}"
-received_backup_file_path=$1
 
 populate_variables() {
+    declare -g received_backup_file_path=$1
     declare -g docker_compose_path="$ODOO_DOCKER_COMPOSE_PATH"
     declare -g db_name="postgres"
     declare -g odoo_image_tag="$ODOO_IMAGE_TAG"
@@ -96,9 +96,10 @@ analyze_log_file() {
 }
 
 main() {
+    populate_variables $@
     restore_backup
     run_test_cases
     analyze_log_file
 }
 
-main
+main $@
