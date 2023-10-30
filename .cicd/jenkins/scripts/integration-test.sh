@@ -7,8 +7,8 @@ populate_variables() {
     declare -g db_name="postgres"
     declare -g integration_db_name="${ODOO_TEST_DATABASE_NAME}_integration"
     declare -g odoo_image_tag="$ODOO_IMAGE_TAG"
+    declare -g odoo_container_store_backup_folder="/tmp/odoo/restore"
     declare -g extracted_backup_folder=$(echo $remote_backup_file_path | sed "s/.tar.gz//")
-    declare -g remote_backup_fi
 
     declare -g db_host=$(get_config_value "db_host")
     declare -g db_host=${db_host:-'db'}
@@ -29,8 +29,8 @@ copy_backup() {
     cd $ODOO_DOCKER_COMPOSE_PATH && docker compose ps -a && docker compose config && docker compose ps -a
     echo "========================="
     received_backup_file_name=$(basename $received_backup_file_path)
-    docker cp "$received_backup_file_path" $odoo_container_id:$ODOO_TMP_BACKUP_FOLDER
-    docker_odoo_exec "cd $ODOO_TMP_BACKUP_FOLDER && tar -xzf $received_backup_file_name"
+    docker cp "$received_backup_file_path" $odoo_container_id:$odoo_container_store_backup_folder
+    docker_odoo_exec "cd $odoo_container_store_backup_folder && tar -xzf $received_backup_file_name"
 }
 
 config_psql_without_password() {
@@ -43,22 +43,22 @@ create_empty_db() {
 }
 
 restore_db() {
-    sql_dump_path="${ODOO_TMP_BACKUP_FOLDER}/${extracted_backup_folder}/dump.sql"
+    sql_dump_path="${odoo_container_store_backup_folder}/${extracted_backup_folder}/dump.sql"
     docker_odoo_exec "psql -h \"$db_host\" -U $db_user $integration_db_name < $sql_dump_path"
 }
 
 restore_filestore() {
-    backup_filestore_path="${ODOO_TMP_BACKUP_FOLDER}/${extracted_backup_folder}/filestore.tar.gz"
+    backup_filestore_path="${odoo_container_store_backup_folder}/${extracted_backup_folder}/filestore.tar.gz"
     filestore_path="$data_dir/filestore"
     docker_odoo_exec "[ ! -d $filestore_path ] && mkdir $filestore_path && cp $backup_filestore_path $filestore_path && cd $file_store_path &&"tar -xzf filestore.tar.gz
 }
 
 restore_backup() {
     copy_backup
-    config_psql_without_password
-    create_empty_db
-    restore_db
-    restore_filestore
+    # config_psql_without_password
+    # create_empty_db
+    # restore_db
+    # restore_filestore
 }
 
 run_test_cases() {
