@@ -15,6 +15,7 @@ populate_variables() {
     declare -g db_name="$2"                    # supplied by jenkins pipeline - config manually in pipeline
     declare -g odoo_image_tag="$3"             # odoo image tag - declared in docker compose file
     declare -g config_file=/etc/odoo/odoo.conf # path inside the Odoo container
+    declare -g backup_folder=/tmp/backup       # path inside the Odoo container
 
     declare -g db_host=$(get_config_value "db_host")
     declare -g db_host=${db_host:-'db'}
@@ -121,10 +122,7 @@ get_latest_backup_tar_file() {
 }
 
 create_sub_backup_folder() {
-    # fixme: remove echo
-    echo $backup_folder
     folder_name=$(execute_command_inside_odoo_container "echo $backup_folder/${db_name}_$(date -u +$DATE_FORMAT)")
-    echo $folder_name
     execute_command_inside_odoo_container "mkdir -p \"$folder_name\""
     echo $folder_name
 }
@@ -157,28 +155,3 @@ delete_old_tar_files() {
 }
 
 main "$@"
-
-# ===================================
-# ========= run on Jenkins to initialize an Odoo instance for test =========
-# ========================
-
-# create_backup
-# convert_datetime_string_to_timestamp $1
-
-# backup db
-# pg_dump -h "$db_host" -U odoo --no-owner --file dump.sql scs-demo
-
-# backup filestore
-# return os.path.join(self['data_dir'], 'filestore', dbname)
-
-# send backup db and filestore from server to Jenkins
-
-# initialize odoo with no installed db
-# cp filestore to odoo instance
-# cp filestore to datadir folder with db name
-# cp dump sql file to odoo instance
-# restore db with dump sql file
-
-# restart odoo and run all test cases
-# update command with db_name  and trigger test cases
-# restart docker compose
