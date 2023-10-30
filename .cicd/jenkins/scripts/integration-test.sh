@@ -6,6 +6,7 @@ populate_variables() {
     declare -g docker_compose_path="$ODOO_DOCKER_COMPOSE_PATH"
     declare -g db_name="postgres"
     declare -g odoo_image_tag="$ODOO_IMAGE_TAG"
+    declare -g config_file=/etc/odoo/odoo.conf # path inside the Odoo container
     declare -g odoo_container_store_backup_folder="/tmp/odoo/restore"
     declare -g extracted_backup_folder_name=$(basename $received_backup_file_path | sed "s/.tar.gz//")
 
@@ -17,6 +18,15 @@ populate_variables() {
     declare -g db_password=$(get_config_value "db_password")
     declare -g data_dir=$(get_config_value "data_dir")
     declare -g data_dir=${data_dir:-'/var/lib/odoo'}
+}
+
+get_config_value() {
+    param=$1
+    docker_odoo_exec "grep -q -E \"^\s*\b${param}\b\s*=\" \"$config_file\""
+    if [[ $? == 0 ]]; then
+        value=$(docker_odoo_exec "grep -E \"^\s*\b${param}\b\s*=\" \"$config_file\" | cut -d \" \" -f3 | sed 's/[\"\n\r]//g'")
+    fi
+    echo "$value"
 }
 
 function update_config_file_before_restoration {
