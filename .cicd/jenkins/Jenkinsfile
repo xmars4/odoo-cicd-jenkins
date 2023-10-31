@@ -16,9 +16,9 @@ node {
     // }
 
     stage('Test #3 (Odoo Test cases)') {
-        // build()
-        // unit_test()
-        integration_test()
+        build()
+        unit_test()
+        // integration_test()
         clean_test_resource()
     }
 
