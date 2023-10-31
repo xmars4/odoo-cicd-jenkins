@@ -262,6 +262,7 @@ def set_github_commit_status(String state, String message) {
     ]) {
         result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
         if (result) {
+            echo "Can't set Github commit status!"
             echo "$result"
         }
     }
@@ -275,6 +276,7 @@ def send_telegram_file(String file_path, String message) {
     ]) {
         result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
         if (result) {
+            echo "Can't send file to telegram!"
             echo "$result"
         }
     }
@@ -288,6 +290,7 @@ def send_telegram_message(String message) {
     ]) {
         result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\"", returnStdout: true).trim()
         if (result) {
+            echo "Can't send message to telegram!"
             echo "$result"
         }
     }
