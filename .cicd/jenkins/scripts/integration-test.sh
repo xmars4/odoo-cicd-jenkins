@@ -94,20 +94,24 @@ restore_backup() {
     restart_instance
 }
 
-run_test_cases() {
-    #todo
-    echo 123222
-}
-
 analyze_log_file() {
-    #todo
-    echo 12
+    # in case Odoo don't have any ERROR -> log file will be not generated
+    # so no need to analyze log anymore
+    [ -f ${LOG_FILE_OUTSIDE} ]
+    if [ $? -ne 0 ]; then
+        return 0
+    fi
+
+    grep -m 1 -P '^[0-9-\s:,]+(ERROR|CRITICAL)' $LOG_FILE_OUTSIDE >/dev/null 2>&1
+    error_exist=$?
+    if [ $error_exist -eq 0 ]; then
+        exit 1
+    fi
 }
 
 main() {
     populate_variables $@
     restore_backup
-    run_test_cases
     analyze_log_file
 }
 

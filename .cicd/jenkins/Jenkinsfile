@@ -21,8 +21,7 @@ node {
         // build()
         // unit_test()
         integration_test()
-        //fixme: uncomnet  clean_test_resource()
-        // clean_test_resource()
+        clean_test_resource()
     }
 
     // fixme: uncomment stage deploy
@@ -197,13 +196,19 @@ Please take a look into [the build log](${BUILD_URL}console) 🔬
                 sh "exit 1"
             }
             def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $received_backup_file_path", returnStatus: true)
-            echo "integration tst result here : $result"
+            if (result != 0){
+                def git_commit_message = "The build failed, please re-check the code!"
+                set_github_commit_status("failure", git_commit_message);
 
-            // todo
-            // copy backup file to Jenkins.
-            // restore backup to new odoo instance
-            // run all tests case on restored db
-            // if error -> send message to telegram
+                def telegram_message = """
+The [PR \\#${pr_id}](${pr_url}) check on existing database has failed\\!
+Please take a look at the attached log file🔬
+        """
+                send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
+
+                clean_test_resource()
+                sh "exit $result"                
+            }
         }
     }
 }
