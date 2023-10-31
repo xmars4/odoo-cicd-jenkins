@@ -49,6 +49,18 @@ def is_pr_merged() {
     return pr_state == 'closed' && pr_merged == 'true'
 }
 
+def clean_test_resource() {
+    sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
+}
+
+def clean_test_resource_and_bad_exit(String error_message) {
+    if (error_message) {
+        echo "$error_message"
+    }
+    clean_test_resource()
+    sh "exit 1"
+}
+
 def git_checkout() {
     if (is_pr_merged()) {
         // fixme:  remove  git_checkout_pull_request_branch() and uncomment git_checkout_main_branch()
@@ -263,18 +275,6 @@ def deploy_to_server() {
             }
         }
     }
-}
-
-def clean_test_resource() {
-    sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
-}
-
-def clean_test_resource_and_bad_exit(String error_message) {
-    if (error_message) {
-        echo "$error_message"
-    }
-    clean_test_resource()
-    sh "exit 1"
 }
 
 def set_github_commit_status_succeed(){
