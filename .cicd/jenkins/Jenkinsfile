@@ -5,16 +5,15 @@ node {
         verify_tools()
     }
 
-    // fixme: uncomment stage #1 & #2
-    // stage('Test #1 (Sonarqube)') {
-    //     sonarqube_check_code_quality()
-    // }
+    stage('Test #1 (Sonarqube)') {
+        sonarqube_check_code_quality()
+    }
 
-    // stage('Test #2 (Odoo Pylint)') {
-    //     build_pylint()
-    //     pylint_test()
-    //     clean_test_resource() // clean them for the next build and test
-    // }
+    stage('Test #2 (Odoo Pylint)') {
+        build_pylint()
+        pylint_test()
+        clean_test_resource() // clean them for the next build and test
+    }
 
     stage('Test #3 (Odoo Test cases)') {
         build()
@@ -23,10 +22,9 @@ node {
         clean_test_resource()
     }
 
-    // fixme: uncomment stage deploy
-    // stage('Deploy to server') {
-    //     deploy_to_server()
-    // }
+    stage('Deploy to server') {
+        deploy_to_server()
+    }
 }
 
 def setup_environment_variables() {
@@ -198,7 +196,6 @@ Please take a look into [the build log](${BUILD_URL}console) 🔬
         }
 
         def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $received_backup_file_path", returnStatus: true)
-        echo "here your tes result : $result"
         if (result != 0){
             def git_commit_message = "The build failed, please re-check the code!"
             set_github_commit_status("failure", git_commit_message);
