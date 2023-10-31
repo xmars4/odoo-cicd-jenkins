@@ -81,7 +81,7 @@ restore_filestore() {
     filestore_path="$data_dir/filestore"
 
     docker_odoo_exec "mkdir -p $filestore_path;cp $backup_filestore_path $filestore_path;cd $filestore_path;tar -xzf filestore.tar.gz"
-    # docker_odoo_exec "mv $(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;) $ODOO_TEST_DATABASE_NAME"
+    docker_odoo_exec "find . -mindepth 1 -maxdepth 1 -type d -exec mv {} $ODOO_TEST_DATABASE_NAME \;"
     echo "ending restore filestore"
 }
 
