@@ -88,7 +88,7 @@ restore_filestore() {
     filestore_path="$data_dir/filestore"
 
     docker_odoo_exec """
-    cp $backup_filestore_path $filestore_path 
+    cp $backup_filestore_path $filestore_path
     cd $filestore_path
     tar -xzf filestore.tar.gz
     rm -rf filestore.tar.gz
