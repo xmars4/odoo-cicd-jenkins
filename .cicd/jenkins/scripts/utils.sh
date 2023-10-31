@@ -128,13 +128,11 @@ set_github_commit_status() {
     response=$(curl --write-out '%{http_code}\n' -L -s \
         -X POST \
         -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${aab}" \
+        -H "Authorization: Bearer ${qer}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/${repo_name}/statuses/${commit_sha} \
         -d "$request_content")
     status_code=$(echo $response | grep -oE "[0-9]+$")
-    echo "here response: $response"
-    echo "here status code:$status_code"
     if ! [[ $status_code != "201" ]]; then
         echo "Can't set Github commit status!"
         echo $response
