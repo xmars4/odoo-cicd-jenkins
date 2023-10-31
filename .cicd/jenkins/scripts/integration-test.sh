@@ -54,7 +54,7 @@ config_psql_without_password() {
 
 start_instance() {
     update_config_file_before_restoration
-    docker_compose down -v # remove old test instance
+    docker_compose_clean # remove old test instance
     docker_compose up -d
 }
 

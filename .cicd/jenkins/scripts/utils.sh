@@ -9,6 +9,12 @@ docker_compose() {
     docker compose -p "$ODOO_DOCKER_COMPOSE_PROJECT_NAME" "$@"
 }
 
+docker_compose_clean() {
+    cd $ODOO_DOCKER_COMPOSE_PATH
+    docker_compose down -v
+    rm -f $LOG_FILE_OUTSIDE
+}
+
 get_config_value() {
     param=$1
     grep -q -E "^\s*\b${param}\b\s*=" "$CONFIG_FILE"
