@@ -87,9 +87,9 @@ restore_backup() {
     start_instance
     copy_backup
     config_psql_without_password
-    create_empty_db
-    restore_db
-    restore_filestore
+    # create_empty_db
+    # restore_db
+    # restore_filestore
     # restart_instance
 }
 
