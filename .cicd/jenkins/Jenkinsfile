@@ -17,9 +17,8 @@ node {
     // }
 
     stage('Test #3 (Odoo Test cases)') {
-        // fixme :uncomment 
-        // build()
-        // unit_test()
+        build()
+        unit_test()
         integration_test()
         clean_test_resource()
     }
@@ -205,7 +204,7 @@ Please take a look into [the build log](${BUILD_URL}console) 🔬
             set_github_commit_status("failure", git_commit_message);
 
             def telegram_message = """
-The [PR \\#${pr_id}](${pr_url}) check on existing database has failed\\!
+The [PR \\#${pr_id}](${pr_url}) checking on existing database failed\\!
 Please take a look at the attached log file🔬
     """
             send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)

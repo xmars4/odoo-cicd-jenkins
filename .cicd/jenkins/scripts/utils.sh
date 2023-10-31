@@ -150,8 +150,7 @@ set_github_commit_status_default() {
 }
 
 # ------------------ Telegram functions -------------------------
-# fixme: restore to this function
-send_file_telegram_bak() {
+send_file_telegram() {
     bot_token=$1
     chat_id=$2
     file_path=$3
@@ -168,25 +167,6 @@ send_file_telegram_bak() {
     if [[ $response =~ "{\"ok\":false" ]]; then
         echo $response
     fi
-}
-
-send_file_telegram() {
-    bot_token=$1
-    chat_id=$2
-    file_path=$3
-    caption=$4
-    parse_mode=$5
-    [ -z $parse_mode ] && parse_mode="MarkdownV2"
-
-    curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
-        -F "chat_id=$chat_id" \
-        -F "document=@$file_path" \
-        -F "caption=$caption" \
-        -F "parse_mode=$parse_mode" \
-        -F "disable_notification=true"
-    # if [[ $response =~ "{\"ok\":false" ]]; then
-    #     echo $response
-    # fi
 }
 
 send_message_telegram() {
