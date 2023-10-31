@@ -84,7 +84,7 @@ restore_filestore() {
     cp $backup_filestore_path $filestore_path
     cd $filestore_path
     tar -xzf filestore.tar.gz
-    old_filestore_name=$(find . -mindepth 1 -maxdepth 1 -type d | tail -n 1 | xargs basename)
+    old_filestore_name=$(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
     echo 000000000000000
     echo $filestore_path
     pwd
