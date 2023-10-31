@@ -92,6 +92,7 @@ restore_backup() {
     restore_filestore
     restart_instance
     #fixme 1
+    echo $LOG_FILE_OUTSIDE
     cat $LOG_FILE_OUTSIDE
 }
 
