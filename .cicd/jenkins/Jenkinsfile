@@ -260,11 +260,7 @@ def set_github_commit_status(String state, String message) {
     withCredentials([
         string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
     ]) {
-        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
-        if (result) {
-            echo "Can't set Github commit status!"
-            echo "$result"
-        }
+        sh "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}'"
     }
 }
 
