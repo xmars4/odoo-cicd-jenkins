@@ -104,8 +104,7 @@ def verify_tools() {
 def build() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh false", returnStatus: true)
     if (result != 0) {
-        clean_test_resource()
-        sh "exit $result"
+        clean_test_resource_and_bad_exit()
     }
 }
 
@@ -129,23 +128,40 @@ def pylint_test() {
     // }
 }
 
+def send_message_telegram_unit_test_failed(){
+    def telegram_message = """
+The [PR \\#${pr_id}](${pr_url}) check has failed\\!
+Please take a look at the attached log file🔬
+"""
+    send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
+}
+
 def unit_test() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/unit-test.sh", returnStatus: true)
     if (result != 0) {
         set_github_commit_status_failed()
-
-        def telegram_message = """
-The [PR \\#${pr_id}](${pr_url}) check has failed\\!
-Please take a look at the attached log file🔬
-"""
-        send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
-
-        clean_test_resource()
-        sh "exit $result"
+        send_message_telegram_unit_test_failed()
+        clean_test_resource_and_bad_exit()
     }
     if (!is_pr_merged()){
         set_github_commit_status_succeed()
     }
+}
+
+def send_message_telegram_integration_backup_failed() {
+    def failed_message = """
+Cannot take a backup from remote server to continue testing process\\.
+Please take a look into [the build log](${BUILD_URL}console) 🔬                
+"""
+    send_message_telegram_default(failed_message)
+}
+
+def send_message_telegram_integration_test_failed() {
+    def telegram_message = """
+The [PR \\#${pr_id}](${pr_url}) checking on existing database failed\\!
+Please take a look at the attached log file🔬
+    """
+    send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 }
 
 def integration_test() {
@@ -184,32 +200,33 @@ def integration_test() {
             }
 
             if (!received_backup_file_path){
-                def failed_message = """
-Cannot take a backup from remote server to continue testing process\\.
-Please take a look into [the build log](${BUILD_URL}console) 🔬                
-"""
-                send_message_telegram_default(failed_message)
-                clean_test_resource()
-                sh "exit 1"
+                send_message_telegram_integration_backup_failed()
+                clean_test_resource_and_bad_exit()
             }
         }
 
         def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $received_backup_file_path", returnStatus: true)
         if (result != 0){
             set_github_commit_status_failed()
-
-            def telegram_message = """
-The [PR \\#${pr_id}](${pr_url}) checking on existing database failed\\!
-Please take a look at the attached log file🔬
-    """
-            send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
-
-            clean_test_resource()
-            sh "exit $result"                
+            send_message_telegram_integration_test_failed()
+            clean_test_resource_and_bad_exit()
         }   
 
         set_github_commit_status_succeed()
     }
+}
+
+def send_message_telegram_deploy_failed() {
+    def failed_message = """
+The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
+Please take a look into [the build log](${BUILD_URL}console)\\.
+"""
+    send_telegram_message(failed_message)
+}
+
+def send_message_telegram_deploy_succeed() {
+    def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
+    send_telegram_message(success_message)
 }
 
 def deploy_to_server() {
@@ -239,15 +256,10 @@ def deploy_to_server() {
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/deploy.sh", into: server_deploy_script
                 sshCommand remote: remote, command: "chmod +x $server_deploy_script"
                 sshCommand remote: remote, command: "$server_deploy_script '$server_docker_compose_path' '$server_custom_addons_path' '$server_config_file' '$git_private_key_file_in_server' '$server_odoo_url'"
-                def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
-                send_telegram_message(success_message)
+                send_message_telegram_deploy_succeed()    
             } catch (Exception e) {
-                echo "$e"
-                def failed_message = """
-The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
-Please take a look into [the build log](${BUILD_URL}console)\\.
-"""
-                send_telegram_message(failed_message)
+                send_message_telegram_deploy_failed()
+                clean_test_resource_and_bad_exit(e)
             }
         }
     }
@@ -257,8 +269,16 @@ def clean_test_resource() {
     sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
 }
 
+def clean_test_resource_and_bad_exit(String error_message) {
+    if (error_message) {
+        echo "$error_message"
+    }
+    clean_test_resource()
+    sh "exit 1"
+}
+
 def set_github_commit_status_succeed(){
-    def git_commit_message = "The build succeed!"
+    def git_commit_message = "The build was successfull!"
     set_github_commit_status("success", git_commit_message);
 }
 
