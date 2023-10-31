@@ -3,7 +3,6 @@ node {
         git_checkout()
         setup_environment_variables()
         verify_tools()
-        clean_test_resource() // in case previous job can't clean
     }
 
     // stage('Test #1 (Sonarqube)') {
@@ -15,42 +14,49 @@ node {
     //     pylint_test()
     //     clean_test_resource() // clean them for the next build and test
     // }
-    
+
     stage('Test #3 (Odoo Test cases)') {
         build()
         unit_test()
+        integration_test()
+        clean_test_resource()
     }
 
     stage('Deploy to server') {
         deploy_to_server()
-    }
-
-    stage('Clean Test Resources') {
-        clean_test_resource()
     }
 }
 
 def setup_environment_variables() {
     env.CICD_PATH = "${env.WORKSPACE}/.cicd"
     env.PIPELINE_SCRIPTS_PATH = "${CICD_PATH}/jenkins/scripts"
-    env.PIPELINE_UTILS_SCRIPT_PATH="${PIPELINE_SCRIPTS_PATH}/utils.sh"
+    env.PIPELINE_UTILS_SCRIPT_PATH = "${PIPELINE_SCRIPTS_PATH}/utils.sh"
     env.ODOO_IMAGE_TAG = "xmars/odoo16-cicd" // this valued mapped with odoo image name in odoo/docker-compose.yml file
     env.ODOO_WORKSPACE = "${CICD_PATH}/odoo"
     env.ODOO_CUSTOM_ADDONS_PATH = "${env.WORKSPACE}" // we put custom addons to top directory so other developers don't need to care about CICD config
     env.ODOO_DOCKER_COMPOSE_PATH = "${ODOO_WORKSPACE}"
+    env.ODOO_DOCKER_COMPOSE_PROJECT_NAME = "odoo-${pr_sha}" // in case we run multiple current jobs,we have to make sure each docker compose is separately
+    env.ODOO_TEST_DATABASE_NAME = "testing_db"
     env.CONFIG_FILE = "${ODOO_WORKSPACE}/etc/odoo.conf"
     env.LOG_FILE = "/var/log/odoo/odoo.log" // the log file is inside the odoo container
     env.LOG_FILE_OUTSIDE = "${ODOO_WORKSPACE}/logs/odoo.log" // mounted odoo's log file in Jenkins instance
+    env.ODOO_TMP_BACKUP_FOLDER = "${env.WORKSPACE}/.tmp/server-backup" // backup file folder
 }
 
-def git_checkout() {
-    if (pr_state != 'closed') {
-        // TODO: do we need a different test process when code was merged to main repo 
-        // like running test cases on existing database instead of empty database
-        git_checkout_pull_request_branch()
-    } else {
-        git_checkout_main_branch()
+def is_pr_merged() {
+    return pr_state == 'closed' && pr_merged == 'true'
+}
+
+def clean_test_resource() {
+    sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
+}
+
+def clean_test_resource_and_bad_exit(error_message="") {
+    if (error_message) {
+        echo "$error_message"
     }
+    clean_test_resource()
+    sh "exit 1"
 }
 
 def git_checkout_main_branch() {
@@ -87,6 +93,14 @@ def git_checkout_pull_request_branch() {
         ])
 }
 
+def git_checkout() {
+    if (is_pr_merged()) {
+        git_checkout_main_branch()
+    } else {
+        git_checkout_pull_request_branch()
+    }
+}
+
 def verify_tools() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/verify.sh > /dev/null", returnStatus: true)
     if (result != 0) {
@@ -98,24 +112,18 @@ def verify_tools() {
 def build() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh false", returnStatus: true)
     if (result != 0) {
-        clean_test_resource()
-        sh "exit $result"
+        clean_test_resource_and_bad_exit()
     }
 }
 
 def build_pylint() {
-    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh true", returnStatus: true)
-    // TODO: should we stop pipeline or continue next stages
-    // if (result != 0) {
-    //     clean_test_resource()
-    //     sh "exit $result"
-    // }
+    sh "$PIPELINE_SCRIPTS_PATH/build.sh true"
 }
 
 def sonarqube_check_code_quality() {
     withCredentials([usernamePassword(credentialsId: 'sonar-cred', usernameVariable: 'SONAR_URL', passwordVariable: 'SONAR_TOKEN')]) {
         env.SONARQUBE_SCANNER_HOME = tool name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        def result_url=sh(script:"$PIPELINE_SCRIPTS_PATH/sonarqube.sh", returnStdout: true).trim()
+        def result_url = sh(script: "$PIPELINE_SCRIPTS_PATH/sonarqube.sh", returnStdout: true).trim()
         send_telegram_message("The code quality result of [PR \\#${pr_id}](${pr_url}) is [here]($result_url)")
     }
 }
@@ -131,23 +139,69 @@ def pylint_test() {
 def unit_test() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/unit-test.sh", returnStatus: true)
     if (result != 0) {
-        def git_commit_message = "The build failed, please re-check the code!"
-        set_github_commit_status("failure", git_commit_message);
-
-        def telegram_message = """
-The [PR \\#${pr_id}](${pr_url}) check has failed\\!
-Please take a look at the attached log file🔬
-"""
-        send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
-
-        clean_test_resource()
-        sh "exit $result"
+        set_github_commit_status_failed()
+        send_message_telegram_unit_test_failed()
+        clean_test_resource_and_bad_exit()
     }
-    set_github_commit_status("success", "The build succeed!");
+    if (!is_pr_merged()) {
+        set_github_commit_status_succeed()
+    }
+}
+
+def integration_test() {
+    if (is_pr_merged()) {
+        def received_backup_file_path = ""
+
+        withCredentials([
+            sshUserPrivateKey(credentialsId: 'remote-server-cred',
+                keyFileVariable: 'server_privatekey',
+                passphraseVariable: '',
+                usernameVariable: 'server_username'),
+            file(credentialsId: 'remote-server-github-privatekey-cred',
+                variable: 'server_github_privatekey_file')
+        ]) {
+            def remote = [: ]
+            remote.name = "remote-server"
+            remote.host = server_host
+            remote.allowAnyHosts = true
+            remote.user = server_username
+            remote.identityFile = server_privatekey
+            remote.fileTransfer = "sftp"
+            def server_backup_script_folder = "/tmp/odoo/scripts"
+            def server_backup_script_file = "$server_backup_script_folder/backup.sh"
+
+            try {
+                sshCommand remote: remote, command: "[ ! -d $server_backup_script_folder ] && mkdir -p $server_backup_script_folder || true"
+                sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/server-backup.sh", into: server_backup_script_file
+                sshCommand remote: remote, command: "chmod +x $server_backup_script_file"
+                remote_backup_file_path = sshCommand remote: remote, command: "$server_backup_script_file '$server_docker_compose_path' '$server_odoo_db_name' '$server_odoo_image_tag'"
+                sh "rm -rf ${ODOO_TMP_BACKUP_FOLDER}/* && mkdir -p $ODOO_TMP_BACKUP_FOLDER || true"
+                def jenkin_backup_file_name = sh(script: "basename $remote_backup_file_path", returnStdout: true).trim()
+                received_backup_file_path = "${ODOO_TMP_BACKUP_FOLDER}/${jenkin_backup_file_name}"
+                sshGet remote: remote, from: remote_backup_file_path, into: env.ODOO_TMP_BACKUP_FOLDER, override: true
+            } catch (Exception e) {
+                echo "$e"
+            }
+
+            if (!received_backup_file_path) {
+                send_message_telegram_integration_backup_failed()
+                clean_test_resource_and_bad_exit()
+            }
+        }
+
+        def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $received_backup_file_path", returnStatus: true)
+        if (result != 0) {
+            set_github_commit_status_failed()
+            send_message_telegram_integration_test_failed()
+            clean_test_resource_and_bad_exit()
+        }
+
+        set_github_commit_status_succeed()
+    }
 }
 
 def deploy_to_server() {
-    if (pr_state == 'closed' && pr_merged == 'true') {
+    if (is_pr_merged()) {
         withCredentials([
             sshUserPrivateKey(credentialsId: 'remote-server-cred',
                 keyFileVariable: 'server_privatekey',
@@ -168,49 +222,47 @@ def deploy_to_server() {
             def git_private_key_file_in_server = "$git_private_key_folder_in_server/odoo-cicd-git-privkey"
             def server_deploy_script = "/tmp/odoo-cicd-deploy.sh"
             try {
-                sshCommand remote: remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server", failOnError: false
+                sshCommand remote: remote, command: "[ ! -d $git_private_key_folder_in_server ] && mkdir -p $git_private_key_folder_in_server || true"
                 sshPut remote: remote, from: server_github_privatekey_file, into: git_private_key_file_in_server
                 sshPut remote: remote, from: "$PIPELINE_SCRIPTS_PATH/deploy.sh", into: server_deploy_script
                 sshCommand remote: remote, command: "chmod +x $server_deploy_script"
                 sshCommand remote: remote, command: "$server_deploy_script '$server_docker_compose_path' '$server_custom_addons_path' '$server_config_file' '$git_private_key_file_in_server' '$server_odoo_url'"
-                def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
-                send_telegram_message(success_message)
+                send_message_telegram_deploy_succeed()
             } catch (Exception e) {
-                echo "$e"
-                def failed_message = """
-The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
-Please take a look into [the build log]($BUILD_URL/console)\\.
-"""
-                send_telegram_message(failed_message)
+                send_message_telegram_deploy_failed()
+                clean_test_resource_and_bad_exit(e)
             }
         }
     }
 }
+// ======================= Github commit status functions  ================
 
-def clean_test_resource() {
-    sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
+def set_github_commit_status_succeed() {
+    def git_commit_message = "The build was successfull!"
+    set_github_commit_status("success", git_commit_message);
+}
+
+def set_github_commit_status_failed() {
+    def git_commit_message = "The build failed, please re-check the code!"
+    set_github_commit_status("failure", git_commit_message);
 }
 
 def set_github_commit_status(String state, String message) {
     withCredentials([
         string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
     ]) {
-        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}'", returnStdout: true).trim()
-        if (result) {
-            echo "$result"
-        }
+        sh "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}'"
     }
 }
+
+// ======================== Telegram functions ========================
 
 def send_telegram_file(String file_path, String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'", returnStdout: true).trim()
-        if (result) {
-            echo "$result"
-        }
+        sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'"
     }
 }
 
@@ -219,9 +271,43 @@ def send_telegram_message(String message) {
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
         string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
     ]) {
-        result = sh(script: "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\"", returnStdout: true).trim()
-        if (result) {
-            echo "$result"
-        }
+        sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\""
     }
+}
+
+def send_message_telegram_unit_test_failed(){
+    def telegram_message = """
+The [PR \\#${pr_id}](${pr_url}) check has failed\\!
+Please take a look at the attached log file🔬
+"""
+    send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
+}
+
+def send_message_telegram_integration_backup_failed() {
+    def failed_message = """
+Cannot take a backup from remote server to continue testing process\\.
+Please take a look into [the build log](${BUILD_URL}console) 🔬                
+"""
+    send_message_telegram_default(failed_message)
+}
+
+def send_message_telegram_integration_test_failed() {
+    def telegram_message = """
+The [PR \\#${pr_id}](${pr_url}) checking on existing database failed\\!
+Please take a look at the attached log file🔬
+    """
+    send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
+}
+
+def send_message_telegram_deploy_failed() {
+    def failed_message = """
+The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
+Please take a look into [the build log](${BUILD_URL}console)\\.
+"""
+    send_telegram_message(failed_message)
+}
+
+def send_message_telegram_deploy_succeed() {
+    def success_message = "The [PR \\#${pr_id}](${pr_url}) was merged and deployed to server 💫🤩💫"
+    send_telegram_message(success_message)
 }

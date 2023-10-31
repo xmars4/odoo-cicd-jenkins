@@ -12,6 +12,21 @@ custom_repo_host="ssh.github.com"
 server_config_file_backup="${server_config_file}.bak"
 CUSTOM_ADDONS=
 
+function get_list_addons {
+    addons=
+    res=$(find "$1" -type f -name "__manifest__.py" -exec dirname {} \;)
+    for dr in $res; do
+        addon_name=$(basename $dr)
+        if [[ -z $addons ]]; then
+            addons="$addon_name"
+        else
+            addons="$addons,$addon_name"
+        fi
+    done
+
+    echo $addons
+}
+
 check_git_repo_folder() {
     cd $server_custom_addons_path
     git status >/dev/null 2>&1
@@ -91,25 +106,6 @@ pull_latest_code() {
     fi
 }
 
-function get_list_addons {
-    if [[ $# -gt 0 ]]; then
-        cd "$1"
-    fi
-
-    addons=
-    res=$(find . -maxdepth 2 -mindepth 2 -type f -name "__manifest__.py" -exec dirname {} \;)
-    for dr in $res; do
-        addon_name=$(basename $dr)
-        if [[ -z $addons ]]; then
-            addons="$addon_name"
-        else
-            addons="$addons,$addon_name"
-        fi
-    done
-
-    echo $addons
-}
-
 set_list_addons() {
     CUSTOM_ADDONS=$(get_list_addons "$server_custom_addons_path")
     if [ -z $CUSTOM_ADDONS ]; then
@@ -134,10 +130,18 @@ update_odoo_services() {
     docker compose restart
 }
 
+function get_odoo_login_url() {
+    url=$1
+    scheme=$(echo $url | awk -F:// '{print $1}')
+    domain_port=$(echo $url | sed -n 's~^https\?://\([^/]\+\).*~\1~p')
+    echo "${scheme}://${domain_port}/web/login"
+}
+
 function wait_until_odoo_available {
     echo "Hang on, Modules are being updated ..."
-    # Assuming each addon needs 30s to install and run test cases
+    # Assuming each addon needs 60s to be updated
     # -> we can calculate maximum total sec we have to wait until Odoo is up and running
+    server_odoo_login_url=$(get_odoo_login_url $server_odoo_url)
     ESITATE_TIME_EACH_ADDON=30
     IFS=',' read -ra separate_addons_list <<<$CUSTOM_ADDONS
     total_addons=${#separate_addons_list[@]}
@@ -145,7 +149,7 @@ function wait_until_odoo_available {
     maximum_count=$(((total_addons * ESITATE_TIME_EACH_ADDON) / 5))
     count=1
     while (($count <= $maximum_count)); do
-        http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${server_odoo_url}" 2>&1 | awk 'NR==1{print $2}' || true; })
+        http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${server_odoo_login_url}" 2>&1 | awk 'NR==1{print $2}' || true; })
         if [[ $http_status = '200' ]]; then
             exit 0 # Odoo service is fully up and running
         fi

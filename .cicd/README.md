@@ -145,6 +145,7 @@
         | pr_to_repo_ssh_url | $.pull_request.base.repo.ssh_url | JSONPath        |               |              |
         | pr_url             | $.pull_request.html_url          | JSONPath        |               |              |
         | pr_draft           | $.pull_request.draft             | JSONPath        |               |              |
+        | pr_sha             | $.pull_request.head.sha          | JSONPath        |               |              |
 
     - Fill the **_Token_** with a random string
     - Fill the **_Cause_** with text: Triggered from PR: $pr_url
@@ -166,6 +167,8 @@
         server_docker_compose_path=<path to folder contain odoo docker-compose.yml file>
         server_config_file=<path to odoo config file>
         server_custom_addons_path=<path to custom addons folder, also a git repo>
+        server_odoo_db_name=<db name to backup and use in integration test>
+        server_odoo_image_tag=<odoo image name - defined in docker compose file>
         ```
 
         for example:
@@ -176,6 +179,8 @@
         server_odoo_url=http://12.34.56.78:8069
         server_config_file=/opt/odoo/.deploy/etc/odoo.conf
         server_custom_addons_path=/opt/odoo/
+        server_odoo_db_name=odoo-staging
+        server_odoo_image_tag=xmars/odoo:16
         ```
 
 6. [Create Github webhook](https://docs.github.com/en/webhooks/using-webhooks)
@@ -308,3 +313,5 @@
 
 - By default, before pipeline start, Jenkins will check out repo with branch specified in 'Branches to build' to get the Jenkinsfile,\
 so we can't ignore check out default Instead, we will perform second checkout with specific branch (from pull request)
+...
+.
