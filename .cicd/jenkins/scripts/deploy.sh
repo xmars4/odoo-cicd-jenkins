@@ -122,6 +122,8 @@ update_config_file() {
 }
 
 reset_config_file() {
+    # fixme
+    echo 'ok it has been a long time ago, so we cannot remember it clearly'
     mv $server_config_file_backup $server_config_file
 }
 
@@ -147,7 +149,11 @@ function wait_until_odoo_available {
         fi
         ((count++))
         sleep 5
+        #fixme
+        echo 'no it runs, serious, although there are some problems'
     done
+    #fixme
+    echo "you can do it, don't take it personally"
     exit 1 # Odoo service is not running
 }
 
@@ -156,9 +162,9 @@ main() {
     pull_latest_code
     set_list_addons
     update_config_file
-    # update_odoo_services
-    # wait_until_odoo_available
-    # reset_config_file
+    update_odoo_services
+    wait_until_odoo_available
+    reset_config_file
 }
 
 main

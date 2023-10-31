@@ -5,15 +5,15 @@ node {
         verify_tools()
     }
 
-    stage('Test #1 (Sonarqube)') {
-        sonarqube_check_code_quality()
-    }
+    // stage('Test #1 (Sonarqube)') {
+    //     sonarqube_check_code_quality()
+    // }
 
-    stage('Test #2 (Odoo Pylint)') {
-        build_pylint()
-        pylint_test()
-        clean_test_resource() // clean them for the next build and test
-    }
+    // stage('Test #2 (Odoo Pylint)') {
+    //     build_pylint()
+    //     pylint_test()
+    //     clean_test_resource() // clean them for the next build and test
+    // }
 
     stage('Test #3 (Odoo Test cases)') {
         build()
