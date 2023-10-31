@@ -91,7 +91,7 @@ restore_backup() {
     restore_db
     restore_filestore
     restart_instance
-    #fixme
+    #fixme 1
     cat $LOG_FILE_OUTSIDE
 }
 
