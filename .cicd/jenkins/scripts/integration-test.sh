@@ -76,13 +76,11 @@ restore_db() {
 }
 
 restore_filestore() {
-    echo "start restore filestore"
-    backup_filestore_path="${odoo_container_store_backup_folder}/${extracted_backup_folder_name}/filestore.tar.gz"
+    filestore_backup_name="filestore.tar.gz"
+    backup_filestore_path="${odoo_container_store_backup_folder}/${extracted_backup_folder_name}/$filestore_backup_name"
     filestore_path="$data_dir/filestore"
-
-    docker_odoo_exec "mkdir -p $filestore_path;cp $backup_filestore_path $filestore_path;cd $filestore_path;tar -xzf filestore.tar.gz"
+    docker_odoo_exec "mkdir -p $filestore_path;cp $backup_filestore_path $filestore_path;cd $filestore_path;tar -xzf $filestore_backup_name;rm -rf $filestore_backup_name"
     docker_odoo_exec "cd $filestore_path && find . -mindepth 1 -maxdepth 1 -type d -exec mv {} $ODOO_TEST_DATABASE_NAME \;"
-    echo "ending restore filestore"
 }
 
 restore_backup() {
@@ -92,7 +90,7 @@ restore_backup() {
     create_empty_db
     restore_db
     restore_filestore
-    # restart_instance
+    restart_instance
 }
 
 run_test_cases() {
