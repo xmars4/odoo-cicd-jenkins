@@ -18,10 +18,11 @@ function update_config_file {
     # Odoo's suggestion:  Unit testing in workers mode could fail; use --workers 0.
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
+    tagged_custom_addons=$(echo $CUSTOM_ADDONS | sed "s/,/,\//g" | sed "s/^/\//")
     if [[ $is_pylint_build == "true" ]]; then
         echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --logfile "$LOG_FILE" --log-level info --load base,web -i test_lint,test_pylint --test-enable --test-tags /test_lint,/test_pylint,/test_lint,/test_pylint,-/test_lint:TestPyLint.test_pylint\n" >>$CONFIG_FILE
     else
-        echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --logfile "$LOG_FILE" --log-level info -i "${CUSTOM_ADDONS}" --test-enable --test-tags "${CUSTOM_ADDONS}"\n" >>$CONFIG_FILE
+        echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --logfile "$LOG_FILE" --log-level info -i "${CUSTOM_ADDONS}" --test-enable --test-tags "${tagged_custom_addons}"\n" >>$CONFIG_FILE
     fi
 }
 
@@ -50,6 +51,7 @@ function main {
     show_build_message
     set_list_addons
     update_config_file
+    cat $CONFIG_FILE
     start_containers
     wait_until_odoo_shutdown
 }

@@ -61,16 +61,6 @@ def clean_test_resource_and_bad_exit(error_message="") {
     sh "exit 1"
 }
 
-def git_checkout() {
-    if (is_pr_merged()) {
-        // fixme:  remove  git_checkout_pull_request_branch() and uncomment git_checkout_main_branch()
-        git_checkout_pull_request_branch()
-        // git_checkout_main_branch()
-    } else {
-        git_checkout_pull_request_branch()
-    }
-}
-
 def git_checkout_main_branch() {
     // the branch that pull request is merge 'TO'
     echo "Checkout main branch!"
@@ -103,6 +93,16 @@ def git_checkout_pull_request_branch() {
                 url: "${pr_to_repo_ssh_url}"
             ]
         ])
+}
+
+def git_checkout() {
+    if (is_pr_merged()) {
+        // fixme:  remove  git_checkout_pull_request_branch() and uncomment git_checkout_main_branch()
+        git_checkout_pull_request_branch()
+        // git_checkout_main_branch()
+    } else {
+        git_checkout_pull_request_branch()
+    }
 }
 
 def verify_tools() {
