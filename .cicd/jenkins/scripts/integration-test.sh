@@ -62,6 +62,7 @@ restart_instance() {
     update_config_file_after_restoration
     #fixme
     docker_odoo_exec "psql -h db -U odoo $ODOO_TEST_DATABASE_NAME -c \"select count(*) from purchase_order;\""
+    docker_odoo_exec "cat /etc/odoo/odoo.conf"
     #fixme
     docker_compose restart
 }
