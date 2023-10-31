@@ -48,7 +48,7 @@ copy_backup() {
 config_psql_without_password() {
     pgpass_path="~/.pgpass"
     docker_odoo_exec "touch $pgpass_path ; echo $db_host:$db_port:postgres:$db_user:$db_password > $pgpass_path ; chmod 0600 $pgpass_path"
-    docker_odoo_exec "echo "" >> $pgpass_path"
+    docker_odoo_exec "echo '' >> $pgpass_path"
     docker_odoo_exec "echo $db_host:$db_port:\"$ODOO_TEST_DATABASE_NAME\":$db_user:$db_password >> $pgpass_path"
 }
 
@@ -91,7 +91,7 @@ restore_backup() {
     create_empty_db
     restore_db
     restore_filestore
-    restart_instance
+    # restart_instance
     #fixme 1
     echo $LOG_FILE_OUTSIDE
     cat $LOG_FILE_OUTSIDE
