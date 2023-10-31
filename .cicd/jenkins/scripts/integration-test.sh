@@ -85,6 +85,9 @@ restore_filestore() {
     cd $filestore_path
     tar -xzf filestore.tar.gz
     old_filestore_name=$(find . -mindepth 1 -maxdepth 1 -type d | tail -n 1 | xargs basename)
+    echo $old_filestore_name
+    echo $ODOO_TEST_DATABASE_NAME
+    echo =============..===
     mv $old_filestore_name $ODOO_TEST_DATABASE_NAME
     """
 }
