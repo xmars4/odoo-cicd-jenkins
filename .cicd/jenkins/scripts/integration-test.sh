@@ -93,7 +93,9 @@ restore_filestore() {
     echo $ODOO_TEST_DATABASE_NAME
     echo =============..===
     mv $old_filestore_name $ODOO_TEST_DATABASE_NAME
+    mv $(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;) $ODOO_TEST_DATABASE_NAME
     """
+    docker_odoo_exec
 }
 
 restore_backup() {
