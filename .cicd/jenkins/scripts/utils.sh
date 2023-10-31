@@ -128,7 +128,7 @@ set_github_commit_status() {
     response=$(curl --write-out '%{http_code}\n' -L -s \
         -X POST \
         -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${github_access_token}" \
+        -H "Authorization: Bearer ${github_access_token_}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/${repo_name}/statuses/${commit_sha} \
         -d "$request_content")
