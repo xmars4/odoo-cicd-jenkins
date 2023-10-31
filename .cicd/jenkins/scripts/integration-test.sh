@@ -3,10 +3,6 @@ source "${PIPELINE_UTILS_SCRIPT_PATH}"
 
 populate_variables() {
     declare -g received_backup_file_path=$1
-    declare -g docker_compose_path="$ODOO_DOCKER_COMPOSE_PATH"
-    declare -g db_name="postgres"
-    declare -g odoo_image_tag="$ODOO_IMAGE_TAG"
-    declare -g config_file=/etc/odoo/odoo.conf # path inside the Odoo container
     declare -g odoo_container_store_backup_folder="/tmp/odoo/restore"
     declare -g extracted_backup_folder_name=$(basename $received_backup_file_path | sed "s/.tar.gz//")
 
@@ -50,7 +46,7 @@ copy_backup() {
 
 config_psql_without_password() {
     pgpass_path="~/.pgpass"
-    docker_odoo_exec "touch $pgpass_path ; echo $db_host:$db_port:\"$db_name\":$db_user:$db_password > $pgpass_path ; chmod 0600 $pgpass_path"
+    docker_odoo_exec "touch $pgpass_path ; echo $db_host:$db_port:postgres:$db_user:$db_password > $pgpass_path ; chmod 0600 $pgpass_path"
     docker_odoo_exec "echo "" >> $pgpass_path"
     docker_odoo_exec "echo $db_host:$db_port:\"$ODOO_TEST_DATABASE_NAME\":$db_user:$db_password >> $pgpass_path"
 }
