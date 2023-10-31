@@ -53,7 +53,7 @@ def clean_test_resource() {
     sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
 }
 
-def clean_test_resource_and_bad_exit(String error_message) {
+def clean_test_resource_and_bad_exit(error_message="") {
     if (error_message) {
         echo "$error_message"
     }
