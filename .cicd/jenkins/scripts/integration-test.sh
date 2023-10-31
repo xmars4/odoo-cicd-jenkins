@@ -60,10 +60,7 @@ start_instance() {
 restart_instance() {
     update_config_file_after_restoration
     #fixme
-    docker_odoo_exec "cat /etc/odoo/odoo.conf"
-    cat "$ODOO_DOCKER_COMPOSE_PATH/docker-compose.yml"
-
-    docker_odoo_exec "psql -h db -U odoo $ODOO_TEST_DATABASE_NAME -c \"select * from res_partner;\""
+    docker_odoo_exec "psql -h db -U odoo $ODOO_TEST_DATABASE_NAME -c \"select count(*) from purchase_order;\""
     #fixme
     docker_compose restart
 }
