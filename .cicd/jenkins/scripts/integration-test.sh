@@ -60,10 +60,6 @@ start_instance() {
 
 restart_instance() {
     update_config_file_after_restoration
-    #fixme
-    docker_odoo_exec "psql -h db -U odoo $ODOO_TEST_DATABASE_NAME -c \"select count(*) from purchase_order;\""
-    docker_odoo_exec "cat /etc/odoo/odoo.conf"
-    #fixme
     docker_compose restart
 }
 
@@ -93,17 +89,11 @@ restore_backup() {
     restore_filestore
     restart_instance
     wait_until_odoo_shutdown
-    #fixme 1
-    echo $LOG_FILE_OUTSIDE
-    cat $LOG_FILE_OUTSIDE
 }
 
 analyze_log_file() {
     # in case Odoo don't have any ERROR -> log file will be not generated
     # so no need to analyze log anymore
-    #fixme
-    sleep 30
-    cat $LOG_FILE_OUTSIDE
     [ -f ${LOG_FILE_OUTSIDE} ]
     if [ $? -ne 0 ]; then
         return 0
