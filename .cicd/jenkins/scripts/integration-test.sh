@@ -89,7 +89,7 @@ restore_backup() {
     create_empty_db
     restore_db
     restore_filestore
-    restart_instance
+    # restart_instance
     #fixme
     cat $LOG_FILE_OUTSIDE
 }

@@ -21,7 +21,7 @@ node {
         // build()
         // unit_test()
         integration_test()
-        clean_test_resource()
+        // clean_test_resource()
     }
 
     // fixme: uncomment stage deploy
