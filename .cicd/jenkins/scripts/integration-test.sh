@@ -79,23 +79,8 @@ restore_filestore() {
     backup_filestore_path="${odoo_container_store_backup_folder}/${extracted_backup_folder_name}/filestore.tar.gz"
     filestore_path="$data_dir/filestore"
 
-    docker_odoo_exec """
-    mkdir -p $filestore_path
-    cp $backup_filestore_path $filestore_path
-    cd $filestore_path
-    tar -xzf filestore.tar.gz
-    old_filestore_name=$(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
-    echo 000000000000000
-    echo $filestore_path
-    pwd
-    ls -lah .
-    echo $old_filestore_name
-    echo $ODOO_TEST_DATABASE_NAME
-    echo =============..===
-    mv $old_filestore_name $ODOO_TEST_DATABASE_NAME
-    mv $(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;) $ODOO_TEST_DATABASE_NAME
-    """
-    docker_odoo_exec
+    docker_odoo_exec "mkdir -p $filestore_path;cp $backup_filestore_path $filestore_path;cd $filestore_path;tar -xzf filestore.tar.gz"
+    docker_odoo_exec "mv $(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;) $ODOO_TEST_DATABASE_NAME"
 }
 
 restore_backup() {
