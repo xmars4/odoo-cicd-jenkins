@@ -59,6 +59,9 @@ start_instance() {
 
 restart_instance() {
     update_config_file_after_restoration
+    #fixme
+    docker_odoo_exec "cat $CONFIG_FILE"
+    docker_odoo_exec "psql -h db -U odoo $ODOO_TEST_DATABASE_NAME -c \"select * from res_partner;\""
     docker_compose restart
 }
 
