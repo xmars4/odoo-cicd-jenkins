@@ -165,10 +165,8 @@ send_file_telegram() {
         -F "parse_mode=$parse_mode" \
         -F "disable_notification=true")
     status_code=$(echo $response | grep -oE "[0-9]+$")
-    echo 'send telegram file'
-    echo $response
-    echo $status_code
-    if [[ $response =~ "{\"ok\":false" ]]; then
+    if [[ $status_code != "200" ]]; then
+        echo "Can't send file to Telegram!"
         echo $response
     fi
 }
@@ -182,14 +180,12 @@ send_message_telegram() {
 
     response=$(curl --write-out '%{http_code}\n' -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
-        -d "text=$message" \
+        -d "text=*(*())" \
         -d "parse_mode=$parse_mode" \
         -d "disable_notification=true")
     status_code=$(echo $response | grep -oE "[0-9]+$")
-    echo 'send telegram message'
-    echo $response
-    echo $status_code
-    if [[ $response =~ "{\"ok\":false" ]]; then
+    if [[ $status_code != "200" ]]; then
+        echo "Can't send message to Telegram!"
         echo $response
     fi
 }
