@@ -128,7 +128,7 @@ set_github_commit_status() {
     response=$(curl --write-out '%{http_code}\n' -L -s \
         -X POST \
         -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${github_access_o}" \
+        -H "Authorization: Bearer ${github_access_token}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/${repo_name}/statuses/${commit_sha} \
         -d "$request_content")
@@ -158,12 +158,16 @@ send_file_telegram() {
     parse_mode=$5
     [ -z $parse_mode ] && parse_mode="MarkdownV2"
 
-    response=$(curl -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
+    response=$(curl --write-out '%{http_code}\n' -s -X POST "https://api.telegram.org/bot$bot_token/sendDocument" \
         -F "chat_id=$chat_id" \
         -F "document=@$file_path" \
         -F "caption=$caption" \
         -F "parse_mode=$parse_mode" \
         -F "disable_notification=true")
+    status_code=$(echo $response | grep -oE "[0-9]+$")
+    echo 'send telegram file'
+    echo $response
+    echo $status_code
     if [[ $response =~ "{\"ok\":false" ]]; then
         echo $response
     fi
@@ -176,11 +180,15 @@ send_message_telegram() {
     parse_mode=$4
     [ -z $parse_mode ] && parse_mode="MarkdownV2"
 
-    response=$(curl -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
+    response=$(curl --write-out '%{http_code}\n' -s -X POST "https://api.telegram.org/bot$bot_token/sendMessage" \
         -d "chat_id=$chat_id" \
         -d "text=$message" \
         -d "parse_mode=$parse_mode" \
         -d "disable_notification=true")
+    status_code=$(echo $response | grep -oE "[0-9]+$")
+    echo 'send telegram message'
+    echo $response
+    echo $status_code
     if [[ $response =~ "{\"ok\":false" ]]; then
         echo $response
     fi
