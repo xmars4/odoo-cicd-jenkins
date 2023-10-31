@@ -122,8 +122,6 @@ update_config_file() {
 }
 
 reset_config_file() {
-    # fixme
-    echo 'ok it has been a long time ago, so we cannot remember it clearly'
     mv $server_config_file_backup $server_config_file
 }
 

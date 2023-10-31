@@ -42,17 +42,17 @@ services:
             - frontend
             - backend
         restart: always
-    # fixme: uncomment nginx section
-    # nginx:
-    #     image: nginx
-    #     depends_on:
-    #         - odoo16
-    #     volumes:
-    #         - ./nginx:/etc/nginx/conf.d
-    #     ports:
-    #         - "80:80"
-    #     networks:
-    #         - frontend
+
+    nginx:
+        image: nginx
+        depends_on:
+            - odoo16
+        volumes:
+            - ./nginx:/etc/nginx/conf.d
+        ports:
+            - "80:80"
+        networks:
+            - frontend
 
 volumes:
     odoo-data:
