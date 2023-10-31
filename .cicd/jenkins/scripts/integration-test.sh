@@ -91,7 +91,8 @@ restore_backup() {
     create_empty_db
     restore_db
     restore_filestore
-    # restart_instance
+    restart_instance
+    wait_until_odoo_shutdown
     #fixme 1
     echo $LOG_FILE_OUTSIDE
     cat $LOG_FILE_OUTSIDE
@@ -100,6 +101,7 @@ restore_backup() {
 analyze_log_file() {
     # in case Odoo don't have any ERROR -> log file will be not generated
     # so no need to analyze log anymore
+    #fixme
     sleep 30
     cat $LOG_FILE_OUTSIDE
     [ -f ${LOG_FILE_OUTSIDE} ]

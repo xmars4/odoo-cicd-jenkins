@@ -37,28 +37,6 @@ function start_containers {
     docker_compose ps
 }
 
-function wait_until_odoo_shutdown {
-    # because we put --stop-after-init option to odoo command
-    # so after Odoo has finished installing and runing test cases
-    # It will shutdown automatically
-    # we just need to wait until odoo container is stopped (status=exited)
-    # and we can start analyze the log file
-    maximum_waiting_time=3600 # maximum wait time is 60', in case if there is an unexpected problem
-    odoo_container_id=$(get_odoo_container_id)
-    if [ -z $odoo_container_id ]; then
-        echo "Can't find the Odoo container, stop pipeline immediately!"
-        exit 1
-    fi
-    sleep_block=5
-    total_waited_time=0
-    while (($total_waited_time <= $maximum_waiting_time)); do
-        container_exited_id=$(docker ps -q --filter "id=$odoo_container_id" --filter "status=exited")
-        if [[ -n $container_exited_id ]]; then break; fi
-        total_waited_time=$((total_waited_time + sleep_block))
-        sleep $sleep_block
-    done
-}
-
 show_build_message() {
     if [[ $is_pylint_build == "true" ]]; then
         show_separator "Install and run pylint test cases for custom addons!"
