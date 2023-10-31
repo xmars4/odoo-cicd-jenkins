@@ -86,7 +86,8 @@ restore_db() {
 restore_filestore() {
     backup_filestore_path="${odoo_container_store_backup_folder}/${extracted_backup_folder_name}/filestore.tar.gz"
     filestore_path="$data_dir/filestore"
-    docker_odoo_exec "[ ! -d $filestore_path ] && mkdir $filestore_path && cp $backup_filestore_path $filestore_path && cd $file_store_path && tar -xzf filestore.tar.gz"
+
+    docker_odoo_exec "[ ! -d $filestore_path ] && mkdir -p $filestore_path && cp $backup_filestore_path $filestore_path && cd $filestore_path && tar -xzf filestore.tar.gz"
 }
 
 restore_backup() {
