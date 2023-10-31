@@ -132,8 +132,7 @@ def pylint_test() {
 def unit_test() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/unit-test.sh", returnStatus: true)
     if (result != 0) {
-        def git_commit_message = "The build failed, please re-check the code!"
-        set_github_commit_status("failure", git_commit_message);
+        set_github_commit_status_failed()
 
         def telegram_message = """
 The [PR \\#${pr_id}](${pr_url}) check has failed\\!
@@ -144,7 +143,9 @@ Please take a look at the attached log file🔬
         clean_test_resource()
         sh "exit $result"
     }
-    set_github_commit_status("success", "The build succeed!");
+    if (!is_pr_merged()){
+        set_github_commit_status_succeed()
+    }
 }
 
 def integration_test() {
@@ -195,8 +196,7 @@ Please take a look into [the build log](${BUILD_URL}console) 🔬
 
         def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $received_backup_file_path", returnStatus: true)
         if (result != 0){
-            def git_commit_message = "The build failed, please re-check the code!"
-            set_github_commit_status("failure", git_commit_message);
+            set_github_commit_status_failed()
 
             def telegram_message = """
 The [PR \\#${pr_id}](${pr_url}) checking on existing database failed\\!
@@ -206,7 +206,9 @@ Please take a look at the attached log file🔬
 
             clean_test_resource()
             sh "exit $result"                
-        }        
+        }   
+
+        set_github_commit_status_succeed()
     }
 }
 
@@ -247,13 +249,22 @@ Please take a look into [the build log](${BUILD_URL}console)\\.
 """
                 send_telegram_message(failed_message)
             }
-
         }
     }
 }
 
 def clean_test_resource() {
     sh "$PIPELINE_SCRIPTS_PATH/clean.sh"
+}
+
+def set_github_commit_status_succeed(){
+    def git_commit_message = "The build succeed!"
+    set_github_commit_status("success", git_commit_message);
+}
+
+def set_github_commit_status_failed(){
+    def git_commit_message = "The build failed, please re-check the code!"
+    set_github_commit_status("failure", git_commit_message);
 }
 
 def set_github_commit_status(String state, String message) {
