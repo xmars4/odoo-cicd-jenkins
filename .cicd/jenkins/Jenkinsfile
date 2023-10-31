@@ -22,7 +22,7 @@ node {
         // unit_test()
         integration_test()
         //fixme: uncomnet  clean_test_resource()
-        // clean_test_resource()
+        clean_test_resource()
     }
 
     // fixme: uncomment stage deploy
