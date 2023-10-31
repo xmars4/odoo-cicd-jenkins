@@ -100,6 +100,7 @@ restore_backup() {
 analyze_log_file() {
     # in case Odoo don't have any ERROR -> log file will be not generated
     # so no need to analyze log anymore
+    sleep 30
     cat $LOG_FILE_OUTSIDE
     [ -f ${LOG_FILE_OUTSIDE} ]
     if [ $? -ne 0 ]; then
