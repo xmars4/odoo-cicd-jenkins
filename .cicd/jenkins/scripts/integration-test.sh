@@ -100,7 +100,7 @@ run_test_cases() {
 
 analyze_log_file() {
     #todo
-    echo 1
+    echo 12
 }
 
 main() {
