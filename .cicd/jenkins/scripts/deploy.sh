@@ -132,10 +132,18 @@ update_odoo_services() {
     docker compose restart
 }
 
+function get_odoo_login_url() {
+    url=$1
+    scheme=$(echo $url | awk -F:// '{print $1}')
+    domain_port=$(echo $url | sed -n 's~^https\?://\([^/]\+\).*~\1~p')
+    echo "${scheme}://${domain_port}/web/login"
+}
+
 function wait_until_odoo_available {
     echo "Hang on, Modules are being updated ..."
-    # Assuming each addon needs 30s to install and run test cases
+    # Assuming each addon needs 60s to be updated
     # -> we can calculate maximum total sec we have to wait until Odoo is up and running
+    server_odoo_login_url=$(get_odoo_login_url $server_odoo_url)
     ESITATE_TIME_EACH_ADDON=30
     IFS=',' read -ra separate_addons_list <<<$CUSTOM_ADDONS
     total_addons=${#separate_addons_list[@]}
@@ -143,17 +151,13 @@ function wait_until_odoo_available {
     maximum_count=$(((total_addons * ESITATE_TIME_EACH_ADDON) / 5))
     count=1
     while (($count <= $maximum_count)); do
-        http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${server_odoo_url}" 2>&1 | awk 'NR==1{print $2}' || true; })
+        http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${server_odoo_login_url}" 2>&1 | awk 'NR==1{print $2}' || true; })
         if [[ $http_status = '200' ]]; then
             exit 0 # Odoo service is fully up and running
         fi
         ((count++))
         sleep 5
-        #fixme
-        echo 'no it runs, serious, although there are some problems'
     done
-    #fixme
-    echo "you can do it, don't take it personally"
     exit 1 # Odoo service is not running
 }
 
