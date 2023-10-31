@@ -63,6 +63,7 @@ start_instance() {
 
 restart_instance() {
     update_config_file_after_restoration
+    docker_odoo_exec "cat /etc/odoo/odoo.conf"
     docker_compose restart
 }
 
@@ -87,10 +88,10 @@ restore_backup() {
     start_instance
     copy_backup
     config_psql_without_password
-    # create_empty_db
-    # restore_db
-    # restore_filestore
-    # restart_instance
+    create_empty_db
+    restore_db
+    restore_filestore
+    restart_instance
 }
 
 run_test_cases() {
