@@ -18,7 +18,7 @@
                     <button
                         name="button_to_approve"
                         states="draft"
-                        string="Request approval"
+                        string="Reject request kekeke"
                         type="object"
                         class="oe_highlight"
                     />
