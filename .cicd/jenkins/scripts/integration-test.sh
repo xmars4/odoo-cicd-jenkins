@@ -88,6 +88,7 @@ restore_filestore() {
     echo 000000000000000
     echo $filestore_path
     pwd
+    ls -lah .
     echo $old_filestore_name
     echo $ODOO_TEST_DATABASE_NAME
     echo =============..===
