@@ -11,31 +11,31 @@
                     <button
                         name="button_draft"
                         states="to_approve,approved,rejected,done"
-                        string="Reset"
+                        string="1"
                         type="object"
                         groups="purchase_request.group_purchase_request_manager"
                     />
                     <button
                         name="button_to_approve"
-                        string="Reject request kekeke"
+                        string="2"
                         type="object"
                         class="oe_highlight"
                     />
                     <button
                         name="button_approved"
-                        string="Approve"
+                        string="3"
                         type="object"
                         class="oe_highlight"
                         groups="purchase_request.group_purchase_request_manager"
                     />
                     <button
                         name="%(action_purchase_request_line_make_purchase_order)d"
-                        string="Create RFQ"
+                        string="aaaaa RFQ"
                         type="action"
                     />
                     <button
                         name="button_done"
-                        string="Done"
+                        string="bbbbb"
                         type="object"
                         class="oe_highlight"
                         groups="purchase_request.group_purchase_request_manager"

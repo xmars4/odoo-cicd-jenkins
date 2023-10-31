@@ -44,8 +44,6 @@ def setup_environment_variables() {
 }
 
 def is_pr_merged() {
-    // fixme: remove return true
-    return true
     return pr_state == 'closed' && pr_merged == 'true'
 }
 
@@ -97,9 +95,7 @@ def git_checkout_pull_request_branch() {
 
 def git_checkout() {
     if (is_pr_merged()) {
-        // fixme:  remove  git_checkout_pull_request_branch() and uncomment git_checkout_main_branch()
-        git_checkout_pull_request_branch()
-        // git_checkout_main_branch()
+        git_checkout_main_branch()
     } else {
         git_checkout_pull_request_branch()
     }
