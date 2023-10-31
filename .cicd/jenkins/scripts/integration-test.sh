@@ -59,7 +59,6 @@ start_instance() {
 
 restart_instance() {
     update_config_file_after_restoration
-    docker_odoo_exec "cat /etc/odoo/odoo.conf"
     docker_compose restart
 }
 
