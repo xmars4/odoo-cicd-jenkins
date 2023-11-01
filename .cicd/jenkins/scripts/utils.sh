@@ -4,6 +4,13 @@ global_github_access_token=${github_access_token}
 global_telegram_bot_token=${telegram_bot_token}
 global_telegram_channel_id=${telegram_channel_id}
 
+get_cicd_config_for_odoo_addon() {
+    addon_name=$1
+    option=$2
+    config_path="$CICD_PATH/conf/odoo.json"
+    echo $(jq ".addons.${addon_name}.${option}" $config_path)
+}
+
 docker_compose() {
     cd $ODOO_DOCKER_COMPOSE_PATH
     docker compose -p "$ODOO_DOCKER_COMPOSE_PROJECT_NAME" "$@"
@@ -37,6 +44,23 @@ function get_list_addons {
     done
 
     echo $addons
+}
+
+function get_list_addons_ignored_test {
+    addons_ignored_test=
+    addons=$(get_list_addons $1)
+    if [[ -n $addons ]]; then
+        IFS=','
+        read -ra elements <<<"$addons"
+        for addon_name in "${elements[@]}"; do
+            ignore_test=$(get_cicd_config_for_odoo_addon "$addon_name" "ignore_test")
+            if [[ $ignore_test == "null" ]]; then
+                addons_ignored_test="$addons_ignored_test,$addon_name"
+            fi
+        done
+    fi
+    echo $addons_ignored_test
+
 }
 
 function wait_until_odoo_shutdown {

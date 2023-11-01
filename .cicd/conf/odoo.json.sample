@@ -1,0 +1,8 @@
+{
+    "addons": {
+        "purchase_request": {
+            "demo_data": true,
+            "ignore_test": true
+        }
+    }
+}
