@@ -1,8 +1,13 @@
 {
     "addons": {
-        "purchase_request": {
-            "demo_data": true,
+        "report_py3o": {
             "ignore_test": true
+        },
+        "scs_approval": {
+            "ignore_demo": true
+        },
+        "sh_activity_base": {
+            "ignore_demo": true
         }
     }
 }

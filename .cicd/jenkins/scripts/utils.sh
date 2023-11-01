@@ -3,11 +3,11 @@
 global_github_access_token=${github_access_token}
 global_telegram_bot_token=${telegram_bot_token}
 global_telegram_channel_id=${telegram_channel_id}
+config_path="$CICD_PATH/conf/odoo.json"
 
 get_cicd_config_for_odoo_addon() {
     addon_name=$1
     option=$2
-    config_path="$CICD_PATH/conf/odoo.json"
     echo $(jq ".addons.${addon_name}.${option}" $config_path)
 }
 
@@ -32,8 +32,9 @@ get_config_value() {
 }
 
 function get_list_addons {
+    addons_path=$1
     addons=
-    res=$(find "$1" -type f -name "__manifest__.py" -exec dirname {} \;)
+    res=$(find "$addons_path" -maxdepth 2 -mindepth 2 -type f -name "__manifest__.py" -exec dirname {} \;)
     for dr in $res; do
         addon_name=$(basename $dr)
         if [[ -z $addons ]]; then
@@ -44,6 +45,41 @@ function get_list_addons {
     done
 
     echo $addons
+}
+
+get_list_addons_filtered_by_config_option() {
+    addons_path=$1
+    option_name=$2
+    option_value=$3
+    addons=
+    full_list_addons=$(get_list_addons $addons_path)
+    if [[ -n $full_list_addons ]]; then
+        backup_IFS=$IFS
+        IFS=","
+        for addon_name in $full_list_addons; do
+            origin_option_value=$(get_cicd_config_for_odoo_addon "$addon_name" "$option_name")
+            if [[ "$origin_option_value" == "$option_value" ]]; then
+                if [[ -z $addons ]]; then
+                    addons=$addon_name
+                else
+                    addons="$addons;$addon_name"
+                fi
+            fi
+        done
+        IFS=$backup_IFS
+    fi
+    addons=$(echo $addons | sed "s/;/,/g")
+    echo $addons
+}
+
+function get_list_addons_should_run_test {
+    addons_path=$1
+    echo $(get_list_addons_filtered_by_config_option $addons_path "ignore_test" "null")
+}
+
+function get_list_addons_ignore_demo_data {
+    addons_path=$1
+    echo $(get_list_addons_filtered_by_config_option $addons_path "ignore_demo" "true")
 }
 
 function get_list_addons_ignored_test {
