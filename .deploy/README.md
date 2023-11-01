@@ -31,7 +31,7 @@ Install docker and docker compose
     docker compose up -d
     ```
 
-5. DONE, your Odoo instance will running on [http://localhost:18069](http://localhost:18069)
+5. DONE, your Odoo instance will running on [http://localhost:8069](http://localhost:18069)
 
 6. _(Optionally)_ Setup log rotate (on host machine)
 
