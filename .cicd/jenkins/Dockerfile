@@ -7,7 +7,7 @@ RUN apt-get install ca-certificates curl gnupg wget apt-transport-https -y
 # update java version from 11 -> 17
 RUN wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | apt-key add - && \
   echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
-RUN apt-get update && apt-get install temurin-17-jdk -y
+RUN apt-get update && apt-get install temurin-17-jdk -y && apt-get install jq -y
 
 ENV JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
 ENV PATH "${JAVA_HOME}/bin:${PATH}"

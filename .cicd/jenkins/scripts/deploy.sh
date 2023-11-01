@@ -13,8 +13,9 @@ server_config_file_backup="${server_config_file}.bak"
 CUSTOM_ADDONS=
 
 function get_list_addons {
+    addons_path=$1
     addons=
-    res=$(find "$1" -type f -name "__manifest__.py" -exec dirname {} \;)
+    res=$(find "$addons_path" -maxdepth 2 -mindepth 2 -type f -name "__manifest__.py" -exec dirname {} \;)
     for dr in $res; do
         addon_name=$(basename $dr)
         if [[ -z $addons ]]; then
