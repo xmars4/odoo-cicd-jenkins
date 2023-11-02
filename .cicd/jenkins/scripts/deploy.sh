@@ -166,8 +166,8 @@ main() {
     set_list_addons
     update_config_file
     update_odoo_services
-    wait_until_odoo_available
     reset_config_file
+    wait_until_odoo_available
 }
 
 main
