@@ -20,7 +20,7 @@
     1.5. Executing bash script to create Jenkins data folder
 
     ```shell
-        sudo ./jenkins/scripts/host-setup.sh
+        sudo .cicd/jenkins/scripts/host-setup.sh
     ```
 
     1.6. Installing Jenkins
@@ -196,14 +196,39 @@
     - **_Which events would you like to trigger this webhook?_** : _Let me select individual events./ Pull requests_
     - Click : Add webhook
 
-7. Integration with SonarQube
+7. CI/CD options for build and run test cases
 
-    7.1. Install SonarQube
+    If you want to ignore running Odoo test cases for some addons, update file [odoo.json](conf/odoo.json)\
+    Belwow is the structure and list of avaiable options:
+
+    ```json
+    {
+        "addons": {
+            "addon_name": {
+                "ignore_test": true,
+                ...
+            },
+            "addon_2": {
+                "ignore_demo": true,
+                ...
+            }
+        }
+        ...
+    }
+    ```
+
+    - _addon_name_: Odoo addon name, each addon have to stay in a different block
+    - _ignore_test_: if it's value is _true_, Jenkins won't run test cases for this addon
+    - _ignore_demo_: if it's value is _true_, Jenkins will ingore this module's demo data when running test cases
+
+8. Integration with SonarQube
+
+    8.1. Install SonarQube
 
     - Install SonarQube and allow Jenkins to connect to it (already done in docker compose file at step **_1.6_**)
     - Access SonarQube UI and [generate a user token](https://docs.sonarsource.com/sonarqube/latest/user-guide/user-account/generating-and-using-tokens/#generating-a-token)
 
-    7.2. Add SonarQube installer to Jenkins
+    8.2. Add SonarQube installer to Jenkins
 
     - Access Jenkins Web UI
     - Path: Dasboard / Manage Jenkins / Tools / SonarQube Scanner
@@ -211,24 +236,24 @@
         - Input Name: **sonarqube-scanner**
         - Check: **Install automatically**
 
-    7.3. Add SonarQube credentail to Jenkins
+    8.3. Add SonarQube credentail to Jenkins
 
     - Access Jenkins Web UI
     - **_Path_**: Dashboard > Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> + Add Credentials
     - **_Kind_**: _Username with password_
     - **_Username_**: the SonarQube url which Jenkins can connect
-    - **_Secret_**: the token was obtained from step 7.1
+    - **_Secret_**: the token was obtained from step 8.1
     - **_ID_**: _sonar-cred_
     - **_Description_**: _Jenkins will use this url and token to connect to SonarQube_
 
-8. Send message to Telegram from Jenkins
+9. Send message to Telegram from Jenkins
 
     - Follow [this link](https://gist.github.com/xmars4/25931e4e59476da70a183d0f5a1d9e9e) to obtain **BOT token** and **Channel ID**
     - Add two secret text credentails to your Jenkins instance
         - **_ID_**: **telegram-bot-token** **_Secret_**: BOT token
         - **_ID_**: **telegram-channel-id** **_Secret_**: Channel ID
 
-9. Trigger build process manually
+10. Trigger build process manually
 
     - **You have to trigger build process first time manually before Github webhook can trigger the build process automatically**
 
