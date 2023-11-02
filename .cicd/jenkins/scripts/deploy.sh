@@ -152,11 +152,13 @@ function wait_until_odoo_available {
     while (($count <= $maximum_count)); do
         http_status=$(echo "foo|bar" | { wget --connect-timeout=5 --server-response --spider --quiet "${server_odoo_login_url}" 2>&1 | awk 'NR==1{print $2}' || true; })
         if [[ $http_status = '200' ]]; then
+            reset_config_file
             exit 0 # Odoo service is fully up and running
         fi
         ((count++))
         sleep 5
     done
+    reset_config_file
     exit 1 # Odoo service is not running
 }
 
@@ -166,7 +168,6 @@ main() {
     set_list_addons
     update_config_file
     update_odoo_services
-    reset_config_file
     wait_until_odoo_available
 }
 
