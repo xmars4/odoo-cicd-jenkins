@@ -9,6 +9,7 @@ main() {
     check_required_files
     backup_file_path=$(create_backup_inside_container)
     copy_backup_to_host $backup_file_path
+    delete_old_backup_files
 }
 
 populate_variables() {
@@ -108,7 +109,6 @@ create_backup_inside_container() {
         create_sql_backup $sub_backup_folder
         create_filestore_backup $sub_backup_folder
         new_backup_tar_file_path=$(create_tar_file_backup $sub_backup_folder)
-        delete_old_tar_files
         echo $new_backup_tar_file_path
     else
         echo $latest_backup_tar_file_path
@@ -119,7 +119,7 @@ copy_backup_to_host() {
     backup_file_path=$1
     odoo_container_id=$(get_odoo_container_id $odoo_image_tag)
     [ ! -d "$backup_folder" ] && mkdir -p "$backup_folder"
-    rm -rf "${backup_folder}/*"
+    rm -rf ${backup_folder}/*
     docker cp $odoo_container_id:$backup_file_path $backup_folder
     echo $backup_file_path
 }
@@ -158,9 +158,11 @@ create_tar_file_backup() {
     echo "${backup_folder}/${new_backup_tar_file_path}"
 }
 
-delete_old_tar_files() {
-    # keep only 12 newest files only and delete other files
-    execute_command_inside_odoo_container "cd $backup_folder && ls -1tr $backup_folder | head -n -12 | xargs -d '\n' rm -rf --"
+delete_old_backup_files() {
+    # keep only 7 newest files only and delete other files
+    # delete inside container and on host machine
+    execute_command_inside_odoo_container "cd $backup_folder && ls -1tr $backup_folder | head -n -7 | xargs -d '\n' rm -rf --"
+    cd $backup_folder && ls -1tr $backup_folder | head -n -7 | xargs -d '\n' rm -rf --
 }
 
 main "$@"
