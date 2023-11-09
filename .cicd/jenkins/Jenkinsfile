@@ -15,6 +15,7 @@ node {
     //     clean_test_resource() // clean them for the next build and test
     // }
 
+    // FIXME: implement post_install test and at_install test
     stage('Test #3 (Odoo Test cases)') {
         build()
         unit_test()
