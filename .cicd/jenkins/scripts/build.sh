@@ -90,7 +90,7 @@ show_build_message() {
 function main {
     show_separator "aaaaaa=========="
     echo $@
-    populate_variables $@
+    populate_variables "$@"
     show_build_message
     set_list_addons
     update_config_file
@@ -98,4 +98,4 @@ function main {
     wait_until_odoo_shutdown
 }
 
-main $@
+main "$@"
