@@ -121,13 +121,16 @@ def verify_tools() {
 }
 
 def build(String execute_test_time) {
-    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh 'normal' '${execute_test_time}'", returnStatus: true)
+    env.UNIT_TEST_TYPE = "normal"
+    env.WHEN_TO_EXECUTE_TEST = execute_test_time
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh", returnStatus: true)
     if (result != 0) {
         clean_test_resource_and_bad_exit()
     }
 }
 
 def build_pylint() {
+    env.UNIT_TEST_TYPE = "pylint"
     sh "$PIPELINE_SCRIPTS_PATH/build.sh 'pylint'"
 }
 
