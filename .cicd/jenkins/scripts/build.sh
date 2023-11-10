@@ -6,9 +6,6 @@ populate_variables() {
     declare -g test_type=${UNIT_TEST_TYPE}
     declare -g execute_test_time=${WHEN_TO_EXECUTE_TEST}
     declare -g test_pylint=$(is_test_pylint)
-    # fixme
-    echo $test_type
-    echo $execute_test_time
 }
 
 function is_test_pylint() {
@@ -91,8 +88,6 @@ show_build_message() {
 }
 
 function main {
-    show_separator "aaaaaa=========="
-    echo $@
     populate_variables "$@"
     show_build_message
     set_list_addons

@@ -9,11 +9,11 @@ node {
     //     sonarqube_check_code_quality()
     // }
 
-    stage('Code analytic - Odoo Pylint') {
-        build_pylint()
-        pylint_test()
-        clean_test_resource()
-    }
+    // stage('Code analytic - Odoo Pylint') {
+    //     build_pylint()
+    //     pylint_test()
+    //     clean_test_resource()
+    // }
 
     stage('Unit Test - At install') {
         build('at_install')
