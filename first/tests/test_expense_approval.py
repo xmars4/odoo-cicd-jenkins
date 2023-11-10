@@ -8,7 +8,7 @@ class TestExpenseApproval(TransactionCase):
 
     def setUp(self):
         super(TestExpenseApproval, self).setUp()
-        self.unit = self.env['freight.unit'].create({
+        self.unit = self.env['res.partner'].create({
             'name': 'CBM',
             'code': 'cbm'
         })
