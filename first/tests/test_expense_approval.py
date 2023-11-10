@@ -15,4 +15,4 @@ class TestExpenseApproval(TransactionCase):
     def test_fake_pro(self):
         self.assertEqual(self.unit.name, 'CBM')
 
-a = 1
+a = 12
