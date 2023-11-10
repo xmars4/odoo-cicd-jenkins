@@ -5,6 +5,8 @@ test_type=$1
 execute_test_time=$2
 # fixme
 show_separator $execute_test_time
+show_separator $@
+echo "f* $@"
 function is_test_pylint() {
     if [[ $test_type == 'pylint' ]]; then
         echo 1
