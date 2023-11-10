@@ -5,22 +5,31 @@ node {
         verify_tools()
     }
 
-    // stage('Test #1 (Sonarqube)') {
-    //     sonarqube_check_code_quality()
-    // }
+    stage('Code analytic - Sonarqube') {
+        sonarqube_check_code_quality()
+    }
 
-    // stage('Test #2 (Odoo Pylint)') {
-    //     build_pylint()
-    //     pylint_test()
-    //     clean_test_resource() // clean them for the next build and test
-    // }
+    stage('Code analytic - Odoo Pylint') {
+        build_pylint()
+        pylint_test()
+        clean_test_resource() // clean them for the next build and test
+    }
 
     // FIXME: implement post_install test and at_install test
-    stage('Test #3 (Odoo Test cases)') {
-        build()
+    stage('Unit Test - At install') {
+        build('at_install')
         unit_test()
-        integration_test()
         clean_test_resource()
+    }
+
+    stage('Unit Test - Post install') {
+        build('post_install')
+        unit_test()
+        clean_test_resource()
+    }
+
+    stage('Integration Test') {
+        integration_test()
     }
 
     stage('Deploy to server') {
@@ -110,15 +119,15 @@ def verify_tools() {
     }
 }
 
-def build() {
-    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh false", returnStatus: true)
+def build(String execute_test_time) {
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh 'normal' '${execute_test_time}'", returnStatus: true)
     if (result != 0) {
         clean_test_resource_and_bad_exit()
     }
 }
 
 def build_pylint() {
-    sh "$PIPELINE_SCRIPTS_PATH/build.sh true"
+    sh "$PIPELINE_SCRIPTS_PATH/build.sh 'pylint'"
 }
 
 def sonarqube_check_code_quality() {

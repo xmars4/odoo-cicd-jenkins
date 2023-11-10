@@ -58,9 +58,10 @@ function update_config_file {
             test_tags="${tagged_custom_addons},-post_install"
         else
             test_tags="${tagged_custom_addons}"
-        echo -en " --init "${custom_addons}" \
+        fi
+        echo -en " --init ${custom_addons} \
         --without-demo $without_demo_addons \
-        --test-tags "${tagged_custom_addons}"\n" >>$CONFIG_FILE
+        --test-tags $test_tags\n" >>$CONFIG_FILE
     fi
 }
 
