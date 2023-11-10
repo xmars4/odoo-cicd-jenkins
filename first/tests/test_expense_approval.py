@@ -10,7 +10,6 @@ class TestExpenseApproval(TransactionCase):
         super(TestExpenseApproval, self).setUp()
         self.unit = self.env['res.partner'].create({
             'name': 'CBM',
-            'code': 'cbm'
         })
 
     def test_fake_pro(self):
