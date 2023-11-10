@@ -1,19 +1,18 @@
 #!/bin/bash
 
 source "${PIPELINE_UTILS_SCRIPT_PATH}"
-test_type=$1
-execute_test_time=$2
-# fixme
-show_separator $execute_test_time
-show_separator $@
-echo "f* $@"
+
+populate_variables() {
+    declare -g test_type=$1
+    declare -g execute_test_time=$2
+    declare -g test_pylint=$(is_test_pylint)
+}
+
 function is_test_pylint() {
     if [[ $test_type == 'pylint' ]]; then
         echo 1
     fi
 }
-
-test_pylint=$(is_test_pylint)
 
 function set_list_addons {
     if [[ -n $test_pylint ]]; then
@@ -89,6 +88,9 @@ show_build_message() {
 }
 
 function main {
+    show_separator "aaaaaa=========="
+    echo $@
+    populate_variables $@
     show_build_message
     set_list_addons
     update_config_file
@@ -96,4 +98,4 @@ function main {
     wait_until_odoo_shutdown
 }
 
-main
+main $@
