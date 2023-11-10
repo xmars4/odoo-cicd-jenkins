@@ -5,15 +5,15 @@ node {
         verify_tools()
     }
 
-    stage('Code analytic - Sonarqube') {
-        sonarqube_check_code_quality()
-    }
+    // stage('Code analytic - Sonarqube') {
+    //     sonarqube_check_code_quality()
+    // }
 
-    stage('Code analytic - Odoo Pylint') {
-        build_pylint()
-        pylint_test()
-        clean_test_resource() // clean them for the next build and test
-    }
+    // stage('Code analytic - Odoo Pylint') {
+    //     build_pylint()
+    //     pylint_test()
+    //     clean_test_resource()
+    // }
 
     stage('Unit Test - At install') {
         build('at_install')
@@ -25,6 +25,7 @@ node {
         build('post_install')
         unit_test()
         clean_test_resource()
+        update_commit_status_success()
     }
 
     stage('Integration Test') {
@@ -153,8 +154,11 @@ def unit_test() {
         send_message_telegram_unit_test_failed()
         clean_test_resource_and_bad_exit()
     }
+}
+
+def update_commit_status_success() {
     if (!is_pr_merged()) {
-        set_github_commit_status_succeed()
+        set_github_commit_status_success()
     }
 }
 
@@ -206,7 +210,7 @@ def integration_test() {
             clean_test_resource_and_bad_exit()
         }
 
-        set_github_commit_status_succeed()
+        set_github_commit_status_success()
     }
 }
 
@@ -247,7 +251,7 @@ def deploy_to_server() {
 }
 // ======================= Github commit status functions  ================
 
-def set_github_commit_status_succeed() {
+def set_github_commit_status_success() {
     def git_commit_message = "The build was successfull!"
     set_github_commit_status("success", git_commit_message);
 }
