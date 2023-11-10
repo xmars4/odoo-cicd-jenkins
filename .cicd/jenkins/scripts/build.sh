@@ -3,9 +3,12 @@
 source "${PIPELINE_UTILS_SCRIPT_PATH}"
 
 populate_variables() {
-    declare -g test_type=$UNIT_TEST_TYPE
-    declare -g execute_test_time=$WHEN_TO_EXECUTE_TEST
+    declare -g test_type=${UNIT_TEST_TYPE}
+    declare -g execute_test_time=${WHEN_TO_EXECUTE_TEST}
     declare -g test_pylint=$(is_test_pylint)
+    # fixme
+    echo $test_type
+    echo $execute_test_time
 }
 
 function is_test_pylint() {
