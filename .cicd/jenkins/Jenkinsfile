@@ -121,6 +121,9 @@ def verify_tools() {
 }
 
 def build(String execute_test_time) {
+    // fixme
+    echo "this is meeee"
+    echo "${execute_test_time}"
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh 'normal' '${execute_test_time}'", returnStatus: true)
     if (result != 0) {
         clean_test_resource_and_bad_exit()
