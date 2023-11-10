@@ -19,7 +19,8 @@ function set_list_addons {
         return 0
     fi
 
-    declare -g custom_addons=$(get_list_addons_should_run_test "$ODOO_CUSTOM_ADDONS_PATH")
+    custom_addons=$(get_list_addons_should_run_test "$ODOO_CUSTOM_ADDONS_PATH")
+    declare -g custom_addons
     if [ -z $custom_addons ]; then
         show_separator "Can't find any Odoo custom modules, please recheck your config!"
         exit 1
