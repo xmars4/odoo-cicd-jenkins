@@ -35,7 +35,15 @@ function update_config_file_after_restoration {
     custom_addons=$(get_list_addons_should_run_test "$ODOO_CUSTOM_ADDONS_PATH")
     tagged_custom_addons=$(echo $custom_addons | sed "s/,/,\//g" | sed "s/^/\//")
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
-    echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --logfile $LOG_FILE --log-level info -u $custom_addons -i $install_addons --test-tags ${tagged_custom_addons}\n" >>$CONFIG_FILE
+    echo -e "\ncommand = \
+    --stop-after-init \
+    --workers 0 \
+    --database $ODOO_TEST_DATABASE_NAME \
+    --logfile $LOG_FILE \
+    --log-level info \
+    --update $custom_addons \
+    --init $install_addons \
+    --test-tags ${tagged_custom_addons}\n" >>$CONFIG_FILE
 }
 
 copy_backup() {

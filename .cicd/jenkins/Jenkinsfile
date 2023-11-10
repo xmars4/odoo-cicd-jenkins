@@ -15,7 +15,6 @@ node {
         clean_test_resource() // clean them for the next build and test
     }
 
-    // FIXME: implement post_install test and at_install test
     stage('Unit Test - At install') {
         build('at_install')
         unit_test()
@@ -30,6 +29,7 @@ node {
 
     stage('Integration Test') {
         integration_test()
+        clean_test_resource()
     }
 
     stage('Deploy to server') {
