@@ -270,7 +270,7 @@ def set_github_commit_status(String state, String message) {
 }
 
 // ======================== Telegram functions ========================
-
+// FIXME: update temp-telegram-channel->  telegram-channel-id
 def send_telegram_file(String file_path, String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
