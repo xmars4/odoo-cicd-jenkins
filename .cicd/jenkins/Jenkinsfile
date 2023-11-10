@@ -270,7 +270,7 @@ def set_github_commit_status(String state, String message) {
 def send_telegram_file(String file_path, String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id')
     ]) {
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'"
     }
@@ -279,7 +279,7 @@ def send_telegram_file(String file_path, String message) {
 def send_telegram_message(String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id')
     ]) {
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\""
     }
