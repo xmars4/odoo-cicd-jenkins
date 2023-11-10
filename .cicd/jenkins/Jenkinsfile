@@ -4,7 +4,7 @@ node {
         setup_environment_variables()
         verify_tools()
         // fixme: remove below
-        stop_previous_builds_in_same_pr
+        stop_previous_builds_in_same_pr()
     }
 
     // stage('Code analytic - Sonarqube') {
