@@ -1,16 +1,18 @@
 #!/bin/bash
 
 source "${PIPELINE_UTILS_SCRIPT_PATH}"
-test_type=$1
-execute_test_time=$2
+
+populate_variables() {
+    declare -g test_type=${UNIT_TEST_TYPE}
+    declare -g execute_test_time=${WHEN_TO_EXECUTE_TEST}
+    declare -g test_pylint=$(is_test_pylint)
+}
 
 function is_test_pylint() {
     if [[ $test_type == 'pylint' ]]; then
         echo 1
     fi
 }
-
-test_pylint=$(is_test_pylint)
 
 function set_list_addons {
     if [[ -n $test_pylint ]]; then
@@ -40,7 +42,7 @@ function update_config_file {
 
     test_tags=
 
-    echo -e "\ncommand = \
+    echo -en "\ncommand = \
     --stop-after-init \
     --workers 0 \
     --database $ODOO_TEST_DATABASE_NAME \
@@ -86,6 +88,7 @@ show_build_message() {
 }
 
 function main {
+    populate_variables "$@"
     show_build_message
     set_list_addons
     update_config_file
@@ -93,4 +96,4 @@ function main {
     wait_until_odoo_shutdown
 }
 
-main
+main "$@"

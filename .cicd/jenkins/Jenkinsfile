@@ -12,7 +12,7 @@ node {
     stage('Code analytic - Odoo Pylint') {
         build_pylint()
         pylint_test()
-        clean_test_resource() // clean them for the next build and test
+        clean_test_resource()
     }
 
     stage('Unit Test - At install') {
@@ -25,6 +25,7 @@ node {
         build('post_install')
         unit_test()
         clean_test_resource()
+        update_commit_status_success()
     }
 
     stage('Integration Test') {
@@ -120,13 +121,16 @@ def verify_tools() {
 }
 
 def build(String execute_test_time) {
-    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh 'normal' '${execute_test_time}'", returnStatus: true)
+    env.UNIT_TEST_TYPE = "normal"
+    env.WHEN_TO_EXECUTE_TEST = execute_test_time
+    def result = sh(script: "$PIPELINE_SCRIPTS_PATH/build.sh", returnStatus: true)
     if (result != 0) {
         clean_test_resource_and_bad_exit()
     }
 }
 
 def build_pylint() {
+    env.UNIT_TEST_TYPE = "pylint"
     sh "$PIPELINE_SCRIPTS_PATH/build.sh 'pylint'"
 }
 
@@ -153,8 +157,12 @@ def unit_test() {
         send_message_telegram_unit_test_failed()
         clean_test_resource_and_bad_exit()
     }
+}
+
+def update_commit_status_success() {
     if (!is_pr_merged()) {
-        set_github_commit_status_succeed()
+        set_github_commit_status_success()
+
     }
 }
 
@@ -206,7 +214,7 @@ def integration_test() {
             clean_test_resource_and_bad_exit()
         }
 
-        set_github_commit_status_succeed()
+        set_github_commit_status_success()
     }
 }
 
@@ -245,9 +253,10 @@ def deploy_to_server() {
         }
     }
 }
+
 // ======================= Github commit status functions  ================
 
-def set_github_commit_status_succeed() {
+def set_github_commit_status_success() {
     def git_commit_message = "The build was successfull!"
     set_github_commit_status("success", git_commit_message);
 }
@@ -266,11 +275,11 @@ def set_github_commit_status(String state, String message) {
 }
 
 // ======================== Telegram functions ========================
-
+// FIXME: update temp-telegram-channel->  telegram-channel-id
 def send_telegram_file(String file_path, String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id')
     ]) {
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'"
     }
@@ -279,7 +288,7 @@ def send_telegram_file(String file_path, String message) {
 def send_telegram_message(String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id')
     ]) {
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\""
     }

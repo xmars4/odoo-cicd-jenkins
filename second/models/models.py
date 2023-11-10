@@ -1,4 +1,4 @@
--*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
 
@@ -10,6 +10,6 @@ class g(models.Model):
     def create(self, vals_list):
         res = super().create(vals_list)
         for r in res:
-            r.name = '****' + res.name + '****'
+            r.name = '*' + res.name + '*'
         return res
     

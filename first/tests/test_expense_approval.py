@@ -8,10 +8,10 @@ class TestExpenseApproval(TransactionCase):
 
     def setUp(self):
         super(TestExpenseApproval, self).setUp()
-        self.unit = self.env['freight.unit'].create({
+        self.unit = self.env['res.partner'].create({
             'name': 'CBM',
-            'code': 'cbm'
         })
 
     def test_fake_pro(self):
-        self.assertEqual(self.unit.name, 'CBM')
+        # self.assertEqual(self.unit.name, 'CBM')
+        self.assertEqual(self.unit.name, '*CBM*')
