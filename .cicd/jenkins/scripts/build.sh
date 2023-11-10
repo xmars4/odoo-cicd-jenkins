@@ -1,10 +1,19 @@
 #!/bin/bash
 
 source "${PIPELINE_UTILS_SCRIPT_PATH}"
-is_pylint_build=$1
+test_type=$1
+execute_test_time=$2
+
+function is_test_pylint() {
+    if [[ $test_type == 'pylint' ]]; then
+        echo 1
+    fi
+}
+
+test_pylint=$(is_test_pylint)
 
 function set_list_addons {
-    if [[ $is_pylint_build == "true" ]]; then
+    if [[ -n $test_pylint ]]; then
         return 0
     fi
 
@@ -28,11 +37,30 @@ function update_config_file {
     # replace old command argument
     sed -i "s/^\s*command\s*.*//g" $CONFIG_FILE
     sed -i "s/^\s*without_demo\s*.*//g" $CONFIG_FILE
-    tagged_custom_addons=$(echo $custom_addons | sed "s/,/,\//g" | sed "s/^/\//")
-    if [[ $is_pylint_build == "true" ]]; then
-        echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --logfile "$LOG_FILE" --log-level info --load base,web -i test_lint,test_pylint --test-enable --test-tags /test_lint,/test_pylint,/test_lint,/test_pylint,-/test_lint:TestPyLint.test_pylint\n" >>$CONFIG_FILE
+
+    test_tags=
+
+    echo -e "\ncommand = \
+    --stop-after-init \
+    --workers 0 \
+    --database $ODOO_TEST_DATABASE_NAME \
+    --logfile "$LOG_FILE" \
+    --log-level info " >>$CONFIG_FILE
+
+    if [[ -n $test_pylint ]]; then
+        test_tags="/test_lint,/test_pylint,/test_lint,/test_pylint,-/test_lint:TestPyLint.test_pylint"
+        echo -en " --load base,web \
+        --init test_lint,test_pylint \
+        --test-tags "$test_tags"\n" >>$CONFIG_FILE
     else
-        echo -e "\ncommand = --stop-after-init --workers 0 --database $ODOO_TEST_DATABASE_NAME --without-demo $without_demo_addons --logfile "$LOG_FILE" --log-level info -i "${custom_addons}" --test-enable --test-tags "${tagged_custom_addons}"\n" >>$CONFIG_FILE
+        tagged_custom_addons=$(echo $custom_addons | sed "s/,/,\//g" | sed "s/^/\//")
+        if [[ $execute_test_time == 'at_install' ]]; then
+            test_tags="${tagged_custom_addons},-post_install"
+        else
+            test_tags="${tagged_custom_addons}"
+        echo -en " --init "${custom_addons}" \
+        --without-demo $without_demo_addons \
+        --test-tags "${tagged_custom_addons}"\n" >>$CONFIG_FILE
     fi
 }
 
@@ -49,11 +77,10 @@ function start_containers {
 }
 
 show_build_message() {
-    if [[ $is_pylint_build == "true" ]]; then
+    if [[ -n $test_pylint ]]; then
         show_separator "Install and run pylint test cases for custom addons!"
     else
         show_separator "Install and run test cases for custom addons!"
-
     fi
 }
 
