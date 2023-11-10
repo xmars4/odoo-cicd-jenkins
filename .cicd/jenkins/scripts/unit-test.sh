@@ -14,7 +14,6 @@ function analyze_log {
         return 0
     fi
     # fixme: remove redundant elements
-    cat $LOG_FILE_OUTSIDE
     cat $CONFIG_FILE
 
     grep -m 1 -P '^[0-9-\s:,]+(ERROR|CRITICAL)' $LOG_FILE_OUTSIDE >/dev/null 2>&1
