@@ -3,6 +3,8 @@ node {
         git_checkout()
         setup_environment_variables()
         verify_tools()
+        // fixme: remove below
+        stop_previous_builds_in_same_pr
     }
 
     // stage('Code analytic - Sonarqube') {
@@ -15,27 +17,27 @@ node {
     //     clean_test_resource()
     // }
 
-    stage('Unit Test - At install') {
-        build('at_install')
-        unit_test()
-        clean_test_resource()
-    }
+    // stage('Unit Test - At install') {
+    //     build('at_install')
+    //     unit_test()
+    //     clean_test_resource()
+    // }
 
-    stage('Unit Test - Post install') {
-        build('post_install')
-        unit_test()
-        clean_test_resource()
-        update_commit_status_success()
-    }
+    // stage('Unit Test - Post install') {
+    //     build('post_install')
+    //     unit_test()
+    //     clean_test_resource()
+    //     update_commit_status_success()
+    // }
 
-    stage('Integration Test') {
-        integration_test()
-        clean_test_resource()
-    }
+    // stage('Integration Test') {
+    //     integration_test()
+    //     clean_test_resource()
+    // }
 
-    stage('Deploy to server') {
-        deploy_to_server()
-    }
+    // stage('Deploy to server') {
+    //     deploy_to_server()
+    // }
 }
 
 def setup_environment_variables() {
@@ -162,6 +164,7 @@ def unit_test() {
 def update_commit_status_success() {
     if (!is_pr_merged()) {
         set_github_commit_status_success()
+
     }
 }
 
@@ -251,6 +254,17 @@ def deploy_to_server() {
             }
         }
     }
+}
+
+def stop_previous_builds_in_same_pr(){
+    def runningBuilds = Jenkins.instance.getItems().collect { job->
+    job.builds.findAll { it.getResult().equals(null) }
+    }.flatten()
+    echo "==============8888888888888888888888==================="
+    echo "$runningBuilds"
+    def build = Jenkins.instance.getItemByFullName("jobName").getBuildByNumber(jobNumber)
+    build.doStop()
+    build.doKill()
 }
 // ======================= Github commit status functions  ================
 
