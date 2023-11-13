@@ -177,7 +177,7 @@ set_github_commit_status() {
     context=$7
 
     if [ -z $context ]; then
-        context="continuous-integration/jenkins"
+        context="cicd/jenkins"
     fi
     if [ -z $build_url ]; then
         build_url=$BUILD_URL
@@ -206,7 +206,8 @@ set_github_commit_status_default() {
     github_access_token=${global_github_access_token}
     state=$1
     message=$2
-    set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message"
+    context=$3
+    set_github_commit_status "$repo_name" "$commit_sha" "$github_access_token" "$state" "$message" "$BUILD_URL" "$context"
 }
 
 # ------------------ Telegram functions -------------------------
