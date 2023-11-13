@@ -285,10 +285,11 @@ def set_github_commit_status(String state, String message, String context) {
 }
 
 // ======================== Telegram functions ========================
+// fixme:replace  temp-telegram-channel -> telegram-channel-id
 def send_telegram_file(String file_path, String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id2')
     ]) {
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'"
     }
@@ -297,7 +298,7 @@ def send_telegram_file(String file_path, String message) {
 def send_telegram_message(String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id')
     ]) {
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\""
     }
@@ -307,6 +308,7 @@ def send_message_telegram_unit_test_failed(){
     def telegram_message = """
 The [PR \\#${pr_id}](${pr_url}) check has failed\\!
 Please take a look at the attached log file🔬
+[Build \\#${BUILD_NUMBER} log](${BUILD_URL}console)
 """
     send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 }
@@ -314,7 +316,7 @@ Please take a look at the attached log file🔬
 def send_message_telegram_integration_backup_failed() {
     def failed_message = """
 Cannot take a backup from remote server to continue testing process\\.
-Please take a look into [the build log](${BUILD_URL}console) 🔬                
+Please take a look into [Build \\#${BUILD_NUMBER} log](${BUILD_URL}console) 🔬                
 """
     send_message_telegram_default(failed_message)
 }
@@ -323,6 +325,7 @@ def send_message_telegram_integration_test_failed() {
     def telegram_message = """
 The [PR \\#${pr_id}](${pr_url}) checking on existing database failed\\!
 Please take a look at the attached log file🔬
+[Build \\#${BUILD_NUMBER} log](${BUILD_URL}console)
     """
     send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 }
@@ -330,7 +333,7 @@ Please take a look at the attached log file🔬
 def send_message_telegram_deploy_failed() {
     def failed_message = """
 The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
-Please take a look into [the build log](${BUILD_URL}console)\\.
+Please take a look into [Build \\#${BUILD_NUMBER} log](${BUILD_URL}console)\\.
 """
     send_telegram_message(failed_message)
 }
