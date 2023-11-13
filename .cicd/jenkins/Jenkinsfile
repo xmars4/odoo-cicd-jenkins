@@ -278,7 +278,7 @@ def set_github_commit_status(String state, String message, String context) {
     withCredentials([
         string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
     ]) {
-        def default_context = "cicd/jenkins"
+        def default_context = "cicd"
         def commit_context = "${default_context}/${context}"
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}' '${commit_context}'"
     }
