@@ -12,6 +12,6 @@ class TestExpenseApproval(TransactionCase):
             'name': 'CBM',
         })
 
-    def test_fake_pro(self):
+    def test_create_partner(self):
         # self.assertEqual(self.unit.name, 'CBM')
         self.assertEqual(self.unit.name, '*CBM*')

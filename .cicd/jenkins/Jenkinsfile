@@ -17,15 +17,14 @@ node {
 
     stage('Unit Test - At install') {
         build('at_install')
-        unit_test()
+        unit_test('at_install')
         clean_test_resource()
     }
 
     stage('Unit Test - Post install') {
         build('post_install')
-        unit_test()
+        unit_test('post_install')
         clean_test_resource()
-        update_commit_status_success()
     }
 
     stage('Integration Test') {
@@ -145,25 +144,36 @@ def sonarqube_check_code_quality() {
 def pylint_test() {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/pylint-test.sh", returnStatus: true);
     send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})\\!")
-    // if (result != 0){
-    //     send_telegram_file(LOG_FILE_OUTSIDE, "The pylint test result for [PR \\#${pr_id}](${pr_url})!")
-    // }
 }
 
-def unit_test() {
+def unit_test(String execution_time) {
     def result = sh(script: "$PIPELINE_SCRIPTS_PATH/unit-test.sh", returnStatus: true)
-    if (result != 0) {
-        set_github_commit_status_failed()
-        send_message_telegram_unit_test_failed()
-        clean_test_resource_and_bad_exit()
+    switch (execution_time) {
+        case "at_install":
+            def context = 'unit_test-at_install'
+            def general_message = 'Unit nest - At install was'
+            if (result != 0) {
+                set_github_commit_status_failed("${general_message} failed!", context)
+                send_message_telegram_unit_test_failed()
+                clean_test_resource_and_bad_exit()
+            }
+            set_github_commit_status_success("${general_message} successfull!", context)
+            break
+        case "post_install":
+            def context = 'unit_test-post_install'
+            def general_message = 'Unit nest - Post install was'
+            if (result != 0) {
+                set_github_commit_status_failed("${general_message} failed!", context)
+                send_message_telegram_unit_test_failed()
+                clean_test_resource_and_bad_exit()
+            }
+            set_github_commit_status_success("${general_message} successfull!", context)
+            break
+        default:
+            clean_test_resource_and_bad_exit()
+            break
     }
-}
-
-def update_commit_status_success() {
-    if (!is_pr_merged()) {
-        set_github_commit_status_success()
-
-    }
+    
 }
 
 def integration_test() {
@@ -209,12 +219,12 @@ def integration_test() {
 
         def result = sh(script: "$PIPELINE_SCRIPTS_PATH/integration-test.sh $received_backup_file_path", returnStatus: true)
         if (result != 0) {
-            set_github_commit_status_failed()
+            set_github_commit_status_failed("Integration test was failed!", 'integration_test')
             send_message_telegram_integration_test_failed()
             clean_test_resource_and_bad_exit()
         }
 
-        set_github_commit_status_success()
+        set_github_commit_status_success('Integration test was successful!', 'integration_test')
     }
 }
 
@@ -256,29 +266,30 @@ def deploy_to_server() {
 
 // ======================= Github commit status functions  ================
 
-def set_github_commit_status_success() {
-    def git_commit_message = "The build was successfull!"
-    set_github_commit_status("success", git_commit_message);
+def set_github_commit_status_success(String message, String context) {
+    set_github_commit_status("success", message, context);
 }
 
-def set_github_commit_status_failed() {
-    def git_commit_message = "The build failed, please re-check the code!"
-    set_github_commit_status("failure", git_commit_message);
+def set_github_commit_status_failed(String message, String context) {
+    set_github_commit_status("failure", message, context);
 }
 
-def set_github_commit_status(String state, String message) {
+def set_github_commit_status(String state, String message, String context) {
     withCredentials([
         string(credentialsId: 'github-access-token-cred', variable: 'github_access_token')
     ]) {
-        sh "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}'"
+        def default_context = "cicd"
+        def commit_context = "${default_context}/${context}"
+        sh "$PIPELINE_UTILS_SCRIPT_PATH exec set_github_commit_status_default '${state}' '${message}' '${commit_context}'"
     }
 }
 
 // ======================== Telegram functions ========================
+// fixme:replace  temp-telegram-channel -> telegram-channel-id
 def send_telegram_file(String file_path, String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id')
     ]) {
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_file_telegram_default '${file_path}' '${message}'"
     }
@@ -287,7 +298,7 @@ def send_telegram_file(String file_path, String message) {
 def send_telegram_message(String message) {
     withCredentials([
         string(credentialsId: 'telegram-bot-token', variable: 'telegram_bot_token'),
-        string(credentialsId: 'telegram-channel-id', variable: 'telegram_channel_id')
+        string(credentialsId: 'temp-telegram-channel', variable: 'telegram_channel_id')
     ]) {
         sh "$PIPELINE_UTILS_SCRIPT_PATH exec send_message_telegram_default \"${message}\""
     }
@@ -297,6 +308,7 @@ def send_message_telegram_unit_test_failed(){
     def telegram_message = """
 The [PR \\#${pr_id}](${pr_url}) check has failed\\!
 Please take a look at the attached log file🔬
+[Build \\#${BUILD_NUMBER} log](${BUILD_URL}console)
 """
     send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 }
@@ -304,7 +316,7 @@ Please take a look at the attached log file🔬
 def send_message_telegram_integration_backup_failed() {
     def failed_message = """
 Cannot take a backup from remote server to continue testing process\\.
-Please take a look into [the build log](${BUILD_URL}console) 🔬                
+Please take a look into [Build \\#${BUILD_NUMBER} log](${BUILD_URL}console) 🔬                
 """
     send_message_telegram_default(failed_message)
 }
@@ -313,6 +325,7 @@ def send_message_telegram_integration_test_failed() {
     def telegram_message = """
 The [PR \\#${pr_id}](${pr_url}) checking on existing database failed\\!
 Please take a look at the attached log file🔬
+[Build \\#${BUILD_NUMBER} log](${BUILD_URL}console)
     """
     send_telegram_file(LOG_FILE_OUTSIDE, telegram_message)
 }
@@ -320,7 +333,7 @@ Please take a look at the attached log file🔬
 def send_message_telegram_deploy_failed() {
     def failed_message = """
 The [PR \\#${pr_id}](${pr_url}) was merged but the deployment to the server failed\\!
-Please take a look into [the build log](${BUILD_URL}console)\\.
+Please take a look into [Build \\#${BUILD_NUMBER} log](${BUILD_URL}console)\\.
 """
     send_telegram_message(failed_message)
 }
