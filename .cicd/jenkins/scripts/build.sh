@@ -51,9 +51,9 @@ function update_config_file {
     --log-level info " >>$CONFIG_FILE
 
     if [[ -n $test_pylint ]]; then
-        test_tags="/test_lint,/test_pylint,/test_lint,/test_pylint,-/test_lint:TestPyLint.test_pylint"
+        test_tags="/test_lint"
         echo -en " --load base,web \
-        --init test_lint,test_pylint \
+        --init test_lint \
         --test-tags "$test_tags"\n" >>$CONFIG_FILE
     else
         tagged_custom_addons=$(echo $custom_addons | sed "s/,/,\//g" | sed "s/^/\//")
