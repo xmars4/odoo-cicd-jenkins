@@ -74,6 +74,13 @@ function update_config_file {
     fi
 }
 
+function copy_requirements_txt_file {
+    if [[ -f "$SOURCE_REQUIREMENTS_FILE" ]]; then
+        echo "" >>$DOCKER_REQUIREMENTS_FILE
+        cat $SOURCE_REQUIREMENTS_FILE >>$DOCKER_REQUIREMENTS_FILE
+    fi
+}
+
 function start_containers {
     default_container_requirements="$ODOO_WORKSPACE/dockerfile/requirements.txt"
     custom_addons_requirements="$ODOO_CUSTOM_ADDONS_PATH/requirements.txt"
@@ -99,6 +106,7 @@ function main {
     show_build_message
     set_list_addons
     update_config_file
+    copy_requirements_txt_file
     start_containers
     wait_until_odoo_shutdown
 }
