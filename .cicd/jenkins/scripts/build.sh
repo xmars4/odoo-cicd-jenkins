@@ -62,9 +62,15 @@ function update_config_file {
         else
             test_tags="${tagged_custom_addons}"
         fi
-        echo -en " --init ${custom_addons} \
-        --without-demo $without_demo_addons \
-        --test-tags $test_tags\n" >>$CONFIG_FILE
+        if [[ -z $without_demo_addons ]]; then
+            echo -en " --init ${custom_addons} \
+            --test-tags $test_tags\n" >>$CONFIG_FILE
+        else
+            echo -en " --init ${custom_addons} \
+            --without-demo $without_demo_addons \
+            --test-tags $test_tags\n" >>$CONFIG_FILE
+        fi
+
     fi
 }
 
