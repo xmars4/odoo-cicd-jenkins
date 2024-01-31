@@ -116,9 +116,9 @@ analyze_log_file() {
 }
 
 main() {
-    populate_variables $@
+    populate_variables "$@"
     restore_backup
     analyze_log_file
 }
 
-main $@
+main "$@"
